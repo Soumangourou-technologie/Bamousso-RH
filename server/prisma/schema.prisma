@@ -38,6 +38,24 @@ model Company {
   payments    Payment[]
   tasks       Task[]
   customRoles CustomRole[]
+  disciplinaryCases DisciplinaryCase[]
+}
+
+/// Modèle Cas Disciplinaire (Conflit)
+model DisciplinaryCase {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  status      String   @default("OPEN") // OPEN, UNDER_INVESTIGATION, RESOLVED, CLOSED
+  
+  involvedEmployeeId String
+  involvedEmployee   User   @relation("DisciplinaryCases", fields: [involvedEmployeeId], references: [id], onDelete: Cascade)
+
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 /// Modèle Paiement (Payment)
@@ -119,6 +137,8 @@ model User {
   // Custom Role (RBAC)
   customRoleId String?
   customRole   CustomRole? @relation(fields: [customRoleId], references: [id], onDelete: SetNull)
+
+  disciplinaryCases DisciplinaryCase[] @relation("DisciplinaryCases")
 
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
