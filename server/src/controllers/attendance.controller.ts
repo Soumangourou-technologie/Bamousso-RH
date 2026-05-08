@@ -6,7 +6,16 @@ import { notifyAdmins } from "../utils/notifications.js";
 export const toggleClock = async (req: Request, res: Response): Promise<any> => {
   try {
     const userId = (req as any).user.id;
-    const { latitude, longitude } = req.body;
+    const { latitude: lat, longitude: lon } = req.body;
+
+    const parseCoord = (coord: any): number | null => {
+      if (coord === null || coord === undefined || coord === "") return null;
+      const num = parseFloat(coord);
+      return isNaN(num) ? null : num;
+    };
+
+    const latitude = parseCoord(lat);
+    const longitude = parseCoord(lon);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
