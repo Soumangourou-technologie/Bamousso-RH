@@ -60,7 +60,7 @@ export const createRole = async (req: Request, res: Response): Promise<any> => {
 export const updateRole = async (req: Request, res: Response): Promise<any> => {
   try {
     const user = (req as any).user;
-    const { id } = req.params;
+    const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
     const { name, permissions } = roleSchema.parse(req.body);
 
     const role = await prisma.customRole.update({
@@ -77,7 +77,7 @@ export const updateRole = async (req: Request, res: Response): Promise<any> => {
 export const deleteRole = async (req: Request, res: Response): Promise<any> => {
   try {
     const user = (req as any).user;
-    const { id } = req.params;
+    const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
 
     // Check if role is used
     const usersWithRole = await prisma.user.count({
