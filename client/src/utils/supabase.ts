@@ -9,10 +9,17 @@ if (supabaseUrl && supabaseAnonKey) {
   supabase = createClient(supabaseUrl, supabaseAnonKey);
 } else {
   console.warn('Supabase credentials missing. Real-time features will be disabled.');
-  // Crée un client factice pour éviter les crashs, avec des méthodes vides.
+  // Crée un client factice complet pour éviter les crashs.
+  // Il simule la chaîne d'appels `supabase.channel(...).on(...).subscribe()`.
+  const dummyChannel = {
+    on: () => dummyChannel,
+    subscribe: () => {},
+  };
   supabase = {
-    from: () => ({ subscription: null, channel: () => ({ subscribe: () => {} }) }),
-    // Ajoutez d'autres méthodes que vous utilisez si nécessaire pour éviter les erreurs
+    channel: () => dummyChannel,
+    from: () => (({} as any)), // Simule `from` pour d'autres usages potentiels
+    storage: { from: () => ({ upload: () => {}, getPublicUrl: () => ({ data: { publicUrl: '' } }) }) },
+    removeChannel: () => {},
   } as any;
 }
 
