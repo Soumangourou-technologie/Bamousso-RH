@@ -26,7 +26,7 @@ export const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 export const uploadToSupabase = async (file: MulterFile, bucket: string = 'bamousso'): Promise<string | null> => {
   // Try Supabase upload if credentials exist
-  if (supabaseUrl && supabaseKey) {
+  if (supabaseUrl && supabaseServiceKey) {
     try {
       let fileBuffer = file.buffer;
       
