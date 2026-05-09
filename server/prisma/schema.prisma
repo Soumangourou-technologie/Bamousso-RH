@@ -83,7 +83,7 @@ model User {
   password  String // Mot de passe crypté (Haché)
   firstName String
   lastName  String
-  role      String  @default("EMPLOYEE") // SUPER_ADMIN, COMPANY_ADMIN, HR_MANAGER, COMMERCIAL, EMPLOYEE
+  role      String  @default("EMPLOYEE") // SUPER_ADMIN, COMPANY_ADMIN, HR_MANAGER, HR_ASSISTANT, COMMERCIAL, EMPLOYEE
   isOnline  Boolean @default(false)
 
   // Champs RH

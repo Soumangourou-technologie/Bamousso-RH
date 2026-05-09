@@ -33,7 +33,6 @@ import Explanations from './pages/Explanations';
 import Salaries from './pages/Salaries';
 import Roles from './pages/Roles';
 import Conflicts from './pages/Conflicts';
-import Roles from './pages/Roles';
 
 import { NotificationProvider } from './context/NotificationContext';
 
@@ -72,7 +71,7 @@ function App() {
                     <Route path="/roles" element={<Roles />} />
                   </Route>
 
-                  <Route element={<ProtectedRoute allowedRoles={['HR_MANAGER', 'COMMERCIAL']} />}>
+                  <Route element={<ProtectedRoute allowedRoles={['HR_MANAGER', 'HR_ASSISTANT', 'COMMERCIAL']} />}>
                     <Route path="/dashboard/hr" element={<DashboardHR />} />
                   </Route>
 
@@ -81,7 +80,7 @@ function App() {
                   </Route>
 
                   {/* Pages RH */}
-                  <Route element={<ProtectedRoute allowedRoles={['COMPANY_ADMIN', 'HR_MANAGER', 'COMMERCIAL']} />}>
+                  <Route element={<ProtectedRoute allowedRoles={['COMPANY_ADMIN', 'HR_MANAGER', 'HR_ASSISTANT', 'COMMERCIAL']} />}>
                     <Route path="/employees" element={<Employees />} />
                     <Route path="/departments" element={<Departments />} />
                     <Route path="/settings" element={<Settings />} />
@@ -99,7 +98,6 @@ function App() {
                   <Route path="/explanations" element={<Explanations />} />
                   <Route path="/salaries" element={<Salaries />} />
                   <Route path="/conflicts" element={<Conflicts />} />
-                  <Route path="/roles" element={<Roles />} />
                 </Route>
               </Route>
 

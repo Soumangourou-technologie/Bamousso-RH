@@ -42,6 +42,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
       case 'SUPER_ADMIN': return 'Super Administrateur';
       case 'COMPANY_ADMIN': return 'Admin entreprise';
       case 'HR_MANAGER': return 'RH Manager';
+      case 'HR_ASSISTANT': return 'Assistant RH';
       case 'COMMERCIAL': return 'Commercial';
       case 'EMPLOYEE': return 'Employé';
       default: return role;

@@ -14,12 +14,14 @@ interface User {
     | 'SUPER_ADMIN'
     | 'COMPANY_ADMIN'
     | 'HR_MANAGER'
+    | 'HR_ASSISTANT'
     | 'COMMERCIAL'
     | 'EMPLOYEE';
   firstName: string;
   lastName: string;
   companyId?: string;
   status?: 'INVITED' | 'ACTIVE' | 'INACTIVE';
+  permissions: string[];
 }
 
 interface Company {
