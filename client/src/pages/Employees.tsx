@@ -56,7 +56,7 @@ const Employees = () => {
   const { user } = useAuth();
 
   const fetchEmployees = async () => {
-    const res = await api.get<Employee[]>('/employees');
+    const res = await api.get<Employee[]>('/employees?role=EMPLOYEE');
     setEmployees(res.data);
   };
 
