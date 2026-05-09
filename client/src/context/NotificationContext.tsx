@@ -3,7 +3,7 @@ import { supabase } from '../utils/supabase';
 import { useAuth } from './AuthContext';
 import api from '../utils/api';
 
-export interface Notification {
+export interface AppNotification {
   id: string;
   title: string;
   message: string;
@@ -23,7 +23,7 @@ interface BadgeCounts {
 }
 
 interface NotificationContextType {
-  notifications: Notification[];
+  notifications: AppNotification[];
   unreadCount: number;
   badgeCounts: BadgeCounts;
   markAsRead: (id: string) => Promise<void>;
@@ -36,7 +36,7 @@ const NotificationContext = createContext<NotificationContextType | undefined>(u
 
 export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user } = useAuth();
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [notifications, setNotifications] = useState<AppNotification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [badgeCounts, setBadgeCounts] = useState<BadgeCounts>({
     suggestions: 0,
@@ -45,7 +45,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     announcements: 0
   });
 
-  const calculateBadgeCounts = (notifs: Notification[]) => {
+  const calculateBadgeCounts = (notifs: AppNotification[]) => {
     const unread = notifs.filter(n => !n.read);
     setBadgeCounts({
       suggestions: unread.filter(n => n.type === 'SUGGESTION').length,
@@ -60,7 +60,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     try {
       const response = await api.get('/notifications');
       setNotifications(response.data);
-      setUnreadCount(response.data.filter((n: Notification) => !n.read).length);
+      setUnreadCount(response.data.filter((n: AppNotification) => !n.read).length);
       calculateBadgeCounts(response.data);
     } catch (error) {
       console.error("Error fetching notifications", error);
@@ -86,7 +86,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
         schema: 'public',
         table: 'Notification',
         filter: `companyId=eq.${user.companyId}`,
-      }, (payload: { new: Notification }) => {
+      }, (payload: { new: AppNotification }) => {
         const newNotif = payload.new;
         
         // Only process if for this specific user or global to company
@@ -99,8 +99,8 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
           setUnreadCount(prev => prev + 1);
           
           // Browser Notification
-          if (Notification.permission === 'granted') {
-            new Notification(newNotif.title, { body: newNotif.message });
+          if ('Notification' in window && window.Notification.permission === 'granted') {
+            new window.Notification(newNotif.title, { body: newNotif.message });
           }
         }
       })
