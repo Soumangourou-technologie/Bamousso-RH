@@ -1,99 +1,71 @@
-import { Request, Response } from "express";
-import prisma from "../utils/prisma.js";
-import { z } from "zod";
+import { Request, Response } from 'express';
+import prisma from '../utils/prisma.js';
+import { z } from 'zod';
+import { catchAsync } from '../utils/catchAsync.js';
 
 const roleSchema = z.object({
-  name: z.string().min(1),
-  permissions: z.array(z.string()),
+  name: z.string().min(2, "Le nom du rôle est requis."),
+  permissions: z.array(z.string()).min(1, "Au moins une permission est requise."),
 });
 
-export const getRoles = async (req: Request, res: Response): Promise<any> => {
-  try {
-    const user = (req as any).user;
-    
-    // Only fetch roles for the user's company
-    const roles = await prisma.customRole.findMany({
-      where: { companyId: user.companyId },
-      include: {
-        _count: {
-          select: { users: true }
-        }
-      },
-      orderBy: { createdAt: 'desc' }
-    });
-    
-    res.json(roles);
-  } catch (error: any) {
-    res.status(500).json({ message: "Erreur serveur.", error: error.message });
+export const getRoles = catchAsync(async (req: Request, res: Response) => {
+  const currentUser = (req as any).user;
+  const roles = await prisma.customRole.findMany({
+    where: { companyId: currentUser.companyId },
+    orderBy: { name: 'asc' },
+  });
+  res.json(roles);
+});
+
+export const createRole = catchAsync(async (req: Request, res: Response) => {
+  const currentUser = (req as any).user;
+  const { name, permissions } = roleSchema.parse(req.body);
+
+  const newRole = await prisma.customRole.create({
+    data: {
+      name,
+      permissions,
+      companyId: currentUser.companyId,
+    },
+  });
+  res.status(201).json(newRole);
+});
+
+export const updateRole = catchAsync(async (req: Request, res: Response) => {
+  const currentUser = (req as any).user;
+  const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+  if (!id) return res.status(400).json({ message: 'ID du rôle manquant.' });
+
+  const { name, permissions } = roleSchema.parse(req.body);
+
+  const roleToUpdate = await prisma.customRole.findFirst({
+    where: { id, companyId: currentUser.companyId },
+  });
+
+  if (!roleToUpdate) {
+    return res.status(404).json({ message: 'Rôle non trouvé.' });
   }
-};
 
-export const createRole = async (req: Request, res: Response): Promise<any> => {
-  try {
-    const user = (req as any).user;
-    const { name, permissions } = roleSchema.parse(req.body);
+  const updatedRole = await prisma.customRole.update({
+    where: { id },
+    data: { name, permissions },
+  });
+  res.json(updatedRole);
+});
 
-    // Verify if company plan allows custom roles
-    const company = await prisma.company.findUnique({
-      where: { id: user.companyId },
-      select: { plan: true }
-    });
+export const deleteRole = catchAsync(async (req: Request, res: Response) => {
+  const currentUser = (req as any).user;
+  const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+  if (!id) return res.status(400).json({ message: 'ID du rôle manquant.' });
 
-    if (company?.plan === "FITINI") {
-      return res.status(403).json({ message: "La formule FITINI ne permet pas la création de rôles personnalisés. Veuillez passer à la formule supérieure." });
-    }
+  const roleToDelete = await prisma.customRole.findFirst({
+    where: { id, companyId: currentUser.companyId },
+  });
 
-    const role = await prisma.customRole.create({
-      data: {
-        name,
-        permissions,
-        companyId: user.companyId,
-      }
-    });
-
-    res.status(201).json(role);
-  } catch (error: any) {
-    res.status(400).json({ message: "Erreur de validation ou serveur.", error: error.message });
+  if (!roleToDelete) {
+    return res.status(404).json({ message: 'Rôle non trouvé.' });
   }
-};
 
-export const updateRole = async (req: Request, res: Response): Promise<any> => {
-  try {
-    const user = (req as any).user;
-    const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
-    const { name, permissions } = roleSchema.parse(req.body);
-
-    const role = await prisma.customRole.update({
-      where: { id, companyId: user.companyId },
-      data: { name, permissions }
-    });
-
-    res.json(role);
-  } catch (error: any) {
-    res.status(400).json({ message: "Erreur lors de la mise à jour.", error: error.message });
-  }
-};
-
-export const deleteRole = async (req: Request, res: Response): Promise<any> => {
-  try {
-    const user = (req as any).user;
-    const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
-
-    // Check if role is used
-    const usersWithRole = await prisma.user.count({
-      where: { customRoleId: id }
-    });
-
-    if (usersWithRole > 0) {
-      return res.status(400).json({ message: "Impossible de supprimer ce rôle car il est attribué à des employés." });
-    }
-
-    await prisma.customRole.delete({
-      where: { id, companyId: user.companyId }
-    });
-
-    res.json({ message: "Rôle supprimé avec succès." });
-  } catch (error: any) {
-    res.status(500).json({ message: "Erreur lors de la suppression.", error: error.message });
-  }
-};
+  await prisma.customRole.delete({ where: { id } });
+  res.status(204).send();
+});

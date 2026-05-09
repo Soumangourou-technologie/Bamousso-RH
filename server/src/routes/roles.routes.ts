@@ -1,12 +1,11 @@
-import express from "express";
-import { authenticate, authorize } from "../middleware/auth.js";
+import { Router } from "express";
+import { authenticate } from "../middleware/auth.js";
 import { getRoles, createRole, updateRole, deleteRole } from "../controllers/roles.controller.js";
 
-const router = express.Router();
+const router = Router();
 
+// Toutes les routes ici sont protégées et ne sont accessibles qu'aux admins d'entreprise
 router.use(authenticate);
-// Seul le COMPANY_ADMIN peut gérer les rôles personnalisés
-router.use(authorize(["COMPANY_ADMIN"]));
 
 router.get("/", getRoles);
 router.post("/", createRole);

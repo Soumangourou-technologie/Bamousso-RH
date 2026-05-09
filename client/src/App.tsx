@@ -33,6 +33,7 @@ import Explanations from './pages/Explanations';
 import Salaries from './pages/Salaries';
 import Roles from './pages/Roles';
 import Conflicts from './pages/Conflicts';
+import Roles from './pages/Roles';
 
 import { NotificationProvider } from './context/NotificationContext';
 
@@ -98,6 +99,7 @@ function App() {
                   <Route path="/explanations" element={<Explanations />} />
                   <Route path="/salaries" element={<Salaries />} />
                   <Route path="/conflicts" element={<Conflicts />} />
+                  <Route path="/roles" element={<Roles />} />
                 </Route>
               </Route>
 

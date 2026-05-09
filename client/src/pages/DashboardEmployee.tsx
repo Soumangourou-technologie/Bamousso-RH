@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Calendar, Clock, FileText, Megaphone, UserCircle, Building2 } from 'lucide-react';
+import { Calendar, Clock, FileText, Megaphone, UserCircle, Building2, Wallet, Briefcase } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const DashboardEmployee = () => {
@@ -21,11 +21,21 @@ const DashboardEmployee = () => {
     show: { opacity: 1, y: 0 }
   };
 
-  const modules = [
+  const baseModules = [
     { name: 'Mon Pointage', desc: 'Arrivée / Départ', icon: Clock, path: '/attendance', color: 'bg-green-500' },
     { name: 'Mes Congés', desc: 'Solde & Demandes', icon: Calendar, path: '/leaves', color: 'bg-yellow-500' },
     { name: 'Mon Coffre-fort', desc: 'Fiches de paie', icon: FileText, path: '/documents', color: 'bg-purple-500' },
     { name: 'Actualités', desc: 'Annonces entreprise', icon: Megaphone, path: '/announcements', color: 'bg-orange-500' },
+  ];
+
+  const roleSpecificModules = [
+    { name: 'Comptabilité', desc: 'Suivi & Rapports', icon: Wallet, path: '/accounting', color: 'bg-blue-500', requiredPermission: 'view_accounting' },
+    { name: 'CRM Commercial', desc: 'Clients & RDV', icon: Briefcase, path: '/crm', color: 'bg-rose-500', requiredPermission: 'manage_crm' },
+  ];
+
+  const visibleModules = [
+    ...baseModules,
+    ...roleSpecificModules.filter(m => user?.permissions.includes(m.requiredPermission))
   ];
 
   return (
@@ -65,7 +75,7 @@ const DashboardEmployee = () => {
         animate="show"
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
       >
-        {modules.map((mod, index) => (
+        {visibleModules.map((mod, index) => (
           <motion.div key={index} variants={item}>
             <Link
               to={mod.path}
