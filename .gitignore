@@ -34,3 +34,4 @@ server/prisma/dev.db-journal
 # Uploads (local file storage)
 server/uploads/*
 !server/uploads/.gitkeep
+vite.config.ts.timestamp-*
