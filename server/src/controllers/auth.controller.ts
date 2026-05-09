@@ -10,7 +10,7 @@ import { Prisma } from "@prisma/client";
 import prisma from "../utils/prisma.js";
 import { z } from "zod";
 
-import { logger } from "../utils/logger.js";
+import { catchAsync } from '../utils/catchAsync.js';
 
 // Schéma de validation pour l'inscription d'un utilisateur
 const registerSchema = z.object({
@@ -59,7 +59,7 @@ const resetPasswordSchema = z.object({
 /**
  * Enregistre un nouvel utilisateur (principalement utilisé pour les employés par défaut).
  */
-export const register = async (req: Request, res: Response) => {
+export const register = catchAsync(async (req: Request, res: Response) => {
   try {
     // Validation des données entrantes avec Zod
     const { email, password, firstName, lastName, role } = registerSchema.parse(req.body);
@@ -88,15 +88,13 @@ export const register = async (req: Request, res: Response) => {
       message: "Utilisateur créé avec succès", 
       user: { id: user.id, email: user.email, role: user.role } 
     });
-  } catch (error) {
-    res.status(500).json({ message: "Erreur lors de l'inscription", error });
-  }
+  });
 };
 
 /**
  * Crée une entreprise (tenant) et le premier compte admin entreprise.
  */
-export const registerCompany = async (req: Request, res: Response) => {
+export const registerCompany = catchAsync(async (req: Request, res: Response) => {
   try {
     const { companyName, email, phone, password, firstName, lastName, plan, extraEmployees } = registerCompanySchema.parse(req.body);
 
@@ -151,16 +149,14 @@ export const registerCompany = async (req: Request, res: Response) => {
         plan: result.company.plan
       }
     });
-  } catch (error) {
-    res.status(500).json({ message: "Erreur lors de la création de l'entreprise", error });
-  }
+  });
 };
 
 /**
  * Mot de passe oublié : génère un token de reset (hashé en DB).
  * Note MVP : l'envoi email n'est pas branché ici (on pourra ajouter SMTP/Sendgrid).
  */
-export const forgotPassword = async (req: Request, res: Response) => {
+export const forgotPassword = catchAsync(async (req: Request, res: Response) => {
   try {
     const { email } = forgotPasswordSchema.parse(req.body);
 
@@ -194,15 +190,13 @@ export const forgotPassword = async (req: Request, res: Response) => {
       message: "Si le compte existe, un email de réinitialisation a été envoyé.",
       ...(isProd ? {} : { devResetToken: rawToken }),
     });
-  } catch (error) {
-    res.status(500).json({ message: "Erreur lors de la demande de réinitialisation", error });
-  }
+  });
 };
 
 /**
  * Réinitialisation mot de passe via token.
  */
-export const resetPassword = async (req: Request, res: Response) => {
+export const resetPassword = catchAsync(async (req: Request, res: Response) => {
   try {
     const { token, password } = resetPasswordSchema.parse(req.body);
     const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
@@ -230,15 +224,12 @@ export const resetPassword = async (req: Request, res: Response) => {
     });
 
     res.json({ message: "Mot de passe mis à jour avec succès." });
-  } catch (error) {
-    res.status(500).json({ message: "Erreur lors de la réinitialisation", error });
-  }
-};
+  });};
 
 /**
  * Connecte un utilisateur et génère un token JWT.
  */
-export const login = async (req: Request, res: Response) => {
+export const login = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   try {
     // Validation des données de connexion
     const { email, password } = loginSchema.parse(req.body);
@@ -316,25 +307,6 @@ export const login = async (req: Request, res: Response) => {
     };
 
     return res.json(responseData);
-  } catch (error: any) {
-    console.error("CRITICAL Login error:", error);
-    
-    // Log plus détaillé pour le debug
-    if (error.name === 'ZodError') {
-      return res.status(400).json({ message: "Données de connexion invalides", errors: error.errors });
-    }
-
-    if (error instanceof Prisma.PrismaClientInitializationError) {
-      return res.status(500).json({
-        message: "Connexion base de données impossible. Vérifiez les variables d'environnement.",
-      });
-    }
-
-    res.status(500).json({ 
-      message: "Erreur lors de la connexion", 
-      details: process.env.NODE_ENV === 'development' ? error.message : undefined 
-    });
-  }
 };
 
 /**

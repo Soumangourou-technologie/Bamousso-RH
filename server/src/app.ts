@@ -9,8 +9,9 @@ import helmet from "helmet";
 import morgan from "morgan";
 import dotenv from "dotenv";
 import { apiLimiter, authLimiter } from "./middleware/rateLimit.js";
+import errorHandler from "./middleware/errorHandler.js";
 
-import { errorHandler } from "./middleware/error.js";
+
 
 // Importation des routes
 import authRoutes from "./routes/auth.routes.js";
