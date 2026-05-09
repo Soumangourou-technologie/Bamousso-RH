@@ -25,9 +25,9 @@ const Analytics = () => {
   const { canUse, requiredPlanFor } = usePlan();
   const { user } = useAuth();
   const [summary, setSummary] = useState<Summary | null>(null);
-  const [leavesData, setLeavesData] = useState([]);
-  const [attendanceData, setAttendanceData] = useState([]);
-  const [workforceData, setWorkforceData] = useState([]);
+  const [leavesData, setLeavesData] = useState<any[]>([]);
+  const [attendanceData, setAttendanceData] = useState<any[]>([]);
+  const [workforceData, setWorkforceData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchAll = async () => {
