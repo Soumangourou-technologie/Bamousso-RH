@@ -9,7 +9,7 @@ import crypto from "crypto";
 import { Prisma } from "@prisma/client";
 import prisma from "../utils/prisma.js";
 import { z } from "zod";
-import { sendResetPasswordEmail } from "../utils/mailer.js";
+
 import { logger } from "../utils/logger.js";
 
 // Schéma de validation pour l'inscription d'un utilisateur
@@ -180,13 +180,13 @@ export const forgotPassword = async (req: Request, res: Response) => {
     });
 
     // Envoi de l'email réel via Resend
-    const { success, error: mailError } = await sendResetPasswordEmail(email, rawToken);
+    // const { success, error: mailError } = await sendResetPasswordEmail(email, rawToken);
 
-    if (!success) {
-      console.error("Erreur d'envoi email:", mailError);
-      // On continue quand même pour ne pas bloquer l'UX, 
-      // mais en production l'admin verra l'erreur dans les logs.
-    }
+    // if (!success) {
+    //   console.error("Erreur d'envoi email:", mailError);
+    //   // On continue quand même pour ne pas bloquer l'UX, 
+    //   // mais en production l'admin verra l'erreur dans les logs.
+    // }
 
     const isProd = process.env.NODE_ENV === "production";
 
