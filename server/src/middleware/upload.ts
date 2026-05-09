@@ -1,6 +1,7 @@
 import multer from 'multer';
 import { fileTypeFromBuffer } from 'file-type';
 import type { Request, Response, NextFunction } from 'express';
+import { Buffer } from 'node:buffer';
 
 // Use memory storage for serverless environments (Vercel)
 const storage = multer.memoryStorage();

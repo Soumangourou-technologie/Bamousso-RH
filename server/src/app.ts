@@ -3,7 +3,7 @@
  * Configure les middlewares, les routes et la politique de sécurité.
  */
 import express from "express";
-import path from "path";
+import path from "node:path";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";

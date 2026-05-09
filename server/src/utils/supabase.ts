@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import dotenv from 'dotenv';
 import fs from 'fs';
+import { Buffer } from 'node:buffer';
 // Interface locale compatible Multer pour éviter les problèmes de types
 interface MulterFile {
   fieldname: string;

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import axios from 'axios';
-import crypto from 'crypto';
+import crypto from 'node:crypto';
 import prisma from '../utils/prisma.js';
 import { logger } from '../utils/logger.js';
 import { sendSubscriptionConfirmation, sendAdminSubscriptionNotification } from '../utils/mailer.js';

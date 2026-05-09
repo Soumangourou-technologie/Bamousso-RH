@@ -1,4 +1,5 @@
 import PDFDocument from 'pdfkit';
+import { Buffer } from 'node:buffer';
 
 export const generateSubscriptionPDF = (data: {
   companyName: string;
