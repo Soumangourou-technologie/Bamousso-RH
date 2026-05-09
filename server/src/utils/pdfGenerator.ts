@@ -6,7 +6,7 @@ export const generateSubscriptionPDF = (data: {
   amount: number;
   date: string;
   transactionId: string;
-}): Promise<Buffer> => {
+}): Promise<any> => {
   return new Promise((resolve) => {
     const doc = new PDFDocument({ margin: 50 });
     const buffers: Buffer[] = [];

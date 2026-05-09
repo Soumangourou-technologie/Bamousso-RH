@@ -1,5 +1,6 @@
 import { Resend } from 'resend';
 import { logger } from './logger.js';
+import { Buffer } from 'node:buffer';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -11,7 +12,7 @@ export const sendSubscriptionConfirmation = async (
   companyName: string,
   plan: string,
   amount: number,
-  pdfBuffer: Buffer
+  pdfBuffer: any
 ) => {
   try {
     await resend.emails.send({
@@ -52,7 +53,7 @@ export const sendAdminSubscriptionNotification = async (
   companyName: string,
   plan: string,
   amount: number,
-  pdfBuffer: Buffer
+  pdfBuffer: any
 ) => {
   try {
     const adminEmail = process.env.ADMIN_EMAIL || 'admin@bamousso.ci';
