@@ -7,8 +7,8 @@ import { Eye, EyeOff, Building2, CheckCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const plans = [
-  { id: 'FITINI', name: 'FITINI', price: '3.800 FCFA', rawPrice: 3800, maxBase: 3 },
-  { id: 'LOUBA', name: 'LOUBA', price: '4.900 FCFA', rawPrice: 4900, maxBase: 5 },
+  { id: 'FITINI', name: 'FITINI', price: '4.500 FCFA', rawPrice: 4500, maxBase: 5 },
+  { id: 'LOUBA', name: 'LOUBA', price: '7.500 FCFA', rawPrice: 7500, maxBase: 7 },
   { id: 'KORO', name: 'Kôrô', price: '14.700 FCFA', rawPrice: 14700, maxBase: Infinity }
 ];
 
@@ -28,7 +28,7 @@ const Register = () => {
     setError('');
     try {
       const planDetails = plans.find(p => p.id === selectedPlan);
-      const totalAmount = (planDetails?.rawPrice || 0) + (extraEmployees * 1000);
+      const totalAmount = (planDetails?.rawPrice || 0) + (extraEmployees * 850);
 
       // 1. Appel API pour créer l'entreprise et l'utilisateur
       const response = await api.post('/auth/register-company', {
@@ -40,19 +40,15 @@ const Register = () => {
       // 2. Connexion automatique
       login(response.data.token, response.data.user, response.data.company);
       
-      // 3. Redirection : Dashboard si essai KORO, sinon paiement
-      if (selectedPlan === 'KORO') {
-        navigate('/dashboard-admin');
-      } else {
-        navigate('/payment', { 
-          state: { 
-            plan: { ...planDetails, finalPrice: totalAmount }, // Paiement MENSUEL
-            extraEmployees,
-            companyName: data.companyName,
-            companyId: response.data.company?.id || response.data.user?.companyId
-          } 
-        });
-      }
+      // 3. Redirection vers le paiement
+      navigate('/payment', { 
+        state: { 
+          plan: { ...planDetails, finalPrice: totalAmount }, // Paiement MENSUEL
+          extraEmployees,
+          companyName: data.companyName,
+          companyId: response.data.company?.id || response.data.user?.companyId
+        } 
+      });
     } catch (err: any) {
       const message = err.response?.data?.message || 'Une erreur est survenue lors de l\'inscription.';
       setError(message);
@@ -108,7 +104,7 @@ const Register = () => {
             {selectedPlan !== 'KORO' && (
               <div className="mt-8 p-4 bg-orange-50 dark:bg-orange-900/20 rounded-2xl border border-orange-200 dark:border-orange-800">
                 <label className="block text-xs font-black text-orange-600 dark:text-orange-400 uppercase tracking-widest mb-2">
-                  Employés supplémentaires (+1000/mois)
+                  Employés supplémentaires (+850/mois)
                 </label>
                 <div className="flex items-center gap-4">
                   <input 
@@ -127,7 +123,7 @@ const Register = () => {
               <div className="flex justify-between items-center">
                 <span className="text-sm font-bold text-gray-500">Total Mensuel</span>
                 <span className="text-xl font-black text-orange-500">
-                  {((plans.find(p => p.id === selectedPlan)?.rawPrice || 0) + (extraEmployees * 1000))} FCFA
+                  {((plans.find(p => p.id === selectedPlan)?.rawPrice || 0) + (extraEmployees * 850))} FCFA
                 </span>
               </div>
             </div>
@@ -221,15 +217,9 @@ const Register = () => {
                 {isLoading ? (
                   <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1 }} className="w-6 h-6 border-2 border-white border-t-transparent rounded-full" />
                 ) : (
-                  selectedPlan === 'KORO' ? "Démarrer mon Accès Privilège (7 jours)" : "Valider et passer au paiement"
+                  "Valider et passer au paiement"
                 )}
               </button>
-
-              {selectedPlan === 'KORO' && (
-                <p className="text-center text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-2">
-                  Aucune carte requise. Accès immédiat à toutes les fonctions.
-                </p>
-              )}
               
               <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-4">
                 Vous avez déjà un compte ? <Link to="/login" className="text-orange-500 font-bold hover:underline">Connectez-vous</Link>

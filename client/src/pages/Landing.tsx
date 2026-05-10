@@ -165,16 +165,16 @@ const Landing = () => {
             {/* FITINI */}
             <PricingCard 
               title="FITINI (Petit)"
-              price="3.800"
+              price="4.500"
               period="/mois"
-              description="L'essentiel pour 1 à 3 employés."
+              description="L'essentiel pour 1 à 5 employés."
               features={[
-                'Jusqu\'à 3 employés', 
+                'Jusqu\'à 5 employés', 
                 'Pointage en temps réel', 
                 'Gestion des congés', 
                 'Support par ticket', 
                 'Gestion des tâches',
-                '1000 FCFA / employé sup.'
+                '850 FCFA / employé sup.'
               ]}
               delay={0.2}
               isLoading={false}
@@ -184,17 +184,17 @@ const Landing = () => {
             {/* LOUBA (Popular) */}
             <PricingCard 
               title="LOUBA (Moyen)"
-              price="4.900"
+              price="7.500"
               period="/mois"
-              description="Idéal pour 1 à 5 employés."
+              description="Idéal pour 1 à 7 employés."
               features={[
-                'Jusqu\'à 5 employés', 
+                'Jusqu\'à 7 employés', 
                 'Analytique RH avancé', 
                 'Messagerie Interne (Boss/Staff)', 
                 'Gestion des conflits (Anonymat)', 
                 'Demandes d\'explication',
                 'Gestion des salaires',
-                '1000 FCFA / employé sup.'
+                '850 FCFA / employé sup.'
               ]}
               isPopular={true}
               delay={0.4}

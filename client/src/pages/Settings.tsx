@@ -59,8 +59,8 @@ const SettingsPage = () => {
         plan: {
           id: company.plan,
           name: company.plan,
-          finalPrice: 1000,
-          price: "1.000 FCFA"
+          finalPrice: 850,
+          price: "850 FCFA"
         },
         extraEmployees: 1, // On ajoute 1
         isAddOn: true,
@@ -72,8 +72,8 @@ const SettingsPage = () => {
 
   const getPlanLimit = (plan: string) => {
     switch(plan) {
-      case 'FITINI': return 3;
-      case 'LOUBA': return 5;
+      case 'FITINI': return 5;
+      case 'LOUBA': return 7;
       case 'KORO': return Infinity;
       default: return 0;
     }
@@ -177,7 +177,7 @@ const SettingsPage = () => {
                     onClick={handleAddEmployee}
                     className="w-full flex items-center justify-center gap-2 p-3 bg-orange-500 text-white rounded-xl text-xs font-black shadow-lg shadow-orange-500/20 hover:bg-orange-600 transition-colors"
                   >
-                    <Plus className="w-4 h-4" /> Ajouter 1 employé (+1000 FCFA/mois)
+                    <Plus className="w-4 h-4" /> Ajouter 1 employé (+850 FCFA/mois)
                   </button>
                 </div>
               )}

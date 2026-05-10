@@ -15,8 +15,8 @@ const PLAN_HIERARCHY: Record<string, number> = {
 
 // Limites d'employés de BASE par plan
 export const PLAN_LIMITS: Record<string, number> = {
-  FITINI: 3,
-  LOUBA: 5,
+  FITINI: 5,
+  LOUBA: 7,
   KORO: Infinity,
 };
 

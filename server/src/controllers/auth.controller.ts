@@ -70,15 +70,13 @@ export const registerCompany = catchAsync(async (req: Request, res: Response) =>
   }
   const hashedPassword = await bcrypt.hash(password, 10);
   const result = await prisma.$transaction(async (tx) => {
-    const isKoroTrial = plan === "KORO";
-    const trialDuration = 7 * 24 * 60 * 60 * 1000; // 7 jours
     const company = await tx.company.create({
       data: {
         name: companyName,
-        isActive: isKoroTrial ? true : false,
-        subscriptionStatus: isKoroTrial ? "ACTIVE" : "PAST_DUE", 
+        isActive: false,
+        subscriptionStatus: "PAST_DUE", 
         subscriptionEndsAt: null,
-        trialEndsAt: isKoroTrial ? new Date(Date.now() + trialDuration) : null,
+        trialEndsAt: null,
         plan: plan || "FITINI",
         extraEmployees: extraEmployees || 0,
         isLocked: false,

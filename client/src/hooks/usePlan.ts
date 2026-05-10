@@ -12,9 +12,9 @@ const PLAN_LEVEL: Record<string, number> = {
 };
 
 // Limites d'employés (BASE INCLUSE)
-export const PLAN_MAX_EMPLOYEES: Record<string, number | null> = {
-  FITINI: 3,
-  LOUBA: 5,
+export const PLAN_MAX_EMPLOYEES: Record<string, number| null> = {
+  FITINI: 5,
+  LOUBA: 7,
   KORO: null, // Illimité
 };
 

@@ -54,8 +54,8 @@ const PLAN_LABELS: Record<string, string> = {
 };
 
 const PLAN_PRICES: Record<string, number> = {
-  FITINI: 3800,
-  LOUBA: 4900,
+  FITINI: 4500,
+  LOUBA: 7500,
   KORO: 14700,
 };
 
