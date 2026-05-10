@@ -38,7 +38,7 @@ const NotificationCenter = () => {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-4 w-96 glass-card rounded-[2rem] overflow-hidden z-50 border-white/10 shadow-2xl animate-in fade-in zoom-in duration-300">
+        <div className="absolute right-[-1rem] sm:right-0 mt-4 w-[calc(100vw-2rem)] sm:w-96 glass-card rounded-[2rem] overflow-hidden z-50 border-white/10 shadow-2xl animate-in fade-in zoom-in duration-300">
           <div className="py-4 px-6 bg-white/5 border-b border-white/10 flex justify-between items-center">
             <h3 className="text-sm font-black text-white uppercase tracking-widest">Notifications</h3>
             <button onClick={() => setIsOpen(false)} className="text-gray-500 hover:text-white transition-colors">

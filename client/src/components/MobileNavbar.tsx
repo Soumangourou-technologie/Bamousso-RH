@@ -38,21 +38,21 @@ const MobileNavbar = ({ onMenuClick }: MobileNavbarProps) => {
               key={item.path}
               to={item.path}
               className={`flex flex-col items-center justify-center flex-1 h-full gap-1.5 transition-all ${
-                isActive ? 'text-brand-primary' : 'text-gray-500'
+                isActive ? 'text-brand-primary' : 'text-white/60'
               }`}
             >
               <item.icon className={`w-6 h-6 ${isActive ? 'fill-brand-primary/10' : ''}`} />
-              <span className="text-[9px] font-black uppercase tracking-widest">{item.label}</span>
+              <span className="text-[10px] font-black uppercase tracking-widest">{item.label}</span>
               {isActive && <div className="w-1 h-1 rounded-full bg-brand-primary shadow-[0_0_8px_rgba(255,87,34,0.8)]" />}
             </Link>
           );
         })}
         <button
           onClick={onMenuClick}
-          className="flex flex-col items-center justify-center flex-1 h-full gap-1.5 text-gray-500"
+          className="flex flex-col items-center justify-center flex-1 h-full gap-1.5 text-white bg-brand-primary/10 rounded-2xl mx-1"
         >
-          <Menu className="w-6 h-6" />
-          <span className="text-[9px] font-black uppercase tracking-widest">Menu</span>
+          <Menu className="w-6 h-6 text-brand-primary" />
+          <span className="text-[10px] font-black uppercase tracking-widest">Menu</span>
         </button>
       </div>
     </div>
