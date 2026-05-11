@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import "multer";
 import prisma from "../utils/prisma.js";
 import { uploadToSupabase } from "../utils/supabase.js";
 import { notifyAdmins } from "../utils/notifications.js";
