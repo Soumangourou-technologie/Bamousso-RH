@@ -143,10 +143,27 @@ export const handleWebhook = async (req: Request, res: Response) => {
     const isSuccess = event === 'payment.success' || (data && (data.status === 'completed' || data.status === 'SUCCESS'));
 
     if (isSuccess && data) {
-      const companyId = data.metadata?.companyId;
-      const extraEmployees = parseInt(data.metadata?.extraEmployees || '0');
-      const isAddOn = data.metadata?.isAddOn === 'true' || data.metadata?.isAddOn === true;
-      let plan = data.metadata?.plan;
+      const metadata = data.metadata || {};
+      const companyId = metadata.companyId;
+      let extraEmployees = 0;
+      
+      // Robust extraction of extraEmployees (handle string or number)
+      if (metadata.extraEmployees !== undefined) {
+        extraEmployees = typeof metadata.extraEmployees === 'string' 
+          ? parseInt(metadata.extraEmployees) 
+          : Number(metadata.extraEmployees);
+      }
+      
+      const isAddOn = metadata.isAddOn === 'true' || metadata.isAddOn === true;
+      let plan = metadata.plan;
+
+      await logger.info("Webhook Data Received", { 
+        companyId, 
+        extraEmployees, 
+        isAddOn, 
+        plan,
+        fullMetadata: metadata 
+      }, "PaymentController");
 
       // Fallback: chercher le paiement correspondant pour retrouver le plan
       if (!plan) {

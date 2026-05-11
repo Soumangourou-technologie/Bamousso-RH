@@ -19,10 +19,16 @@ const PaymentSuccess = () => {
       
       if (urlStatus === 'completed' || urlStatus === 'success') {
         setStatus('success');
-        // Nettoyage de la session pour repartir sur un login propre
-        localStorage.clear();
-        // Redirection automatique après 3 secondes
-        setTimeout(() => navigate('/login'), 3000);
+        // Ne pas effacer localStorage pour garder la session
+        const userStr = localStorage.getItem('user');
+        const user = userStr ? JSON.parse(userStr) : null;
+        
+        // Redirection intelligente
+        setTimeout(() => {
+          if (user?.role === 'SUPER_ADMIN') navigate('/dashboard-superadmin');
+          else if (user?.role === 'COMPANY_ADMIN') navigate('/dashboard-admin');
+          else navigate('/login');
+        }, 3000);
       }
 
       if (!token && !companyId) return;
@@ -39,7 +45,13 @@ const PaymentSuccess = () => {
         
         if (data.success) {
           setStatus('success');
-          setTimeout(() => navigate('/login'), 3000);
+          const userStr = localStorage.getItem('user');
+          const user = userStr ? JSON.parse(userStr) : null;
+          setTimeout(() => {
+            if (user?.role === 'SUPER_ADMIN') navigate('/dashboard-superadmin');
+            else if (user?.role === 'COMPANY_ADMIN') navigate('/dashboard-admin');
+            else navigate('/login');
+          }, 3000);
         } else if (retryCount < maxRetries) {
           retryCount++;
           setTimeout(verifyPayment, 3000);

@@ -65,6 +65,9 @@ const DashboardSuperAdmin = () => {
   const [superAdmins, setSuperAdmins] = useState<SuperAdmin[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterPlan, setFilterPlan] = useState('ALL');
+  const [activeTab, setActiveTab] = useState<'companies' | 'payments'>('companies');
+  const [payments, setPayments] = useState<any[]>([]);
+  const [paymentsLoading, setPaymentsLoading] = useState(false);
 
   // Modal States
   const [isPlanModalOpen, setIsPlanModalOpen] = useState(false);
@@ -80,12 +83,14 @@ const DashboardSuperAdmin = () => {
 
   const fetchData = async () => {
     try {
-      const [compRes, statsRes] = await Promise.all([
+      const [compRes, statsRes, payRes] = await Promise.all([
         api.get('/admin/companies'),
-        api.get('/admin/stats')
+        api.get('/admin/stats'),
+        api.get('/admin/payments')
       ]);
       setCompanies(compRes.data);
       setSuperAdmins(statsRes.data.superAdmins);
+      setPayments(payRes.data);
     } catch (error) {
       console.error('Error fetching data', error);
     }
@@ -213,6 +218,24 @@ const DashboardSuperAdmin = () => {
     return new Date(dateStr).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
   };
 
+  const handleDownloadInvoice = async (paymentId: string, companyName: string, reference: string) => {
+    try {
+      const response = await api.get(`/admin/payments/${paymentId}/invoice`, {
+        responseType: 'blob'
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `Facture_${companyName.replace(/\s+/g, '_')}_${reference}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error('Error downloading invoice', error);
+      alert('Erreur lors du téléchargement de la facture');
+    }
+  };
+
   return (
     <div className="space-y-8 max-w-7xl mx-auto pb-20">
       {/* Header */}
@@ -302,93 +325,140 @@ const DashboardSuperAdmin = () => {
 
       {/* Main Content */}
       <div className="glass-card rounded-[2.5rem] p-10">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-10">
-          <h2 className="text-3xl font-black text-white tracking-tight">Gestion des Entreprises</h2>
-          <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
-            <div className="relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
-              <input 
-                type="text" placeholder="Rechercher..."
-                value={searchTerm} onChange={e => setSearchTerm(e.target.value)}
-                className="pl-12 pr-6 py-4 bg-white/5 border border-white/10 rounded-2xl w-full md:w-72 focus:ring-2 focus:ring-brand-primary text-white font-bold placeholder:text-gray-600"
-              />
-            </div>
-            <div className="relative">
-              <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
-              <select 
-                value={filterPlan} onChange={e => setFilterPlan(e.target.value)}
-                className="pl-12 pr-10 py-4 bg-white/5 border border-white/10 rounded-2xl focus:ring-2 focus:ring-brand-primary appearance-none font-bold text-white cursor-pointer"
-              >
-                <option value="ALL" className="bg-brand-900">Tous les plans</option>
-                <option value="FITINI" className="bg-brand-900">Fitini</option>
-                <option value="LOUBA" className="bg-brand-900">Louba</option>
-                <option value="KORO" className="bg-brand-900">Kôrô</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <AnimatePresence>
-            {filteredCompanies.map(company => (
-              <motion.div 
-                layout initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-                key={company.id} className={`p-8 rounded-[2rem] border transition-all duration-300 group hover:shadow-2xl ${company.isLocked ? 'bg-rose-500/10 border-rose-500/20' : 'bg-white/5 border-white/10 hover:border-brand-primary/30'}`}
-              >
-                <div className="flex justify-between items-start mb-6">
-                  <div>
-                    <h3 className="text-2xl font-black text-white leading-tight group-hover:text-brand-primary transition-colors">{company.name}</h3>
-                    <div className="flex items-center gap-2 mt-2">
-                      <div className="w-2 h-2 rounded-full bg-brand-primary shadow-[0_0_8px_rgba(255,87,34,0.8)]" />
-                      <span className="text-[10px] font-black text-brand-accent uppercase tracking-[0.2em]">{PLAN_LABELS[company.plan]}</span>
-                    </div>
-                  </div>
-                  <button onClick={() => { setSelectedCompany(company); setIsPlanModalOpen(true); }} className="p-3 hover:bg-white/10 rounded-2xl transition-colors">
-                    <MoreVertical className="w-5 h-5 text-gray-500" />
-                  </button>
+        {activeTab === 'companies' ? (
+          <>
+            <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-10">
+              <h2 className="text-3xl font-black text-white tracking-tight">Gestion des Entreprises</h2>
+              <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
+                <div className="relative">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
+                  <input 
+                    type="text" placeholder="Rechercher..."
+                    value={searchTerm} onChange={e => setSearchTerm(e.target.value)}
+                    className="pl-12 pr-6 py-4 bg-white/5 border border-white/10 rounded-2xl w-full md:w-72 focus:ring-2 focus:ring-brand-primary text-white font-bold placeholder:text-gray-600"
+                  />
                 </div>
-
-                <div className="space-y-4 mb-8">
-                  <div className="flex justify-between text-[10px] font-black text-gray-500 uppercase tracking-widest">
-                    <span>Administrateur</span>
-                    <span className="text-gray-300">{company.manager?.firstName} {company.manager?.lastName}</span>
-                  </div>
-                  <div className="flex justify-between text-[10px] font-black text-gray-500 uppercase tracking-widest">
-                    <span>Contact / WhatsApp</span>
-                    <span className="text-brand-accent font-bold">{company.manager?.phone || 'N/A'}</span>
-                  </div>
-                  <div className="flex justify-between text-[10px] font-black text-gray-500 uppercase tracking-widest">
-                    <span>Effectif</span>
-                    <span className="text-gray-300 font-black">{company._count?.users || 0} membres</span>
-                  </div>
-                  <div className="flex justify-between text-[10px] font-black text-gray-500 uppercase tracking-widest">
-                    <span>Échéance</span>
-                    <div className="text-right">
-                      <div className="text-brand-accent">{formatDate(company.subscriptionEndsAt)}</div>
-                      <div className="text-[9px] text-emerald-500">{getDaysRemaining(company.subscriptionEndsAt)}</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex gap-3">
-                  <button 
-                    onClick={() => handleToggleLock(company)}
-                    className={`flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all ${company.isLocked ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/20' : 'bg-rose-600 text-white shadow-lg shadow-rose-600/20 active:scale-95'}`}
+                <div className="relative">
+                  <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
+                  <select 
+                    value={filterPlan} onChange={e => setFilterPlan(e.target.value)}
+                    className="pl-12 pr-10 py-4 bg-white/5 border border-white/10 rounded-2xl focus:ring-2 focus:ring-brand-primary appearance-none font-bold text-white cursor-pointer"
                   >
-                    {company.isLocked ? 'Réactiver' : 'Suspendre'}
-                  </button>
-                  <button 
-                    onClick={() => handleDeleteCompany(company)}
-                    className="p-4 rounded-2xl bg-white/5 border border-white/10 text-gray-500 hover:text-rose-500 hover:border-rose-500/30 transition-all active:scale-95"
-                    title="Supprimer définitivement"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
+                    <option value="ALL" className="bg-brand-900">Tous les plans</option>
+                    <option value="FITINI" className="bg-brand-900">Fitini</option>
+                    <option value="LOUBA" className="bg-brand-900">Louba</option>
+                    <option value="KORO" className="bg-brand-900">Kôrô</option>
+                  </select>
                 </div>
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <AnimatePresence>
+                {filteredCompanies.map(company => (
+                  <motion.div 
+                    layout initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
+                    key={company.id} className={`p-8 rounded-[2rem] border transition-all duration-300 group hover:shadow-2xl ${company.isLocked ? 'bg-rose-500/10 border-rose-500/20' : 'bg-white/5 border-white/10 hover:border-brand-primary/30'}`}
+                  >
+                    <div className="flex justify-between items-start mb-6">
+                      <div>
+                        <h3 className="text-2xl font-black text-white leading-tight group-hover:text-brand-primary transition-colors">{company.name}</h3>
+                        <div className="flex items-center gap-2 mt-2">
+                          <div className="w-2 h-2 rounded-full bg-brand-primary shadow-[0_0_8px_rgba(255,87,34,0.8)]" />
+                          <span className="text-[10px] font-black text-brand-accent uppercase tracking-[0.2em]">{PLAN_LABELS[company.plan]}</span>
+                        </div>
+                      </div>
+                      <button onClick={() => { setSelectedCompany(company); setIsPlanModalOpen(true); }} className="p-3 hover:bg-white/10 rounded-2xl transition-colors">
+                        <MoreVertical className="w-5 h-5 text-gray-500" />
+                      </button>
+                    </div>
+
+                    <div className="space-y-4 mb-8">
+                      <div className="flex justify-between text-[10px] font-black text-gray-500 uppercase tracking-widest">
+                        <span>Administrateur</span>
+                        <span className="text-gray-300">{company.manager?.firstName} {company.manager?.lastName}</span>
+                      </div>
+                      <div className="flex justify-between text-[10px] font-black text-gray-500 uppercase tracking-widest">
+                        <span>Contact / WhatsApp</span>
+                        <span className="text-brand-accent font-bold">{company.manager?.phone || 'N/A'}</span>
+                      </div>
+                      <div className="flex justify-between text-[10px] font-black text-gray-500 uppercase tracking-widest">
+                        <span>Effectif</span>
+                        <span className="text-gray-300 font-black">{company._count?.users || 0} membres</span>
+                      </div>
+                      <div className="flex justify-between text-[10px] font-black text-gray-500 uppercase tracking-widest">
+                        <span>Échéance</span>
+                        <div className="text-right">
+                          <div className="text-brand-accent">{formatDate(company.subscriptionEndsAt)}</div>
+                          <div className="text-[9px] text-emerald-500">{getDaysRemaining(company.subscriptionEndsAt)}</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-3">
+                      <button 
+                        onClick={() => handleToggleLock(company)}
+                        className={`flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all ${company.isLocked ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/20' : 'bg-rose-600 text-white shadow-lg shadow-rose-600/20 active:scale-95'}`}
+                      >
+                        {company.isLocked ? 'Réactiver' : 'Suspendre'}
+                      </button>
+                      <button 
+                        onClick={() => handleDeleteCompany(company)}
+                        className="p-4 rounded-2xl bg-white/5 border border-white/10 text-gray-500 hover:text-rose-500 hover:border-rose-500/30 transition-all active:scale-95"
+                        title="Supprimer définitivement"
+                      >
+                        <X className="w-5 h-5" />
+                      </button>
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="flex justify-between items-center mb-10">
+              <h2 className="text-3xl font-black text-white tracking-tight">Historique des Factures</h2>
+              <p className="text-gray-500 font-bold uppercase tracking-widest text-[10px]">{payments.length} transactions réussies</p>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead className="text-[10px] font-black text-gray-500 uppercase tracking-widest border-b border-white/5">
+                  <tr>
+                    <th className="pb-4">Date</th>
+                    <th className="pb-4">Entreprise</th>
+                    <th className="pb-4">Montant</th>
+                    <th className="pb-4">Référence</th>
+                    <th className="pb-4 text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="text-sm font-bold text-gray-300">
+                  {payments.map(payment => (
+                    <tr key={payment.id} className="border-b border-white/5 hover:bg-white/5 transition-all">
+                      <td className="py-6">{new Date(payment.createdAt).toLocaleDateString()}</td>
+                      <td className="py-6">
+                        <span className="text-white font-black">{payment.company?.name}</span>
+                        <p className="text-[9px] text-gray-500 font-medium">{payment.description}</p>
+                      </td>
+                      <td className="py-6 text-brand-accent">{payment.amount.toLocaleString()} FCFA</td>
+                      <td className="py-6 font-mono text-[10px] text-gray-500">{payment.reference}</td>
+                      <td className="py-6 text-right">
+                        <button 
+                          onClick={() => handleDownloadInvoice(payment.id, payment.company?.name || 'Inconnue', payment.reference)}
+                          className="p-3 bg-white/5 hover:bg-brand-primary/10 hover:text-brand-primary rounded-xl transition-all group"
+                          title="Télécharger PDF"
+                        >
+                          <FileText className="w-5 h-5" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
       </div>
 
       {/* Plan Update Modal */}

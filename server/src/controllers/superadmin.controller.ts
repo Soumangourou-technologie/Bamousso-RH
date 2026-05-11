@@ -322,3 +322,62 @@ export const getSystemLogs = async (req: AuthRequest, res: Response): Promise<an
     res.status(500).json({ message: "Erreur lors de la récupération des logs.", error: error.message });
   }
 };
+/**
+ * Récupère tous les paiements réussis de la plateforme.
+ */
+export const getAllPayments = async (req: AuthRequest, res: Response): Promise<any> => {
+  try {
+    const payments = await prisma.payment.findMany({
+      include: {
+        company: {
+          select: { name: true }
+        }
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 200 // Limite aux 200 derniers
+    });
+
+    res.json(payments);
+  } catch (error: any) {
+    res.status(500).json({ message: "Erreur lors de la récupération des paiements.", error: error.message });
+  }
+};
+
+/**
+ * Régénère et télécharge la facture PDF pour un paiement donné.
+ */
+import { generateSubscriptionPDF } from "../utils/pdfGenerator.js";
+
+export const getPaymentInvoice = async (req: AuthRequest, res: Response): Promise<any> => {
+  try {
+    const { id } = req.params;
+    const payment = await prisma.payment.findUnique({
+      where: { id },
+      include: { company: true }
+    });
+
+    if (!payment) {
+      return res.status(404).json({ message: "Paiement introuvable." });
+    }
+
+    // Extraire le plan de la description
+    let plan = 'FITINI';
+    if (payment.description && payment.description.includes('- ')) {
+      plan = payment.description.split('- ')[1];
+    }
+
+    const pdfBuffer = await generateSubscriptionPDF({
+      companyName: payment.company.name,
+      plan: plan,
+      amount: payment.amount,
+      date: new Date(payment.createdAt).toLocaleDateString('fr-FR'),
+      transactionId: payment.externalId || payment.reference
+    });
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename=Facture_${payment.company.name.replace(/\s+/g, '_')}_${payment.reference}.pdf`);
+    res.send(pdfBuffer);
+  } catch (error: any) {
+    res.status(500).json({ message: "Erreur lors de la génération de la facture.", error: error.message });
+  }
+};

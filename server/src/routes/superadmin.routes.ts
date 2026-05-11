@@ -12,6 +12,8 @@ import {
   updateCompanyPlan,
   deleteCompany,
   getSystemLogs,
+  getAllPayments,
+  getPaymentInvoice,
 } from "../controllers/superadmin.controller.js";
 
 const router = Router();
@@ -27,6 +29,8 @@ router.patch("/companies/:id/toggle-lock", authorize(["SUPER_ADMIN"]), toggleCom
 router.patch("/companies/:id/plan", authorize(["SUPER_ADMIN"]), updateCompanyPlan);
 router.delete("/companies/:id", authorize(["SUPER_ADMIN"]), deleteCompany);
 router.get("/logs", authorize(["SUPER_ADMIN"]), getSystemLogs);
+router.get("/payments", authorize(["SUPER_ADMIN"]), getAllPayments);
+router.get("/payments/:id/invoice", authorize(["SUPER_ADMIN"]), getPaymentInvoice);
 
 // ─── Route accessible à tous les rôles (changer son propre mot de passe) ─────
 router.patch("/change-password", changePassword);
