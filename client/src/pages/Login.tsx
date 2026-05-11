@@ -104,7 +104,7 @@ const Login = () => {
             </div>
             {errors.password && <span className="text-red-500 text-xs font-bold ml-2">{errors.password.message as string}</span>}
             <div className="flex justify-end pr-2">
-              <Link to="/forgot-password" size="sm" className="text-xs font-black text-brand-primary uppercase tracking-widest hover:text-brand-accent transition-colors">
+              <Link to="/forgot-password" className="text-xs font-black text-brand-primary uppercase tracking-widest hover:text-brand-accent transition-colors">
                 Oublié ?
               </Link>
             </div>
