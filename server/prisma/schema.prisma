@@ -39,6 +39,7 @@ model Company {
   tasks       Task[]
   customRoles CustomRole[]
   disciplinaryCases DisciplinaryCase[]
+  clientRegistrations ClientRegistration[]
 }
 
 /// Modèle Cas Disciplinaire (Conflit)
@@ -139,6 +140,7 @@ model User {
   customRole   CustomRole? @relation(fields: [customRoleId], references: [id], onDelete: SetNull)
 
   disciplinaryCases DisciplinaryCase[] @relation("DisciplinaryCases")
+  clientRegistrations ClientRegistration[] @relation("CommercialRegistrations")
 
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -340,6 +342,89 @@ model CustomRole {
   company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
   users User[]
+
+  createdAt DateTime @default(now())
+}
+
+/// Modèle Client enregistré par un commercial sur le terrain
+model ClientRegistration {
+  id               String   @id @default(uuid())
+
+  // Relation commercial
+  commercialId     String
+  commercial       User     @relation("CommercialRegistrations", fields: [commercialId], references: [id], onDelete: Cascade)
+  registrationDate DateTime @default(now())
+
+  // Identité Client
+  lastName         String
+  firstName        String
+  gender           String?  // HOMME | FEMME
+  birthDate        DateTime?
+
+  // Type de client
+  clientType       String   @default("PARTICULIER") // ENTREPRISE | PARTICULIER
+
+  // Infos Entreprise (si applicable)
+  companyName        String?
+  legalStatus        String?
+  sector             String?
+  companyDescription String?
+
+  // Localisation
+  address  String?
+  city     String?
+  commune  String?
+  country  String? @default("Mali")
+
+  // Contacts
+  phoneFix    String?
+  phoneMobile String?
+  whatsapp    String?
+  email       String?
+
+  // Pièce d'identité
+  idDocumentType String? // CNI | PASSEPORT | PERMIS | AUTRE
+  idDocumentUrl  String? // URL du scan uploadé
+
+  // Rendez-vous
+  rdvSubject     String?
+  rdvDescription String?
+  rdvDate        DateTime?
+  rdvTime        String?
+  rdvMode        String? // PRESENTIEL | APPEL | VISIO
+
+  // Signatures (canvas base64 -> image URL)
+  clientSignatureUrl     String?
+  commercialSignatureUrl String?
+
+  // Consentement
+  consentMode String?  @default("SIGNATURE") // SIGNATURE | CHECKBOX
+  consentGiven Boolean @default(false)
+  consentDate  DateTime?
+
+  // Statut — directement validé à la soumission
+  status String @default("VALIDATED") // VALIDATED
+
+  // Relation entreprise
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  // Documents additionnels (pièces légales)
+  documents ClientDocument[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+/// Documents attachés à un enregistrement client
+model ClientDocument {
+  id                   String   @id @default(uuid())
+  title                String
+  url                  String
+  type                 String   @default("LEGAL") // LEGAL | CONTRACT | OTHER
+
+  clientRegistrationId String
+  clientRegistration   ClientRegistration @relation(fields: [clientRegistrationId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
 }

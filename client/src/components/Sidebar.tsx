@@ -5,7 +5,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
   Building2, LayoutDashboard, LogOut, Moon, Sun, Users, Layers, X, 
   Calendar, Clock, FileText, Megaphone, Settings as SettingsIcon,
-  ListTodo, Banknote, MessageCircle, MessageSquare, FileWarning, BarChart3, Shield
+  ListTodo, Banknote, MessageCircle, MessageSquare, FileWarning, BarChart3, Shield, UserPlus
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
@@ -79,6 +79,8 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
   const canManageHr =
     user.role === 'COMPANY_ADMIN' || user.role === 'HR_MANAGER' || user.role === 'HR_ASSISTANT';
+
+  const isCommercial = user.role === 'COMMERCIAL';
 
   const isSuperAdmin = user.role === 'SUPER_ADMIN';
   const plan = company?.plan || 'FITINI';
@@ -217,6 +219,23 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
               </Link>
             </>
           )}
+
+          {/* Commercial: Enregistrement Client */}
+          {!isSuperAdmin && isCommercial && (
+            <Link to="/client-registration" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/client-registration' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
+              <UserPlus className="w-5 h-5" />
+              Enregistrement Client
+            </Link>
+          )}
+
+          {/* Admin/HR: Vue Clients Commerciaux */}
+          {!isSuperAdmin && canManageHr && (
+            <Link to="/client-registrations" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/client-registrations' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
+              <UserPlus className="w-5 h-5" />
+              Clients Commerciaux
+            </Link>
+          )}
+
           {canManageHr ? (
             <>
               <Link

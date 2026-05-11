@@ -33,6 +33,8 @@ import Explanations from './pages/Explanations';
 import Salaries from './pages/Salaries';
 import Roles from './pages/Roles';
 import Conflicts from './pages/Conflicts';
+import ClientRegistration from './pages/ClientRegistration';
+import ClientRegistrationAdmin from './pages/ClientRegistrationAdmin';
 
 import { NotificationProvider } from './context/NotificationContext';
 
@@ -98,6 +100,16 @@ function App() {
                   <Route path="/explanations" element={<Explanations />} />
                   <Route path="/salaries" element={<Salaries />} />
                   <Route path="/conflicts" element={<Conflicts />} />
+
+                  {/* Commercial: Enregistrement Client */}
+                  <Route element={<ProtectedRoute allowedRoles={['COMMERCIAL']} />}>
+                    <Route path="/client-registration" element={<ClientRegistration />} />
+                  </Route>
+
+                  {/* Admin/HR: Vue Clients Commerciaux */}
+                  <Route element={<ProtectedRoute allowedRoles={['COMPANY_ADMIN', 'HR_MANAGER', 'HR_ASSISTANT']} />}>
+                    <Route path="/client-registrations" element={<ClientRegistrationAdmin />} />
+                  </Route>
                 </Route>
               </Route>
 

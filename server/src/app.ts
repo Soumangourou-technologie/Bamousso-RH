@@ -35,6 +35,7 @@ import taskRoutes from "./routes/task.routes.js";
 import messageRoutes from "./routes/message.routes.js";
 import rolesRoutes from "./routes/roles.routes.js";
 import conflictsRoutes from "./routes/conflicts.routes.js";
+import clientRegistrationRoutes from "./routes/clientRegistration.routes.js";
 
 // Chargement des variables d'environnement
 dotenv.config();
@@ -98,6 +99,7 @@ app.use("/api/tasks", apiLimiter, taskRoutes);
 app.use("/api/messages", apiLimiter, messageRoutes);
 app.use("/api/roles", apiLimiter, rolesRoutes);
 app.use("/api/conflicts", apiLimiter, conflictsRoutes);
+app.use("/api/client-registrations", apiLimiter, clientRegistrationRoutes);
 
 // Route de test pour vérifier que l'API est en ligne
 app.get("/", (req, res) => {
