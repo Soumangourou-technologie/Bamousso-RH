@@ -350,11 +350,11 @@ import { generateSubscriptionPDF } from "../utils/pdfGenerator.js";
 
 export const getPaymentInvoice = async (req: AuthRequest, res: Response): Promise<any> => {
   try {
-    const { id } = req.params;
-    const payment = await prisma.payment.findUnique({
+    const id = String(req.params.id);
+    const payment = await (prisma.payment.findUnique({
       where: { id },
       include: { company: true }
-    });
+    }) as any);
 
     if (!payment) {
       return res.status(404).json({ message: "Paiement introuvable." });
@@ -366,8 +366,10 @@ export const getPaymentInvoice = async (req: AuthRequest, res: Response): Promis
       plan = payment.description.split('- ')[1];
     }
 
+    const companyName = payment.company?.name || 'Entreprise';
+
     const pdfBuffer = await generateSubscriptionPDF({
-      companyName: payment.company.name,
+      companyName,
       plan: plan,
       amount: payment.amount,
       date: new Date(payment.createdAt).toLocaleDateString('fr-FR'),
@@ -375,7 +377,7 @@ export const getPaymentInvoice = async (req: AuthRequest, res: Response): Promis
     });
 
     res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `attachment; filename=Facture_${payment.company.name.replace(/\s+/g, '_')}_${payment.reference}.pdf`);
+    res.setHeader('Content-Disposition', `attachment; filename=Facture_${companyName.replace(/\s+/g, '_')}_${payment.reference}.pdf`);
     res.send(pdfBuffer);
   } catch (error: any) {
     res.status(500).json({ message: "Erreur lors de la génération de la facture.", error: error.message });

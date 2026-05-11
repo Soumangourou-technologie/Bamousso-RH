@@ -67,7 +67,6 @@ const DashboardSuperAdmin = () => {
   const [filterPlan, setFilterPlan] = useState('ALL');
   const [activeTab, setActiveTab] = useState<'companies' | 'payments'>('companies');
   const [payments, setPayments] = useState<any[]>([]);
-  const [paymentsLoading, setPaymentsLoading] = useState(false);
 
   // Modal States
   const [isPlanModalOpen, setIsPlanModalOpen] = useState(false);
