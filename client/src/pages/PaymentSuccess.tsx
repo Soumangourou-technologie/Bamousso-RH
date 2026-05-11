@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CheckCircle, Loader2, AlertCircle } from 'lucide-react';
 
@@ -8,12 +8,28 @@ const PaymentSuccess = () => {
   const [status, setStatus] = useState<'verifying' | 'success' | 'error'>('verifying');
   const message = 'Vérification de votre paiement en cours...';
 
+  const handleRedirect = useCallback(() => {
+    try {
+      const userStr = localStorage.getItem('user');
+      if (!userStr || userStr === "undefined") {
+        navigate('/login');
+        return;
+      }
+      const user = JSON.parse(userStr);
+      // Correction des chemins vers les tableaux de bord réels du projet
+      if (user?.role === 'SUPER_ADMIN') navigate('/dashboard-superadmin');
+      else if (user?.role === 'COMPANY_ADMIN') navigate('/dashboard-admin');
+      else navigate('/dashboard');
+    } catch (e) {
+      navigate('/login');
+    }
+  }, [navigate]);
+
   useEffect(() => {
     let retryCount = 0;
     const maxRetries = 5;
 
     const verifyPayment = async () => {
-      // Détection plus large des paramètres (GeniusPay peut changer les noms)
       const token = searchParams.get('token') || searchParams.get('reference') || searchParams.get('transaction_id');
       const companyId = searchParams.get('companyId') || searchParams.get('comp_id');
       const urlStatus = searchParams.get('status');
@@ -24,8 +40,7 @@ const PaymentSuccess = () => {
       }
 
       if (!token && !companyId) {
-        console.warn("Aucun token ou companyId trouvé dans l'URL");
-        // Si on a rien, on attend un peu avant de déclarer une erreur ou on redirige
+        console.warn("Aucun token trouvé");
         return;
       }
 
@@ -42,7 +57,6 @@ const PaymentSuccess = () => {
           }
         });
 
-        // Vérifier si la réponse est bien du JSON avant de parser
         const contentType = response.headers.get("content-type");
         if (contentType && contentType.indexOf("application/json") !== -1) {
           const data = await response.json();
@@ -55,10 +69,9 @@ const PaymentSuccess = () => {
             setStatus('error');
           }
         } else {
-          throw new Error("Réponse serveur non-JSON");
+          throw new Error("Non-JSON response");
         }
       } catch (error) {
-        console.error("Erreur vérification paiement:", error);
         if (retryCount < maxRetries) {
           retryCount++;
           setTimeout(verifyPayment, 3000);
@@ -69,23 +82,15 @@ const PaymentSuccess = () => {
     };
 
     verifyPayment();
-  }, [searchParams, navigate]);
+  }, [searchParams]);
 
-  const handleRedirect = () => {
-    try {
-      const userStr = localStorage.getItem('user');
-      if (!userStr || userStr === "undefined") {
-        navigate('/login');
-        return;
-      }
-      const user = JSON.parse(userStr);
-      if (user?.role === 'SUPER_ADMIN') navigate('/dashboard/super-admin');
-      else if (user?.role === 'COMPANY_ADMIN') navigate('/dashboard/admin');
-      else navigate('/dashboard/employee');
-    } catch (e) {
-      navigate('/login');
+  // Redirection automatique quand le statut passe à 'success'
+  useEffect(() => {
+    if (status === 'success') {
+      const timer = setTimeout(handleRedirect, 4000);
+      return () => clearTimeout(timer);
     }
-  };
+  }, [status, handleRedirect]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-white dark:bg-[#1a1614] px-6">
@@ -103,19 +108,14 @@ const PaymentSuccess = () => {
             <CheckCircle className="w-20 h-20 text-green-500 mx-auto mb-6" />
             <h1 className="text-3xl font-bold mb-4 text-gray-900 dark:text-white">Paiement Réussi !</h1>
             <p className="text-gray-600 dark:text-gray-400 mb-8">
-              Votre compte est maintenant actif. Redirection automatique dans quelques secondes...
+              Votre compte est maintenant actif. Redirection automatique vers votre tableau de bord...
             </p>
             <button 
               onClick={handleRedirect}
-              className="w-full bg-[#ff5722] text-white px-8 py-4 rounded-2xl font-bold hover:opacity-90 transition-all"
+              className="w-full bg-[#ff5722] text-white px-8 py-4 rounded-2xl font-bold hover:opacity-90 transition-all shadow-lg shadow-orange-500/20"
             >
-              Accéder à mon tableau de bord
+              Accéder au tableau de bord
             </button>
-            {/* Redirection automatique après 5s */}
-            {useEffect(() => {
-               const timer = setTimeout(handleRedirect, 5000);
-               return () => clearTimeout(timer);
-            }, [])}
           </>
         )}
 
