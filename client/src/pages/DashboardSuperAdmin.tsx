@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import api from '../utils/api';
 import { 
   Building2, CheckCircle, Ban, 
@@ -80,6 +81,8 @@ const DashboardSuperAdmin = () => {
   const [newAdmin, setNewAdmin] = useState({ email: '', password: '', firstName: '', lastName: '' });
   const [adminLoading, setAdminLoading] = useState(false);
 
+  const location = useLocation();
+
   const fetchData = async () => {
     try {
       const [compRes, statsRes, payRes] = await Promise.all([
@@ -98,6 +101,21 @@ const DashboardSuperAdmin = () => {
   useEffect(() => {
     void fetchData();
   }, []);
+
+  // Gestion de la navigation par Hash (#companies, #payments)
+  useEffect(() => {
+    if (location.hash === '#payments') {
+      setActiveTab('payments');
+      setTimeout(() => {
+        document.getElementById('payments-section')?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    } else if (location.hash === '#companies') {
+      setActiveTab('companies');
+      setTimeout(() => {
+        document.getElementById('companies-section')?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+  }, [location.hash]);
 
   const handleToggleLock = async (company: Company) => {
     try {
@@ -275,8 +293,8 @@ const DashboardSuperAdmin = () => {
         </div>
       </motion.div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      {/* Stats Cards - Slidable on mobile */}
+      <div className="flex md:grid md:grid-cols-4 gap-6 overflow-x-auto md:overflow-visible pb-4 md:pb-0 snap-x snap-mandatory no-scrollbar">
         {[
           { label: 'Entreprises', value: companies.length, icon: Building2, color: 'from-blue-600 to-blue-800' },
           { label: 'Abonnements Actifs', value: companies.filter(c => c.subscriptionStatus === 'ACTIVE').length, icon: CheckCircle, color: 'from-emerald-600 to-emerald-800' },
@@ -285,7 +303,8 @@ const DashboardSuperAdmin = () => {
         ].map((stat, i) => (
           <motion.div 
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
-            key={stat.label} className={`glass-card p-8 rounded-[2rem] relative overflow-hidden group`}
+            key={stat.label} 
+            className="glass-card p-8 rounded-[2rem] relative overflow-hidden group min-w-[280px] md:min-w-0 snap-center"
           >
             <div className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${stat.color} opacity-10 rounded-bl-[3rem] transition-transform group-hover:scale-125 duration-500`} />
             <stat.icon className="w-8 h-8 text-white/20 mb-6" />
@@ -342,7 +361,7 @@ const DashboardSuperAdmin = () => {
       <div className="glass-card rounded-[2.5rem] p-10">
         {activeTab === 'companies' ? (
           <>
-            <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-10">
+            <div id="companies-section" className="flex flex-col md:flex-row justify-between items-center gap-6 mb-10 scroll-mt-24">
               <h2 className="text-3xl font-black text-white tracking-tight">Gestion des Entreprises</h2>
               <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
                 <div className="relative">
@@ -368,49 +387,49 @@ const DashboardSuperAdmin = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="flex md:grid md:grid-cols-2 lg:grid-cols-3 gap-8 overflow-x-auto md:overflow-visible pb-8 md:pb-0 snap-x snap-mandatory no-scrollbar">
               <AnimatePresence>
                 {filteredCompanies.map(company => (
                   <motion.div 
                     layout initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-                    key={company.id} className={`p-8 rounded-[2rem] border transition-all duration-300 group hover:shadow-2xl ${company.isLocked ? 'bg-rose-500/10 border-rose-500/20' : 'bg-white/5 border-white/10 hover:border-brand-primary/30'}`}
+                    key={company.id} className={`p-8 rounded-[2rem] border transition-all duration-300 group hover:shadow-2xl min-w-[320px] md:min-w-0 snap-center ${company.isLocked ? 'bg-rose-500/10 border-rose-500/20' : 'bg-white/5 border-white/10 hover:border-brand-primary/30'}`}
                   >
                     <div className="flex justify-between items-start mb-6">
-                      <div>
-                        <h3 className="text-2xl font-black text-white leading-tight group-hover:text-brand-primary transition-colors">{company.name}</h3>
+                      <div className="min-w-0">
+                        <h3 className="text-2xl font-black text-white leading-tight group-hover:text-brand-primary transition-colors truncate">{company.name}</h3>
                         <div className="flex items-center gap-2 mt-2">
                           <div className="w-2 h-2 rounded-full bg-brand-primary shadow-[0_0_8px_rgba(255,87,34,0.8)]" />
                           <span className="text-[10px] font-black text-brand-accent uppercase tracking-[0.2em]">{PLAN_LABELS[company.plan]}</span>
                         </div>
                       </div>
-                      <button onClick={() => { setSelectedCompany(company); setIsPlanModalOpen(true); }} className="p-3 hover:bg-white/10 rounded-2xl transition-colors">
+                      <button onClick={() => { setSelectedCompany(company); setIsPlanModalOpen(true); }} className="p-3 hover:bg-white/10 rounded-2xl transition-colors shrink-0">
                         <MoreVertical className="w-5 h-5 text-gray-500" />
                       </button>
                     </div>
 
                     <div className="space-y-4 mb-8">
-                      <div className="flex justify-between text-[10px] font-black text-gray-500 uppercase tracking-widest">
-                        <span>Administrateur</span>
-                        <span className="text-gray-300">{company.manager?.firstName} {company.manager?.lastName}</span>
+                      <div className="flex justify-between text-[10px] font-black text-gray-500 uppercase tracking-widest gap-2">
+                        <span className="shrink-0">Administrateur</span>
+                        <span className="text-gray-300 truncate">{company.manager?.firstName} {company.manager?.lastName}</span>
                       </div>
-                      <div className="flex justify-between text-[10px] font-black text-gray-500 uppercase tracking-widest">
-                        <span>Contact / WhatsApp</span>
-                        <span className="text-brand-accent font-bold">{company.manager?.phone || 'N/A'}</span>
+                      <div className="flex justify-between text-[10px] font-black text-gray-500 uppercase tracking-widest gap-2">
+                        <span className="shrink-0">Contact / WhatsApp</span>
+                        <span className="text-brand-accent font-bold truncate">{company.manager?.phone || 'N/A'}</span>
                       </div>
-                      <div className="flex justify-between text-[10px] font-black text-gray-500 uppercase tracking-widest">
-                        <span>Effectif</span>
+                      <div className="flex justify-between text-[10px] font-black text-gray-500 uppercase tracking-widest gap-2">
+                        <span className="shrink-0">Effectif</span>
                         <span className="text-gray-300 font-black">{company._count?.users || 0} membres</span>
                       </div>
-                      <div className="flex justify-between text-[10px] font-black text-gray-500 uppercase tracking-widest">
-                        <span>Échéance</span>
-                        <div className="text-right">
-                          <div className="text-brand-accent">{formatDate(company.subscriptionEndsAt)}</div>
+                      <div className="flex justify-between text-[10px] font-black text-gray-500 uppercase tracking-widest gap-2">
+                        <span className="shrink-0">Échéance</span>
+                        <div className="text-right min-w-0">
+                          <div className="text-brand-accent truncate">{formatDate(company.subscriptionEndsAt)}</div>
                           <div className="text-[9px] text-emerald-500">{getDaysRemaining(company.subscriptionEndsAt)}</div>
                         </div>
                       </div>
                     </div>
 
-                    <div className="flex gap-3">
+                    <div className="flex gap-3 mt-auto">
                       <button 
                         onClick={() => handleToggleLock(company)}
                         className={`flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all ${company.isLocked ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/20' : 'bg-rose-600 text-white shadow-lg shadow-rose-600/20 active:scale-95'}`}
@@ -432,7 +451,7 @@ const DashboardSuperAdmin = () => {
           </>
         ) : (
           <>
-            <div className="flex justify-between items-center mb-10">
+            <div id="payments-section" className="flex justify-between items-center mb-10 scroll-mt-24">
               <h2 className="text-3xl font-black text-white tracking-tight">Historique des Factures</h2>
               <p className="text-gray-500 font-bold uppercase tracking-widest text-[10px]">{payments.length} transactions réussies</p>
             </div>

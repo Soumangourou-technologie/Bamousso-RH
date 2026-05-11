@@ -24,8 +24,8 @@ const MobileNavbar = ({ onMenuClick }: MobileNavbarProps) => {
   const navItems = user.role === 'SUPER_ADMIN' 
     ? [
         { icon: LayoutDashboard, label: 'Accueil', path: '/dashboard/super-admin' },
-        { icon: Building2, label: 'Entreprises', path: '/dashboard/super-admin' }, // Scrollera vers la section
-        { icon: FileText, label: 'Factures', path: '/dashboard/super-admin' }, // Scrollera vers la section
+        { icon: Building2, label: 'Entreprises', path: '/dashboard/super-admin#companies' },
+        { icon: FileText, label: 'Factures', path: '/dashboard/super-admin#payments' },
       ]
     : [
         { icon: LayoutDashboard, label: 'Accueil', path: dashboardPath },
