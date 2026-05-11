@@ -63,31 +63,31 @@ export const register = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const registerCompany = catchAsync(async (req: Request, res: Response) => {
-  const result = registerCompanySchema.safeParse(req.body);
-  if (!result.success) {
-    return res.status(400).json({ 
-      message: "Données invalides", 
-      errors: result.error.issues.map(e => e.message) 
-    });
-  }
-
-  const { companyName, email, phone, password, firstName, lastName, plan, extraEmployees } = result.data;
-
-  // Vérifier si l'utilisateur existe déjà
-  const existingUser = await prisma.user.findUnique({ where: { email } });
-  if (existingUser) {
-    return res.status(400).json({ message: "Cet email est déjà utilisé par un autre utilisateur" });
-  }
-
-  // Vérifier si l'entreprise existe déjà
-  const existingCompany = await prisma.company.findFirst({ where: { name: companyName } });
-  if (existingCompany) {
-    return res.status(400).json({ message: "Ce nom d'entreprise est déjà utilisé" });
-  }
-
-  const hashedPassword = await bcrypt.hash(password, 10);
-
   try {
+    const result = registerCompanySchema.safeParse(req.body);
+    if (!result.success) {
+      return res.status(400).json({ 
+        message: "Données invalides", 
+        errors: result.error.issues.map(e => e.message) 
+      });
+    }
+
+    const { companyName, email, phone, password, firstName, lastName, plan, extraEmployees } = result.data;
+
+    // Vérifier si l'utilisateur existe déjà
+    const existingUser = await prisma.user.findUnique({ where: { email } });
+    if (existingUser) {
+      return res.status(400).json({ message: "Cet email est déjà utilisé par un autre utilisateur" });
+    }
+
+    // Vérifier si l'entreprise existe déjà
+    const existingCompany = await prisma.company.findFirst({ where: { name: companyName } });
+    if (existingCompany) {
+      return res.status(400).json({ message: "Ce nom d'entreprise est déjà utilisé" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const registrationResult = await prisma.$transaction(async (tx) => {
       const company = await tx.company.create({
         data: {
@@ -116,11 +116,43 @@ export const registerCompany = catchAsync(async (req: Request, res: Response) =>
         },
       });
 
+      // Mettre à jour le managerId de l'entreprise
+      await tx.company.update({
+        where: { id: company.id },
+        data: { managerId: user.id }
+      });
+
       return { company, user };
     });
 
+    // Générer le token JWT pour permettre la connexion immédiate
+    const jwtSecret = process.env.JWT_SECRET;
+    if (!jwtSecret) {
+      throw new Error("JWT_SECRET is not defined in environment variables");
+    }
+
+    const token = jwt.sign(
+      { 
+        id: registrationResult.user.id, 
+        role: registrationResult.user.role, 
+        companyId: registrationResult.company.id, 
+        permissions: [] 
+      },
+      jwtSecret,
+      { expiresIn: "1d" }
+    );
+
     res.status(201).json({
       message: "Entreprise créée. Veuillez procéder au paiement pour activer votre compte.",
+      token,
+      user: {
+        id: registrationResult.user.id,
+        email: registrationResult.user.email,
+        role: registrationResult.user.role,
+        firstName: registrationResult.user.firstName,
+        lastName: registrationResult.user.lastName,
+        companyId: registrationResult.user.companyId,
+      },
       company: { 
         id: registrationResult.company.id, 
         name: registrationResult.company.name,
@@ -128,14 +160,18 @@ export const registerCompany = catchAsync(async (req: Request, res: Response) =>
       }
     });
   } catch (error: any) {
-    console.error("Erreur lors de l'enregistrement de l'entreprise:", error);
+    console.error("ERREUR CRITIQUE [registerCompany]:", error);
+    
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === 'P2002') {
         return res.status(400).json({ message: "Le nom de l'entreprise ou l'email est déjà utilisé" });
       }
     }
+
+    // On renvoie un message plus détaillé même en prod pour aider au diagnostic temporairement
     return res.status(500).json({ 
-      message: "Une erreur est survenue lors de la création de votre compte. Veuillez réessayer plus tard." 
+      message: `Erreur lors de la création du compte: ${error.message || 'Erreur inconnue'}`,
+      details: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
   }
 });
