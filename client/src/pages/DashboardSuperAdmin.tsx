@@ -61,7 +61,7 @@ const PLAN_PRICES: Record<string, number> = {
 
 const DashboardSuperAdmin = () => {
   const [companies, setCompanies] = useState<Company[]>([]);
-  // @ts-ignore - Reserved for future list of admins
+  // Reserved for future list of admins
   const [superAdmins, setSuperAdmins] = useState<SuperAdmin[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterPlan, setFilterPlan] = useState('ALL');

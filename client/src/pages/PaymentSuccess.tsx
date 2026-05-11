@@ -70,12 +70,16 @@ const PaymentSuccess = () => {
     return () => { isMounted = false; };
   }, [searchParams]);
 
-  // Redirection automatique vers LOGIN après 4 secondes si succès
+  // Redirection automatique vers LOGIN après 2 secondes si succès
   useEffect(() => {
     if (status === 'success') {
       const timer = setTimeout(() => {
-        navigate('/login');
-      }, 4000);
+        try {
+          navigate('/login?success=true');
+        } catch (e) {
+          window.location.assign('/login?success=true');
+        }
+      }, 2000);
       return () => clearTimeout(timer);
     }
   }, [status, navigate]);
@@ -104,7 +108,7 @@ const PaymentSuccess = () => {
             >
               Se connecter maintenant
             </button>
-            <p className="mt-4 text-xs text-gray-500">Redirection vers la page de connexion dans 4s...</p>
+            <p className="mt-4 text-xs text-gray-500">Redirection vers la page de connexion dans 2s...</p>
           </>
         )}
 
