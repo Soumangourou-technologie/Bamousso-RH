@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Clock, Calendar, FileText, Menu } from 'lucide-react';
+import { LayoutDashboard, Clock, Calendar, FileText, Menu, Building2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 interface MobileNavbarProps {
@@ -21,12 +21,18 @@ const MobileNavbar = ({ onMenuClick }: MobileNavbarProps) => {
           ? '/dashboard/hr'
           : '/dashboard/employee';
 
-  const navItems = [
-    { icon: LayoutDashboard, label: 'Accueil', path: dashboardPath },
-    { icon: Clock, label: 'Pointage', path: '/attendance' },
-    { icon: Calendar, label: 'Congés', path: '/leaves' },
-    { icon: FileText, label: 'Doc', path: '/documents' },
-  ];
+  const navItems = user.role === 'SUPER_ADMIN' 
+    ? [
+        { icon: LayoutDashboard, label: 'Accueil', path: '/dashboard/super-admin' },
+        { icon: Building2, label: 'Entreprises', path: '/dashboard/super-admin' }, // Scrollera vers la section
+        { icon: FileText, label: 'Factures', path: '/dashboard/super-admin' }, // Scrollera vers la section
+      ]
+    : [
+        { icon: LayoutDashboard, label: 'Accueil', path: dashboardPath },
+        { icon: Clock, label: 'Pointage', path: '/attendance' },
+        { icon: Calendar, label: 'Congés', path: '/leaves' },
+        { icon: FileText, label: 'Doc', path: '/documents' },
+      ];
 
   return (
     <div className="md:hidden fixed bottom-4 left-4 right-4 glass-card border-white/10 z-50 rounded-[2rem] overflow-hidden">
