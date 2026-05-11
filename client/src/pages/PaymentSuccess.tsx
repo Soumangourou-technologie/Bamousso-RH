@@ -83,13 +83,19 @@ const PaymentSuccess = () => {
             <CheckCircle className="w-20 h-20 text-green-500 mx-auto mb-6" />
             <h1 className="text-3xl font-bold mb-4 text-gray-900 dark:text-white">Paiement Réussi !</h1>
             <p className="text-gray-600 dark:text-gray-400 mb-8">
-              Votre compte est maintenant actif. Redirection vers la page de connexion dans quelques secondes...
+              Votre compte est maintenant actif. Redirection automatique dans quelques secondes...
             </p>
             <button 
-              onClick={() => navigate('/login')}
+              onClick={() => {
+                const userStr = localStorage.getItem('user');
+                const u = userStr ? JSON.parse(userStr) : null;
+                if (u?.role === 'SUPER_ADMIN') navigate('/dashboard-superadmin');
+                else if (u?.role === 'COMPANY_ADMIN') navigate('/dashboard-admin');
+                else navigate('/login');
+              }}
               className="w-full bg-[#ff5722] text-white px-8 py-4 rounded-2xl font-bold hover:opacity-90 transition-all"
             >
-              Se connecter maintenant
+              Accéder à mon tableau de bord
             </button>
           </>
         )}

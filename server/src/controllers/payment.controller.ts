@@ -302,16 +302,35 @@ export const confirmPayment = async (req: Request, res: Response) => {
         if (!plan) plan = 'FITINI';
         
         plan = plan.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        // Extraire les données isAddOn et extraEmployees depuis les métadonnées
+        const metadata = externalData.metadata || {};
+        const isAddOn = metadata.isAddOn === 'true' || metadata.isAddOn === true;
+        let extraEmployees = 0;
+        if (metadata.extraEmployees !== undefined) {
+          extraEmployees = typeof metadata.extraEmployees === 'string'
+            ? parseInt(metadata.extraEmployees)
+            : Number(metadata.extraEmployees);
+        }
+
+        const updateData: any = {
+          subscriptionStatus: "ACTIVE",
+          isActive: true,
+          isLocked: false,
+          subscriptionEndsAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+        };
+
+        if (isAddOn) {
+          // Cas "Ajout d'employé" : on incrémente
+          updateData.extraEmployees = { increment: extraEmployees };
+        } else {
+          // Cas "Nouvel abonnement / Renouvellement"
+          updateData.plan = plan;
+          updateData.extraEmployees = extraEmployees;
+        }
 
         await prisma.company.update({
           where: { id: companyId },
-          data: {
-            plan: plan,
-            subscriptionStatus: "ACTIVE",
-            isActive: true,
-            isLocked: false,
-            subscriptionEndsAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
-          } as any
+          data: updateData as any
         });
 
         await prisma.payment.update({
