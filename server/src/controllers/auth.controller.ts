@@ -67,7 +67,7 @@ export const registerCompany = catchAsync(async (req: Request, res: Response) =>
   if (!result.success) {
     return res.status(400).json({ 
       message: "Données invalides", 
-      errors: result.error.errors.map(e => e.message) 
+      errors: result.error.issues.map(e => e.message) 
     });
   }
 
