@@ -28,7 +28,7 @@ const registerCompanySchema = z.object({
   firstName: z.string().min(1, "Le prénom est requis"),
   lastName: z.string().min(1, "Le nom est requis"),
   plan: z.string().optional(),
-  extraEmployees: z.number().optional(),
+  extraEmployees: z.coerce.number().optional(),
 });
 
 const forgotPasswordSchema = z.object({
@@ -63,48 +63,81 @@ export const register = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const registerCompany = catchAsync(async (req: Request, res: Response) => {
-  const { companyName, email, phone, password, firstName, lastName, plan, extraEmployees } = registerCompanySchema.parse(req.body);
+  const result = registerCompanySchema.safeParse(req.body);
+  if (!result.success) {
+    return res.status(400).json({ 
+      message: "Données invalides", 
+      errors: result.error.errors.map(e => e.message) 
+    });
+  }
+
+  const { companyName, email, phone, password, firstName, lastName, plan, extraEmployees } = result.data;
+
+  // Vérifier si l'utilisateur existe déjà
   const existingUser = await prisma.user.findUnique({ where: { email } });
   if (existingUser) {
-    return res.status(400).json({ message: "Cet utilisateur existe déjà" });
+    return res.status(400).json({ message: "Cet email est déjà utilisé par un autre utilisateur" });
   }
+
+  // Vérifier si l'entreprise existe déjà
+  const existingCompany = await prisma.company.findFirst({ where: { name: companyName } });
+  if (existingCompany) {
+    return res.status(400).json({ message: "Ce nom d'entreprise est déjà utilisé" });
+  }
+
   const hashedPassword = await bcrypt.hash(password, 10);
-  const result = await prisma.$transaction(async (tx) => {
-    const company = await tx.company.create({
-      data: {
-        name: companyName,
-        isActive: false,
-        subscriptionStatus: "PAST_DUE", 
-        subscriptionEndsAt: null,
-        trialEndsAt: null,
-        plan: plan || "FITINI",
-        extraEmployees: extraEmployees || 0,
-        isLocked: false,
-        lockedAt: null,
-      } as any,
+
+  try {
+    const registrationResult = await prisma.$transaction(async (tx) => {
+      const company = await tx.company.create({
+        data: {
+          name: companyName,
+          isActive: false,
+          subscriptionStatus: "PAST_DUE", 
+          subscriptionEndsAt: null,
+          trialEndsAt: null,
+          plan: plan || "FITINI",
+          extraEmployees: extraEmployees || 0,
+          isLocked: false,
+          lockedAt: null,
+        } as any,
+      });
+
+      const user = await tx.user.create({
+        data: {
+          email,
+          phone,
+          password: hashedPassword,
+          firstName,
+          lastName,
+          role: "COMPANY_ADMIN",
+          companyId: company.id,
+          status: "ACTIVE",
+        },
+      });
+
+      return { company, user };
     });
-    const user = await tx.user.create({
-      data: {
-        email,
-        phone,
-        password: hashedPassword,
-        firstName,
-        lastName,
-        role: "COMPANY_ADMIN",
-        companyId: company.id,
-        status: "ACTIVE",
-      },
+
+    res.status(201).json({
+      message: "Entreprise créée. Veuillez procéder au paiement pour activer votre compte.",
+      company: { 
+        id: registrationResult.company.id, 
+        name: registrationResult.company.name,
+        plan: registrationResult.company.plan
+      }
     });
-    return { company, user };
-  });
-  res.status(201).json({
-    message: "Entreprise créée. Veuillez procéder au paiement pour activer votre compte.",
-    company: { 
-      id: result.company.id, 
-      name: result.company.name,
-      plan: result.company.plan
+  } catch (error: any) {
+    console.error("Erreur lors de l'enregistrement de l'entreprise:", error);
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === 'P2002') {
+        return res.status(400).json({ message: "Le nom de l'entreprise ou l'email est déjà utilisé" });
+      }
     }
-  });
+    return res.status(500).json({ 
+      message: "Une erreur est survenue lors de la création de votre compte. Veuillez réessayer plus tard." 
+    });
+  }
 });
 
 export const forgotPassword = catchAsync(async (req: Request, res: Response) => {
