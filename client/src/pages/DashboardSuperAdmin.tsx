@@ -322,6 +322,22 @@ const DashboardSuperAdmin = () => {
         </div>
       </motion.div>
 
+      {/* Tabs */}
+      <div className="flex gap-4 border-b border-white/10 pb-4">
+        <button 
+          onClick={() => setActiveTab('companies')}
+          className={`px-8 py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all ${activeTab === 'companies' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20' : 'text-gray-500 hover:text-white'}`}
+        >
+          Entreprises
+        </button>
+        <button 
+          onClick={() => setActiveTab('payments')}
+          className={`px-8 py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all ${activeTab === 'payments' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20' : 'text-gray-500 hover:text-white'}`}
+        >
+          Factures (Paiements)
+        </button>
+      </div>
+
       {/* Main Content */}
       <div className="glass-card rounded-[2.5rem] p-10">
         {activeTab === 'companies' ? (
