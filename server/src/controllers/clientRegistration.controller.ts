@@ -11,7 +11,7 @@ import { notifyAdmins } from "../utils/notifications.js";
 export const createClientRegistration = async (req: Request, res: Response): Promise<any> => {
   try {
     const currentUser = (req as any).user as { id: string; role: string; companyId: string; firstName?: string; lastName?: string };
-    const files = (req as any).files as { [fieldname: string]: Express.Multer.File[] } | undefined;
+    const files = (req as any).files as any | undefined;
 
     const {
       // Client identity
