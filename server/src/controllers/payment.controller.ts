@@ -330,7 +330,8 @@ export const confirmPayment = async (req: Request, res: Response) => {
 
         await prisma.company.update({
           where: { id: companyId },
-          data: updateData as any
+          data: updateData as any,
+          include: { users: { where: { role: 'COMPANY_ADMIN' }, take: 1 } }
         });
 
         await prisma.payment.update({
@@ -339,6 +340,33 @@ export const confirmPayment = async (req: Request, res: Response) => {
         });
 
         await logger.info(`Compte activé via Confirmation Directe pour ${payment.company.name}`, { plan }, "PaymentController");
+
+        // --- ENVOI E-MAIL ET FACTURE (Même logique que le Webhook) ---
+        try {
+          const updatedCompany = await prisma.company.findUnique({
+            where: { id: companyId },
+            include: { users: { where: { role: 'COMPANY_ADMIN' }, take: 1 } }
+          });
+          const adminEmail = updatedCompany?.users[0]?.email;
+          const amount = externalData.amount || payment.amount || 0;
+          
+          const pdfBuffer = await generateSubscriptionPDF({
+            companyName: payment.company.name,
+            plan: plan,
+            amount: amount,
+            date: new Date().toLocaleDateString(),
+            transactionId: currentToken.toString()
+          });
+
+          if (adminEmail) {
+            await sendSubscriptionConfirmation(adminEmail, payment.company.name, plan, amount, pdfBuffer);
+            await logger.info(`Email de confirmation envoyé à ${adminEmail} (via Confirmation Directe)`, null, "PaymentController");
+          }
+          await sendAdminSubscriptionNotification(payment.company.name, plan, amount, pdfBuffer);
+        } catch (mailError) {
+          await logger.error("Erreur envoi emails après confirmation directe", mailError, "PaymentController");
+        }
+
         return res.json({ success: true, status: "SUCCESS" });
       }
     } catch (apiError) {
