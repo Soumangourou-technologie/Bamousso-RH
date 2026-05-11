@@ -1,7 +1,6 @@
-@import "./design-system/tokens.css";
 @import "tailwindcss";
+@import "./design-system/tokens.css";
 @variant dark (&:where(.dark, .dark *));
-
 
 @theme {
   /* Chromatic Colors */
@@ -50,13 +49,23 @@
 
   /* Bamousso Custom Pattern Background - Premium Implementation */
   .bg-senufo {
+    position: relative;
     background-color: #1a0f0a;
+  }
+  
+  .bg-senufo::before {
+    content: "";
+    position: absolute;
+    inset: 0;
     background-image: url("/bg-pattern.jpg");
     background-size: 600px;
     background-repeat: repeat;
     background-blend-mode: multiply;
-    opacity: 0.8;
+    opacity: 0.15; /* Subtil pattern pour ne pas gêner la lecture */
+    pointer-events: none;
+    z-index: 0;
   }
+
 
   .glass-card {
     background: var(--chromatic-surface-panel);

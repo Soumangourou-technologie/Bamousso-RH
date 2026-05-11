@@ -97,18 +97,18 @@ const PaymentSuccess = () => {
 
         {status === 'success' && (
           <>
-            <CheckCircle className="w-20 h-20 text-green-500 mx-auto mb-6" />
-            <h1 className="text-3xl font-bold mb-4 text-white">Paiement Réussi !</h1>
-            <p className="text-gray-400 mb-8">
-              Votre espace entreprise est maintenant activé.
+            <CheckCircle className="w-20 h-20 text-green-500 mx-auto mb-6 drop-shadow-[0_0_15px_rgba(34,197,94,0.4)]" />
+            <h1 className="text-4xl font-black mb-4 text-white tracking-tight">Paiement Réussi !</h1>
+            <p className="text-gray-400 mb-8 font-medium">
+              Félicitations ! Votre espace entreprise Bamousso RH est maintenant activé.
             </p>
             <button 
               onClick={() => navigate('/login')}
-              className="w-full bg-[#ff5722] text-white px-8 py-4 rounded-2xl font-bold hover:opacity-90 transition-all shadow-lg shadow-orange-500/20"
+              className="w-full bg-[#ff5722] text-white px-8 py-5 rounded-2xl font-black hover:scale-[1.02] transition-all shadow-xl shadow-orange-500/30 uppercase tracking-widest text-xs premium-glow"
             >
               Se connecter maintenant
             </button>
-            <p className="mt-4 text-xs text-gray-500">Redirection vers la page de connexion dans 2s...</p>
+            <p className="mt-6 text-[10px] text-gray-500 font-black uppercase tracking-[0.2em]">Redirection automatique dans 2s...</p>
           </>
         )}
 
