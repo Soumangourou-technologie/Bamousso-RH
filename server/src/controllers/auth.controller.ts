@@ -63,6 +63,10 @@ export const register = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const registerCompany = catchAsync(async (req: Request, res: Response) => {
+  // Debug log pour vérifier l'URL (Masqué pour la sécurité)
+  const dbUrl = process.env.DATABASE_URL || "NON DEFINIE";
+  console.log("DEBUG: Database URL starts with:", dbUrl.substring(0, 30) + "...");
+  
   try {
     const result = registerCompanySchema.safeParse(req.body);
     if (!result.success) {
