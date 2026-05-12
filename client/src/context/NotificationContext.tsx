@@ -85,10 +85,12 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
         event: 'INSERT',
         schema: 'public',
         table: 'Notification',
-        filter: `"companyId"=eq.${user.companyId}`,
       }, (payload: { new: AppNotification }) => {
         const newNotif = payload.new;
         
+        // Filtrage local pour éviter les soucis de nommage de colonne Postgres (camelCase vs quotes)
+        if (newNotif.companyId && newNotif.companyId !== user.companyId) return;
+
         // Only process if for this specific user or global to company
         if (!newNotif.userId || newNotif.userId === user?.id) {
           setNotifications(prev => {
