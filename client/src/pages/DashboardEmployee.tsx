@@ -35,7 +35,7 @@ const DashboardEmployee = () => {
 
   const visibleModules = [
     ...baseModules,
-    ...roleSpecificModules.filter(m => user?.permissions.includes(m.requiredPermission))
+    ...roleSpecificModules.filter(m => (user?.permissions || []).includes(m.requiredPermission))
   ];
 
   return (

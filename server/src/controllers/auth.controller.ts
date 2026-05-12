@@ -270,6 +270,7 @@ export const login = catchAsync(async (req: Request, res: Response, next: NextFu
       lastName: user.lastName, 
       companyId: user.companyId,
       status: (user as any).status,
+      permissions: user.customRole?.permissions || [],
     },
     company: user.company ? {
       id: user.company.id,
@@ -292,7 +293,7 @@ export const getCurrentUser = catchAsync(async (req: any, res: Response) => {
   }
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    include: { company: true },
+    include: { company: true, customRole: true },
   });
   if (!user) {
     return res.status(404).json({ success: false, message: "Utilisateur introuvable" });
@@ -306,6 +307,7 @@ export const getCurrentUser = catchAsync(async (req: any, res: Response) => {
       firstName: user.firstName,
       lastName: user.lastName,
       companyId: user.companyId,
+      permissions: user.customRole?.permissions || [],
     },
     company: user.company ? {
       id: user.company.id,
