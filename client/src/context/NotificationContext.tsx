@@ -85,7 +85,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
         event: 'INSERT',
         schema: 'public',
         table: 'Notification',
-        filter: `companyId=eq.${user.companyId}`,
+        filter: `"companyId"=eq.${user.companyId}`,
       }, (payload: { new: AppNotification }) => {
         const newNotif = payload.new;
         

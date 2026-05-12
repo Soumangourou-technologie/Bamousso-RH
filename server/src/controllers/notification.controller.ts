@@ -20,7 +20,12 @@ export const getNotifications = async (req: AuthRequest, res: Response) => {
     if (!userId) return res.status(401).json({ message: "Unauthorized" });
 
     const notifications = await prisma.notification.findMany({
-      where: { userId },
+      where: {
+        OR: [
+          { userId },
+          { userId: null, companyId: req.user?.companyId }
+        ]
+      },
       orderBy: { createdAt: "desc" },
     });
 
