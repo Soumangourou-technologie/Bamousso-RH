@@ -12,7 +12,7 @@ const router = Router();
 
 router.use(authenticate);
 
-router.get("/", requirePlan("LOUBA"), getNotifications);
+router.get("/", getNotifications);
 router.patch("/:id/read", markAsRead);
 router.delete("/:id", deleteNotification);
 
