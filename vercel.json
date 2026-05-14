@@ -27,6 +27,10 @@
       "destination": "/registerSW.js"
     },
     {
+      "source": "/googlefedf45e60c59441d.html",
+      "destination": "/googlefedf45e60c59441d.html"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
