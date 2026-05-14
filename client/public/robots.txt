@@ -1,0 +1,31 @@
+# Instructions pour les robots d'exploration (Google, Bing, etc.)
+User-agent: *
+
+# Pages autorisées à l'indexation
+Allow: /
+Allow: /login
+Allow: /register
+
+# Interdire l'exploration des pages d'administration et privées
+Disallow: /dashboard/
+Disallow: /employees/
+Disallow: /departments/
+Disallow: /settings/
+Disallow: /leaves/
+Disallow: /attendance/
+Disallow: /documents/
+Disallow: /announcements/
+Disallow: /analytics/
+Disallow: /tasks/
+Disallow: /messaging/
+Disallow: /suggestions/
+Disallow: /explanations/
+Disallow: /salaries/
+Disallow: /conflicts/
+Disallow: /client-registration/
+Disallow: /payment
+Disallow: /payment-success
+Disallow: /payment-cancelled
+
+# Lien vers la sitemap pour aider Google à tout indexer
+Sitemap: https://www.bamousso.com/sitemap.xml
