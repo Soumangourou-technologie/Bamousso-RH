@@ -19,6 +19,10 @@
       "destination": "/vite.svg"
     },
     {
+      "source": "/apple-touch-icon.png",
+      "destination": "/apple-touch-icon.png"
+    },
+    {
       "source": "/manifest.webmanifest",
       "destination": "/manifest.webmanifest"
     },
