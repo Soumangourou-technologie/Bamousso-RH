@@ -284,6 +284,7 @@ export const login = catchAsync(async (req: Request, res: Response, next: NextFu
       isLocked: (user.company as any).isLocked,
       isActive: user.company.isActive,
       trialEndsAt: (user.company as any).trialEndsAt,
+      subscriptionEndsAt: (user.company as any).subscriptionEndsAt,
       subscriptionStatus: (user.company as any).subscriptionStatus,
       extraEmployees: (user.company as any).extraEmployees,
     } : null,
@@ -321,6 +322,7 @@ export const getCurrentUser = catchAsync(async (req: any, res: Response) => {
       isActive: user.company.isActive,
       isLocked: (user.company as any).isLocked,
       trialEndsAt: (user.company as any).trialEndsAt,
+      subscriptionEndsAt: (user.company as any).subscriptionEndsAt,
       subscriptionStatus: (user.company as any).subscriptionStatus,
       extraEmployees: (user.company as any).extraEmployees,
     } : null
