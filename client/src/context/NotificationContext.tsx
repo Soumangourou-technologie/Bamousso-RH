@@ -68,7 +68,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
   }, [user?.id]);
 
   useEffect(() => {
-    if (!user?.id || !user?.companyId) return;
+    if (!user?.id) return;
 
     // Fetch initial notifications
     fetchNotifications();
@@ -79,8 +79,12 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     if (!supabase) return;
 
     // Supabase Realtime
+    const channelName = user.companyId 
+      ? `notifications-${user.companyId}` 
+      : `notifications-superadmin-${user.id}`;
+
     const channel = supabase
-      .channel(`notifications-${user.companyId}`)
+      .channel(channelName)
       .on('postgres_changes', {
         event: 'INSERT',
         schema: 'public',
@@ -89,7 +93,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
         const newNotif = payload.new;
         
         // Filtrage local pour éviter les soucis de nommage de colonne Postgres (camelCase vs quotes)
-        if (newNotif.companyId && newNotif.companyId !== user.companyId) return;
+        if (user.companyId && newNotif.companyId && newNotif.companyId !== user.companyId) return;
 
         // Only process if for this specific user or global to company
         if (!newNotif.userId || newNotif.userId === user?.id) {
