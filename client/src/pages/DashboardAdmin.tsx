@@ -15,6 +15,49 @@ const PLAN_BADGE: Record<string, { label: string; color: string }> = {
   KORO:   { label: 'Kôrô',     color: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400' },
 };
 
+const CompactCountdown = ({ endsAt }: { endsAt: string }) => {
+  const [text, setText] = useState('');
+
+  useEffect(() => {
+    const update = () => {
+      const diff = +new Date(endsAt) - +new Date();
+      if (diff <= 0) {
+        setText('Expiré');
+        return;
+      }
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const mins = Math.floor((diff / 1000 / 60) % 60);
+
+      if (days > 0) {
+        setText(`${days}j ${hours}h restants`);
+      } else if (hours > 0) {
+        setText(`${hours}h ${mins}m restants`);
+      } else {
+        setText(`${mins}m restants`);
+      }
+    };
+
+    update();
+    const itv = setInterval(update, 60000);
+    return () => clearInterval(itv);
+  }, [endsAt]);
+
+  if (!text) return null;
+
+  return (
+    <div className="flex items-center gap-2.5 bg-orange-50/80 dark:bg-orange-950/20 border border-orange-200/60 dark:border-orange-800/30 rounded-2xl px-4 py-2 shadow-inner">
+      <div className="w-7 h-7 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-500 shrink-0">
+        <Clock className="w-4 h-4 animate-pulse" />
+      </div>
+      <div className="flex flex-col text-left">
+        <span className="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Temps Restant</span>
+        <span className="text-sm font-black text-orange-600 dark:text-orange-400 tracking-tight truncate">{text}</span>
+      </div>
+    </div>
+  );
+};
+
 const DashboardAdmin = () => {
   const { company, user } = useAuth();
   const navigate = useNavigate();
@@ -86,7 +129,7 @@ const DashboardAdmin = () => {
           endsAt={company.trialEndsAt} 
           title="Accès Privilège Actif"
           buttonText="Passer premium"
-          onButtonClick={() => navigate('/register', { state: { selectedPlanId: 'KORO' } })}
+          onButtonClick={() => navigate('/upgrade-plan', { state: { selectedPlanId: 'KORO' } })}
         />
       )}
 
@@ -95,7 +138,7 @@ const DashboardAdmin = () => {
           endsAt={company.subscriptionEndsAt} 
           title="Abonnement Actif"
           buttonText="Mettre à jour / Changer de formule"
-          onButtonClick={() => navigate('/register', { state: { selectedPlanId: company.plan } })}
+          onButtonClick={() => navigate('/upgrade-plan', { state: { selectedPlanId: company.plan } })}
         />
       )}
 
@@ -112,6 +155,12 @@ const DashboardAdmin = () => {
               <Building2 className="w-4 h-4" /> {company?.name || 'Bamousso'} • Espace Administrateur
             </p>
           </div>
+          
+          {/* Compteur de durée compact */}
+          {company?.subscriptionEndsAt && (
+            <CompactCountdown endsAt={company.subscriptionEndsAt} />
+          )}
+
           <div className="flex items-center gap-3">
             {/* Badge Plan */}
             <span className={`px-4 py-2 rounded-xl text-sm font-bold ${badge.color}`}>
@@ -137,7 +186,7 @@ const DashboardAdmin = () => {
           if (isLocked) {
             return (
               <motion.div key={index} variants={item}>
-                <Link to="/register" state={{ selectedPlanId: minPlan }} className="relative group block bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-sm border-2 border-dashed border-gray-200 dark:border-gray-700 transition-all hover:border-brand-primary/50">
+                <Link to="/upgrade-plan" state={{ selectedPlanId: minPlan }} className="relative group block bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-sm border-2 border-dashed border-gray-200 dark:border-gray-700 transition-all hover:border-brand-primary/50">
                   <div className="flex items-start justify-between">
                     <div className="flex items-start gap-4">
                       <div className={`w-14 h-14 rounded-2xl ${mod.color} opacity-40 flex items-center justify-center text-white shadow-lg`}>

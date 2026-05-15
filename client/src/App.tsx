@@ -36,6 +36,7 @@ import Conflicts from './pages/Conflicts';
 import ClientRegistration from './pages/ClientRegistration';
 import ClientRegistrationAdmin from './pages/ClientRegistrationAdmin';
 import Support from './pages/Support';
+import Upgrade from './pages/Upgrade';
 
 import { NotificationProvider } from './context/NotificationContext';
 
@@ -110,6 +111,11 @@ function App() {
                   {/* Admin/HR: Vue Clients Commerciaux */}
                   <Route element={<ProtectedRoute allowedRoles={['COMPANY_ADMIN', 'HR_MANAGER', 'HR_ASSISTANT']} />}>
                     <Route path="/client-registrations" element={<ClientRegistrationAdmin />} />
+                  </Route>
+
+                  {/* Module Évolution d'offre / Upgrade */}
+                  <Route element={<ProtectedRoute allowedRoles={['COMPANY_ADMIN']} />}>
+                    <Route path="/upgrade-plan" element={<Upgrade />} />
                   </Route>
 
                   {/* Module Support Client */}
