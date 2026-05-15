@@ -82,3 +82,46 @@ export const sendAdminSubscriptionNotification = async (
     // On ne throw pas ici pour ne pas bloquer le processus client si l'admin ne reçoit pas
   }
 };
+
+/**
+ * Envoie l'email sécurisé de réinitialisation de mot de passe
+ */
+export const sendPasswordResetEmail = async (email: string, name: string, token: string) => {
+  try {
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    const resetUrl = `${frontendUrl}/reset-password?token=${token}`;
+    
+    await resend.emails.send({
+      from: 'Bamousso RH <securite@resend.dev>', // À remplacer par domaine vérifié en prod
+      to: email,
+      subject: '🔒 Réinitialisation de votre mot de passe Bamousso',
+      html: `
+        <div style="font-family: sans-serif; padding: 30px; color: #333; max-width: 600px; margin: 0 auto; border: 1px solid #f0f0f0; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+          <div style="text-align: center; margin-bottom: 24px;">
+            <h1 style="color: #f7a600; font-size: 28px; font-weight: 900; margin: 0; letter-spacing: -1px;">BAMOUSSO RH</h1>
+          </div>
+          <h2 style="font-size: 18px; font-weight: 700; color: #1a0f0a;">Bonjour ${name},</h2>
+          <p style="font-size: 15px; line-height: 1.6;">Nous avons reçu une demande de réinitialisation de mot de passe pour votre compte sur la plateforme BAMOUSSO RH.</p>
+          <p style="font-size: 15px; line-height: 1.6;">Cliquez sur le bouton ci-dessous pour configurer un nouveau mot de passe de sécurité. Ce lien est à usage unique et expirera dans **1 heure**.</p>
+          
+          <div style="text-align: center; margin: 35px 0;">
+            <a href="${resetUrl}" style="background-color: #f7a600; color: white; padding: 14px 32px; border-radius: 12px; text-decoration: none; font-weight: 800; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 12px rgba(247,166,0,0.3); display: inline-block;">Réinitialiser mon mot de passe</a>
+          </div>
+          
+          <p style="font-size: 12px; color: #666; text-align: center;">Si le bouton ne fonctionne pas, vous pouvez copier-coller l'URL suivante dans votre navigateur :</p>
+          <p style="font-size: 11px; color: #0070f3; text-align: center; word-break: break-all; background: #f9f9f9; padding: 10px; border-radius: 8px;">${resetUrl}</p>
+          
+          <div style="border-top: 1px solid #eee; margin-top: 30px; padding-top: 20px; font-size: 12px; color: #999;">
+            <p style="margin: 0 0 10px 0;">Si vous n'avez pas initié cette demande, vous pouvez ignorer cet e-mail en toute sécurité. Votre mot de passe actuel reste protégé.</p>
+            <p style="margin: 0;">L'équipe Sécurité BAMOUSSO</p>
+          </div>
+        </div>
+      `,
+    });
+    await logger.info(`Email de réinitialisation de mot de passe envoyé à ${email}`, {}, "Mailer");
+  } catch (error) {
+    await logger.error("Erreur critique d'envoi email de réinitialisation", error, "Mailer");
+    throw error;
+  }
+};
+

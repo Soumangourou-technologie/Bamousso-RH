@@ -6,6 +6,7 @@ import { Prisma } from "@prisma/client";
 import prisma from "../utils/prisma.js";
 import { z } from "zod";
 import { catchAsync } from '../utils/catchAsync.js';
+import { sendPasswordResetEmail } from '../utils/mailer.js';
 
 const registerSchema = z.object({
   email: z.string().email("Format d'email invalide"),
@@ -192,6 +193,10 @@ export const forgotPassword = catchAsync(async (req: Request, res: Response) => 
     where: { id: user.id },
     data: { passwordResetToken: tokenHash, passwordResetExpiresAt: expiresAt },
   });
+
+  // Envoi automatique de l'e-mail via Resend
+  await sendPasswordResetEmail(user.email, `${user.firstName} ${user.lastName}`, rawToken);
+
   const isProd = process.env.NODE_ENV === "production";
   return res.json({
     message: "Si le compte existe, un email de réinitialisation a été envoyé.",
