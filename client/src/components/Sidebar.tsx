@@ -5,7 +5,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
   Building2, LayoutDashboard, LogOut, Moon, Sun, Users, Layers, X, 
   Calendar, Clock, FileText, Megaphone, Settings as SettingsIcon,
-  ListTodo, Banknote, MessageCircle, MessageSquare, FileWarning, BarChart3, Shield, UserPlus
+  ListTodo, Banknote, MessageCircle, MessageSquare, FileWarning, BarChart3, Shield, UserPlus, LifeBuoy
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
@@ -126,6 +126,13 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
             <LayoutDashboard className="w-5 h-5" />
             Tableau de bord
           </Link>
+
+          {(isSuperAdmin || user.role === 'COMPANY_ADMIN') && (
+            <Link to="/support" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/support' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
+              <LifeBuoy className="w-5 h-5" />
+              Support Client
+            </Link>
+          )}
 
           {isSuperAdmin && (
             <Link to="/messaging" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/messaging' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
