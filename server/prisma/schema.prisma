@@ -40,6 +40,10 @@ model Company {
   customRoles CustomRole[]
   disciplinaryCases DisciplinaryCase[]
   clientRegistrations ClientRegistration[]
+
+  // Relations avec le Support Client
+  supportTickets     SupportTicket[]
+  supportChatRoom    SupportChatRoom?
 }
 
 /// Modèle Cas Disciplinaire (Conflit)
@@ -146,6 +150,11 @@ model User {
   updatedAt     DateTime @updatedAt
   assignedTasks Task[]   @relation("AssignedTasks")
   createdTasks  Task[]   @relation("CreatedTasks")
+
+  // Relations avec le Support Client
+  createdSupportTickets SupportTicket[]        @relation("TicketCreator")
+  ticketMessages        SupportTicketMessage[] @relation("TicketMessageSender")
+  supportChatMessages   SupportChatMessage[]   @relation("SupportChatMessageSender")
 }
 
 model Suggestion {
@@ -427,4 +436,78 @@ model ClientDocument {
   clientRegistration   ClientRegistration @relation(fields: [clientRegistrationId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
+}
+
+// ==========================================
+// --- MODULE DE SUPPORT CLIENT (NOUVEAU) ---
+// ==========================================
+
+/// Modèle Ticket de Support (Formule FITINI)
+model SupportTicket {
+  id          String   @id @default(uuid())
+  title       String   // Objet du ticket
+  status      String   @default("OPEN") // OPEN | IN_PROGRESS | RESOLVED | CLOSED
+  priority    String   @default("MEDIUM") // LOW | MEDIUM | HIGH
+
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  createdById String
+  createdBy   User     @relation("TicketCreator", fields: [createdById], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  messages    SupportTicketMessage[]
+
+  @@index([companyId])
+  @@index([createdById])
+}
+
+/// Messages associés à un Ticket de Support
+model SupportTicketMessage {
+  id         String        @id @default(uuid())
+  content    String        // Contenu de la réponse
+  
+  ticketId   String
+  ticket     SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  senderId   String
+  sender     User          @relation("TicketMessageSender", fields: [senderId], references: [id], onDelete: Cascade)
+
+  createdAt  DateTime      @default(now())
+
+  @@index([ticketId])
+}
+
+/// Salon de Chat Support (Formules LOUBA & KORO - un salon par entreprise)
+model SupportChatRoom {
+  id        String   @id @default(uuid())
+  
+  companyId String   @unique
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  messages  SupportChatMessage[]
+
+  @@index([companyId])
+}
+
+/// Messages instantanés du Salon de Chat Support
+model SupportChatMessage {
+  id        String          @id @default(uuid())
+  content   String          // Texte du message
+  isRead    Boolean         @default(false) // Pour les notifications non lues
+  
+  roomId    String
+  room      SupportChatRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  senderId  String
+  sender    User            @relation("SupportChatMessageSender", fields: [senderId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime        @default(now())
+
+  @@index([roomId])
 }
