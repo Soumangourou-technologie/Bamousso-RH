@@ -250,3 +250,247 @@ export const updateTicketStatus = async (req: any, res: Response) => {
     res.status(500).json({ message: "Erreur lors de la mise à jour du statut", error: error.message });
   }
 };
+
+// ==========================================================
+// --- SECTION CHAT EN DIRECT (FORMULES LOUBA & KORO) ---
+// ==========================================================
+
+const createChatMessageSchema = z.object({
+  content: z.string().min(1, "Le message ne peut pas être vide"),
+});
+
+/**
+ * 6. Récupérer ou Créer le salon de Chat de l'entreprise (COMPANY_ADMIN)
+ */
+export const getOrCreateChatRoom = async (req: any, res: Response) => {
+  try {
+    const user = req.user;
+
+    if (!user.companyId) {
+      return res.status(400).json({ message: "Compte non associé à une entreprise." });
+    }
+
+    // 1. Vérifier le plan de l'entreprise
+    const company = await prisma.company.findUnique({
+      where: { id: user.companyId }
+    });
+
+    if (!company) {
+      return res.status(404).json({ message: "Entreprise introuvable." });
+    }
+
+    if (company.plan === "FITINI" && user.role !== "SUPER_ADMIN") {
+      return res.status(403).json({
+        code: "USE_TICKETS",
+        message: "Votre formule (FITINI) n'inclut pas le Chat en direct. Veuillez ouvrir un ticket support."
+      });
+    }
+
+    // 2. Rechercher si le salon existe
+    let room = await prisma.supportChatRoom.findUnique({
+      where: { companyId: user.companyId },
+      include: {
+        messages: {
+          take: 50, // 50 derniers messages
+          orderBy: { createdAt: "desc" },
+          include: {
+            sender: { select: { firstName: true, lastName: true, role: true } }
+          }
+        }
+      }
+    });
+
+    // 3. Si inexistant, le créer
+    if (!room) {
+      room = await prisma.supportChatRoom.create({
+        data: {
+          companyId: user.companyId
+        },
+        include: {
+          messages: {
+            orderBy: { createdAt: "desc" },
+            include: {
+              sender: { select: { firstName: true, lastName: true, role: true } }
+            }
+          }
+        }
+      }) as any;
+    }
+
+    // Inverser l'ordre des messages pour qu'ils soient chronologiques (du plus ancien au plus récent)
+    if (room && room.messages) {
+      room.messages = room.messages.reverse() as any;
+    }
+
+    res.json(room);
+  } catch (error: any) {
+    res.status(500).json({ message: "Erreur lors de la récupération du salon de chat", error: error.message });
+  }
+};
+
+/**
+ * 7. Récupérer tous les salons de Chat actifs (SUPER_ADMIN)
+ */
+export const getAllChatRooms = async (req: any, res: Response) => {
+  try {
+    const rooms = await prisma.supportChatRoom.findMany({
+      include: {
+        company: {
+          select: { name: true, plan: true, logoUrl: true }
+        },
+        messages: {
+          take: 1, // Juste le dernier message pour l'aperçu
+          orderBy: { createdAt: "desc" },
+          include: {
+            sender: { select: { firstName: true, lastName: true } }
+          }
+        },
+        _count: {
+          select: {
+            messages: {
+              where: {
+                isRead: false,
+                sender: { role: { not: "SUPER_ADMIN" } } // Seulement les messages non lus provenant du client
+              }
+            }
+          }
+        }
+      },
+      orderBy: { updatedAt: "desc" } // Le plus récemment actif en haut
+    });
+
+    res.json(rooms);
+  } catch (error: any) {
+    res.status(500).json({ message: "Erreur lors de la récupération des salons de chat", error: error.message });
+  }
+};
+
+/**
+ * 8. Détails et historique complet d'un salon (SUPER_ADMIN & COMPANY_ADMIN)
+ */
+export const getChatRoomDetails = async (req: any, res: Response) => {
+  try {
+    const { roomId } = req.params;
+    const user = req.user;
+
+    const room = await prisma.supportChatRoom.findUnique({
+      where: { id: roomId },
+      include: {
+        company: {
+          select: { name: true, plan: true }
+        },
+        messages: {
+          orderBy: { createdAt: "asc" }, // Ordre chronologique pour le chat
+          include: {
+            sender: { select: { firstName: true, lastName: true, role: true } }
+          }
+        }
+      }
+    });
+
+    if (!room) {
+      return res.status(404).json({ message: "Salon de chat introuvable." });
+    }
+
+    // Droit d'accès
+    if (user.role !== "SUPER_ADMIN" && room.companyId !== user.companyId) {
+      return res.status(403).json({ message: "Accès refusé." });
+    }
+
+    res.json(room);
+  } catch (error: any) {
+    res.status(500).json({ message: "Erreur lors de la récupération des messages", error: error.message });
+  }
+};
+
+/**
+ * 9. Envoyer un Message dans le Chat
+ */
+export const sendChatMessage = async (req: any, res: Response) => {
+  try {
+    const { roomId } = req.params;
+    const { content } = createChatMessageSchema.parse(req.body);
+    const user = req.user;
+
+    const room = await prisma.supportChatRoom.findUnique({
+      where: { id: roomId }
+    });
+
+    if (!room) {
+      return res.status(404).json({ message: "Salon de chat introuvable." });
+    }
+
+    // Droit d'accès
+    if (user.role !== "SUPER_ADMIN" && room.companyId !== user.companyId) {
+      return res.status(403).json({ message: "Accès refusé." });
+    }
+
+    // Enregistrement atomique : création message + mise à jour "updatedAt" du salon
+    const result = await prisma.$transaction(async (tx) => {
+      const message = await tx.supportChatMessage.create({
+        data: {
+          content,
+          roomId,
+          senderId: user.id,
+          isRead: false
+        },
+        include: {
+          sender: { select: { firstName: true, lastName: true, role: true } }
+        }
+      });
+
+      await tx.supportChatRoom.update({
+        where: { id: roomId },
+        data: { updatedAt: new Date() }
+      });
+
+      return message;
+    });
+
+    res.status(201).json(result);
+  } catch (error: any) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ message: "Données invalides", errors: error.issues });
+    }
+    res.status(500).json({ message: "Erreur lors de l'envoi du message", error: error.message });
+  }
+};
+
+/**
+ * 10. Marquer les messages du salon comme LUS
+ */
+export const markChatAsRead = async (req: any, res: Response) => {
+  try {
+    const { roomId } = req.params;
+    const user = req.user;
+
+    const room = await prisma.supportChatRoom.findUnique({
+      where: { id: roomId }
+    });
+
+    if (!room) {
+      return res.status(404).json({ message: "Salon de chat introuvable." });
+    }
+
+    if (user.role !== "SUPER_ADMIN" && room.companyId !== user.companyId) {
+      return res.status(403).json({ message: "Accès refusé." });
+    }
+
+    // On marque comme lu tous les messages qui ne proviennent pas de l'utilisateur actuel
+    const updateResult = await prisma.supportChatMessage.updateMany({
+      where: {
+        roomId,
+        senderId: { not: user.id },
+        isRead: false
+      },
+      data: { isRead: true }
+    });
+
+    res.json({
+      message: "Messages marqués comme lus",
+      count: updateResult.count
+    });
+  } catch (error: any) {
+    res.status(500).json({ message: "Erreur lors de la mise à jour du statut de lecture", error: error.message });
+  }
+};
