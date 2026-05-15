@@ -157,9 +157,11 @@ const DashboardAdmin = () => {
           </div>
           
           {/* Compteur de durée compact */}
-          {company?.subscriptionEndsAt && (
+          {(isTrialActive && company?.trialEndsAt) ? (
+            <CompactCountdown endsAt={company.trialEndsAt} />
+          ) : (isSubscriptionActive && company?.subscriptionEndsAt) ? (
             <CompactCountdown endsAt={company.subscriptionEndsAt} />
-          )}
+          ) : null}
 
           <div className="flex items-center gap-3">
             {/* Badge Plan */}
