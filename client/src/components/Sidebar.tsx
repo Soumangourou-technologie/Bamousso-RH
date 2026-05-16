@@ -136,8 +136,8 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
           {isSuperAdmin && (
             <Link to="/messaging" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/messaging' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
-              <MessageCircle className="w-5 h-5" />
-              Messagerie Client
+              <MessageSquare className="w-5 h-5" />
+              Messagerie Interne
             </Link>
           )}
 

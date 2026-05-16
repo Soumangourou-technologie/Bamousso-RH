@@ -250,10 +250,10 @@ function FitiniTicketsDashboard() {
       </div>
 
       {/* Layout Split ou Simple */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-[500px]">
+      <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-12 gap-6 min-h-[500px]">
         
         {/* LISTE DES TICKETS */}
-        <div className={`${selectedTicket ? 'lg:col-span-5 hidden lg:block' : 'lg:col-span-12'} space-y-3`}>
+        <div className={`${selectedTicket ? 'lg:col-span-5 hidden lg:block' : 'col-span-12 lg:col-span-12'} space-y-3`}>
           {loading ? (
             <div className="space-y-3">
               {[1, 2, 3].map(i => (
@@ -312,7 +312,7 @@ function FitiniTicketsDashboard() {
 
         {/* DISCUSSION DE TICKET SÉLECTIONNÉ */}
         {selectedTicket && (
-          <div className="lg:col-span-7 col-span-12 flex flex-col h-[600px] glass-card rounded-3xl overflow-hidden border border-brand-primary/20 bg-[#1a0f0a]/90">
+          <div className="lg:col-span-7 col-span-12 flex flex-col h-[500px] md:h-[600px] glass-card rounded-3xl overflow-hidden border border-brand-primary/20 bg-[#1a0f0a]/90">
             {/* Header de Discussion */}
             <div className="p-5 border-b border-white/5 flex items-center justify-between bg-white/5">
               <div className="flex flex-col gap-0.5">
@@ -419,7 +419,7 @@ function FitiniTicketsDashboard() {
               initial={{ scale: 0.9, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              className="w-full max-w-lg glass-card rounded-4xl p-6 border border-white/10 overflow-hidden z-10 relative flex flex-col gap-4 bg-[#1a0f0a]"
+              className="w-full max-w-lg glass-card rounded-3xl md:rounded-4xl p-4 md:p-6 border border-white/10 overflow-hidden z-10 relative flex flex-col gap-4 bg-[#1a0f0a]"
             >
               <div className="flex items-center justify-between border-b border-white/5 pb-4">
                 <div className="flex items-center gap-2">
@@ -568,7 +568,7 @@ function PremiumChatDashboard() {
   };
 
   return (
-    <div className="h-[calc(100vh-12rem)] flex flex-col space-y-4 relative z-10">
+    <div className="h-[calc(100vh-14rem)] md:h-[calc(100vh-12rem)] flex flex-col space-y-4 relative z-10">
       {/* Header Premium Chat */}
       <div className="flex items-center justify-between shrink-0">
         <div className="flex items-center gap-3">
@@ -591,7 +591,7 @@ function PremiumChatDashboard() {
       </div>
 
       {/* Interface Principale */}
-      <div className="flex-1 flex flex-col glass-card rounded-4xl border border-brand-primary/15 overflow-hidden bg-[#1a0f0a]/95 shadow-2xl">
+      <div className="flex-1 flex flex-col glass-card rounded-3xl md:rounded-4xl border border-brand-primary/15 overflow-hidden bg-[#1a0f0a]/95 shadow-2xl">
         
         {/* Messages Area */}
         <div className="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar bg-white/[0.01]">
@@ -622,8 +622,8 @@ function PremiumChatDashboard() {
                     transition={{ duration: 0.2 }}
                     className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}
                   >
-                    <div className="flex flex-col gap-1 max-w-[80%]">
-                      <div className={`p-4 rounded-2xl text-sm font-medium shadow-xl border ${
+                    <div className="flex flex-col gap-1 max-w-[90%] md:max-w-[80%]">
+                      <div className={`p-3 md:p-4 rounded-2xl text-sm font-medium shadow-xl border ${
                         isMe 
                           ? 'bg-brand-primary text-white rounded-br-none border-brand-primary/50' 
                           : isSupport
@@ -829,7 +829,7 @@ function SuperAdminDashboard() {
   };
 
   return (
-    <div className="space-y-6 relative z-10 h-[calc(100vh-10rem)] flex flex-col">
+    <div className="space-y-4 md:space-y-6 relative z-10 h-[calc(100vh-14rem)] md:h-[calc(100vh-10rem)] flex flex-col">
       
       {/* Header Switch */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 shrink-0">
@@ -870,13 +870,13 @@ function SuperAdminDashboard() {
       </div>
 
       {/* Contenu des consoles */}
-      <div className="flex-1 min-h-0 flex gap-6">
+      <div className="flex-1 min-h-0 flex flex-col md:flex-row gap-4 md:gap-6">
         
         {/* ===================================== */}
         {/* CONSOLE CHAT */}
         {/* ===================================== */}
         {activeTab === 'CHATS' && (
-          <div className="flex-1 flex rounded-4xl border border-white/10 bg-[#1a0f0a]/95 overflow-hidden shadow-2xl">
+          <div className="flex-1 flex flex-col md:flex-row rounded-3xl md:rounded-4xl border border-white/10 bg-[#1a0f0a]/95 overflow-hidden shadow-2xl">
             
             {/* Liste des salons (Gauche) */}
             <div className={`${selectedRoom ? 'hidden md:flex' : 'flex'} flex-col w-full md:w-80 border-r border-white/5 bg-black/10 shrink-0`}>
@@ -997,7 +997,7 @@ function SuperAdminDashboard() {
         {/* CONSOLE TICKETS */}
         {/* ===================================== */}
         {activeTab === 'TICKETS' && (
-          <div className="flex-1 flex rounded-4xl border border-white/10 bg-[#1a0f0a]/95 overflow-hidden shadow-2xl">
+          <div className="flex-1 flex flex-col md:flex-row rounded-3xl md:rounded-4xl border border-white/10 bg-[#1a0f0a]/95 overflow-hidden shadow-2xl">
             {/* Liste tickets */}
             <div className={`${selectedTicket ? 'hidden md:flex' : 'flex'} flex-col w-full md:w-96 border-r border-white/5 bg-black/10 shrink-0`}>
               <div className="p-4 border-b border-white/5 font-black text-xs text-gray-500 uppercase tracking-widest flex items-center justify-between">

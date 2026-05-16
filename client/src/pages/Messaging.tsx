@@ -1,4 +1,4 @@
-import { Search, Send, Paperclip, MoreVertical, X } from 'lucide-react';
+import { Search, Send, Paperclip, MoreVertical, X, ArrowLeft } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import api from '../utils/api';
 import { useAuth } from '../context/AuthContext';
@@ -191,10 +191,10 @@ const Messaging = () => {
   );
 
   return (
-    <div className="h-[calc(100vh-160px)] flex gap-8">
+    <div className="h-[calc(100vh-180px)] md:h-[calc(100vh-160px)] flex flex-col md:flex-row gap-4 md:gap-8 overflow-hidden relative">
       {/* Sidebar de messagerie */}
-      <div className="w-96 flex flex-col gap-6">
-        <div className="glass-card p-6 rounded-[2rem] border border-white/5 flex flex-col h-full overflow-hidden">
+      <div className={`w-full md:w-96 flex flex-col gap-6 h-full transition-all duration-300 ${selectedContact ? 'hidden md:flex' : 'flex'}`}>
+        <div className="glass-card p-4 md:p-6 rounded-[2rem] border border-white/5 flex flex-col h-full overflow-hidden">
           <div className="relative mb-6">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
             <input 
@@ -235,11 +235,17 @@ const Messaging = () => {
       </div>
 
       {/* Zone de chat principale */}
-      <div className="flex-1 glass-card rounded-[2.5rem] border border-white/5 overflow-hidden flex flex-col relative shadow-2xl">
+      <div className={`flex-1 glass-card rounded-[2rem] md:rounded-[2.5rem] border border-white/5 overflow-hidden flex flex-col relative shadow-2xl transition-all duration-300 ${selectedContact ? 'flex' : 'hidden md:flex'}`}>
         {selectedContact ? (
           <>
-            <div className="p-6 border-b border-white/5 flex justify-between items-center bg-white/5 backdrop-blur-xl z-10">
-              <div className="flex items-center gap-4">
+            <div className="p-4 md:p-6 border-b border-white/5 flex justify-between items-center bg-white/5 backdrop-blur-xl z-10">
+              <div className="flex items-center gap-3 md:gap-4">
+                <button 
+                  onClick={() => setSelectedContact(null)}
+                  className="md:hidden p-2 -ml-2 hover:bg-white/10 rounded-full text-gray-400"
+                >
+                  <ArrowLeft className="w-6 h-6" />
+                </button>
                 <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-black shadow-lg ${selectedContact.isSupport ? 'bg-gradient-to-br from-brand-primary to-brand-accent' : 'bg-gray-700'}`}>
                   {selectedContact.name[0]}
                 </div>
@@ -256,7 +262,7 @@ const Messaging = () => {
               </div>
             </div>
 
-            <div className="flex-1 p-8 overflow-y-auto space-y-4 custom-scrollbar bg-senufo relative">
+            <div className="flex-1 p-4 md:p-8 overflow-y-auto space-y-4 custom-scrollbar bg-senufo relative">
                <div className="absolute inset-0 bg-brand-900/40 pointer-events-none" />
                <div className="relative z-10 space-y-4">
                   {messages.map((msg) => (
@@ -284,7 +290,7 @@ const Messaging = () => {
                </div>
             </div>
 
-            <div className="p-6 bg-white/5 border-t border-white/5 backdrop-blur-xl">
+            <div className="p-4 md:p-6 bg-white/5 border-t border-white/5 backdrop-blur-xl">
               {selectedFile && (
                 <div className="mb-4 p-3 bg-brand-primary/10 border border-brand-primary/20 rounded-xl flex justify-between items-center animate-in slide-in-from-bottom-2">
                   <div className="flex items-center gap-2">
@@ -294,7 +300,7 @@ const Messaging = () => {
                   <button onClick={() => setSelectedFile(null)} className="p-1 hover:bg-white/10 rounded-full"><X className="w-4 h-4 text-gray-500" /></button>
                 </div>
               )}
-              <form onSubmit={handleSend} className="flex items-center gap-4">
+              <form onSubmit={handleSend} className="flex items-center gap-2 md:gap-4">
                 <input 
                   type="file" 
                   ref={fileInputRef}
@@ -304,9 +310,9 @@ const Messaging = () => {
                 <button 
                   type="button" 
                   onClick={() => fileInputRef.current?.click()}
-                  className="p-4 hover:bg-white/10 rounded-2xl text-gray-500 transition-colors hover:text-white group"
+                  className="p-3 md:p-4 hover:bg-white/10 rounded-2xl text-gray-500 transition-colors hover:text-white group"
                 >
-                  <Paperclip className="w-6 h-6 transition-transform group-hover:scale-110" />
+                  <Paperclip className="w-5 h-5 md:w-6 md:h-6 transition-transform group-hover:scale-110" />
                 </button>
                 <div className="flex-1 relative">
                   <input 
@@ -314,15 +320,15 @@ const Messaging = () => {
                     value={newMessage}
                     onChange={e => setNewMessage(e.target.value)}
                     placeholder="Votre message..."
-                    className="w-full bg-white/5 border border-white/10 p-4 rounded-2xl text-white font-medium outline-none focus:ring-2 focus:ring-brand-primary transition-all"
+                    className="w-full bg-white/5 border border-white/10 p-3 md:p-4 rounded-xl md:rounded-2xl text-white text-sm md:text-base font-medium outline-none focus:ring-2 focus:ring-brand-primary transition-all"
                   />
                 </div>
                 <button 
                   type="submit"
                   disabled={(!newMessage.trim() && !selectedFile) || isUploading}
-                  className="bg-brand-primary text-white p-4 rounded-2xl shadow-lg shadow-brand-primary/20 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100 transition-all"
+                  className="bg-brand-primary text-white p-3 md:p-4 rounded-xl md:rounded-2xl shadow-lg shadow-brand-primary/20 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100 transition-all"
                 >
-                  {isUploading ? <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <Send className="w-6 h-6" />}
+                  {isUploading ? <div className="w-5 h-5 md:w-6 md:h-6 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <Send className="w-5 h-5 md:w-6 md:h-6" />}
                 </button>
               </form>
             </div>

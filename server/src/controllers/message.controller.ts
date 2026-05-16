@@ -66,25 +66,26 @@ export const getContacts = async (req: any, res: Response) => {
   try {
     const user = req.user;
 
-    // Si c'est un SUPER_ADMIN, il voit tous les COMPANY_ADMIN (les clients)
+    // Si c'est un SUPER_ADMIN, il voit les autres SUPER_ADMIN (Chat Interne)
     if (user.role === 'SUPER_ADMIN') {
-      const clients = await prisma.user.findMany({
-        where: { role: 'COMPANY_ADMIN' },
-        include: { company: true },
+      const superAdmins = await prisma.user.findMany({
+        where: { 
+          role: 'SUPER_ADMIN',
+          id: { not: user.id } // Exclure soi-même
+        },
         select: {
           id: true,
           firstName: true,
           lastName: true,
           role: true,
-          company: { select: { name: true } }
         }
-      } as any);
+      });
 
-      const contacts = clients.map((c: any) => ({
-        id: c.id,
-        name: `${c.firstName} ${c.lastName} (${c.company?.name || 'Inconnu'})`,
-        role: 'CLIENT',
-        isSupport: false
+      const contacts = superAdmins.map((s: any) => ({
+        id: s.id,
+        name: `${s.firstName} ${s.lastName}`,
+        role: 'SUPER_ADMIN',
+        isSupport: true // On peut le considérer comme support interne
       }));
 
       return res.json(contacts);
