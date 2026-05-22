@@ -28,7 +28,10 @@ api.interceptors.response.use(
       // Session expirée ou invalide -> Logout
       localStorage.removeItem('user');
       localStorage.removeItem('company');
-      if (window.location.pathname !== '/login') {
+      
+      const publicPaths = ['/', '/login', '/register', '/payment', '/payment-success', '/payment-cancelled', '/forgot-password', '/reset-password', '/client-registration'];
+      
+      if (!publicPaths.includes(window.location.pathname)) {
         window.location.assign('/login?expired=true');
       }
     }
