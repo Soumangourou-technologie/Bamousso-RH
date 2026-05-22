@@ -25,12 +25,27 @@ const Locked = () => {
         <div className="flex flex-col sm:flex-row gap-3">
           <button
             onClick={() => {
-              // TODO: brancher page paiement/renouvellement
-              window.location.href = 'mailto:support@ton-saas.com?subject=Renouvellement%20abonnement';
+              const basePrice = company?.plan === 'KORO' ? 14700 : company?.plan === 'LOUBA' ? 7500 : 0;
+              const extraCost = company?.plan === 'KORO' ? 0 : (company?.extraEmployees || 0) * 850;
+              const finalPrice = basePrice + extraCost;
+              
+              navigate('/payment', {
+                state: {
+                  plan: {
+                    id: company?.plan || 'LOUBA',
+                    name: company?.plan || 'LOUBA',
+                    finalPrice: finalPrice > 0 ? finalPrice : 7500,
+                  },
+                  extraEmployees: company?.extraEmployees || 0,
+                  companyName: company?.name || 'Votre entreprise',
+                  companyId: company?.id,
+                  isAddOn: false
+                }
+              });
             }}
-            className="w-full sm:w-auto bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition font-medium"
+            className="w-full sm:w-auto bg-orange-500 text-white py-2 px-4 rounded-lg hover:bg-orange-600 transition font-bold"
           >
-            Contacter le support
+            Renouveler l'abonnement
           </button>
           <button
             onClick={() => {

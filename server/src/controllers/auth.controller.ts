@@ -143,9 +143,17 @@ export const registerCompany = catchAsync(async (req: Request, res: Response) =>
       { expiresIn: "1d" }
     );
 
+    const cookieOptions = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict' as const,
+      maxAge: 24 * 60 * 60 * 1000 // 1 jour
+    };
+
+    res.cookie('token', token, cookieOptions);
+
     res.status(201).json({
       message: "Entreprise créée. Veuillez procéder au paiement pour activer votre compte.",
-      token,
       user: {
         id: registrationResult.user.id,
         email: registrationResult.user.email,
@@ -265,8 +273,16 @@ export const login = catchAsync(async (req: Request, res: Response, next: NextFu
     where: { id: user.id },
     data: { isOnline: true }
   });
+  const cookieOptions = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict' as const,
+    maxAge: 24 * 60 * 60 * 1000 // 1 jour
+  };
+
+  res.cookie('token', token, cookieOptions);
+
   const responseData = { 
-    token, 
     user: { 
       id: user.id, 
       email: user.email, 
@@ -327,4 +343,21 @@ export const getCurrentUser = catchAsync(async (req: any, res: Response) => {
       extraEmployees: (user.company as any).extraEmployees,
     } : null
   });
+});
+
+export const logout = catchAsync(async (req: any, res: Response) => {
+  res.clearCookie('token', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+  });
+  
+  if (req.user?.id) {
+    await prisma.user.update({
+      where: { id: req.user.id },
+      data: { isOnline: false }
+    }).catch(() => {});
+  }
+  
+  res.json({ success: true, message: "Déconnecté avec succès" });
 });

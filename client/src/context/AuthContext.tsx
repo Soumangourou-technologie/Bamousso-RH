@@ -40,9 +40,8 @@ interface Company {
 // Définition du type de contexte
 interface AuthContextType {
   user: User | null;      // Utilisateur actuellement connecté
-  token: string | null;   // Token JWT pour les appels API
   company: Company | null;
-  login: (token: string, user: User, company?: Company | null) => void; // Fonction de connexion
+  login: (user: User, company?: Company | null) => void; // Fonction de connexion
   logout: () => void;     // Fonction de déconnexion
   isLoading: boolean;     // État de chargement initial
 }
@@ -55,75 +54,63 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
  */
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(null);
   const [company, setCompany] = useState<Company | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Au chargement, on vérifie si un utilisateur est déjà stocké dans le navigateur
+  // Au chargement, on vérifie si l'utilisateur a une session valide via cookie HttpOnly
   useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-    const storedUser = localStorage.getItem('user');
-    const storedCompany = localStorage.getItem('company');
-
-    if (storedToken && storedUser) {
-      setToken(storedToken);
-      setUser(JSON.parse(storedUser));
-      if (storedCompany) setCompany(JSON.parse(storedCompany));
-      api.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
-      
-      // OPTIMISATION : On demande au serveur les dernières infos pour être sûr du plan
-      const fetchLatestInfo = async () => {
-        try {
-          // Utilisation de l'instance 'api' configurée
-          const response = await api.get('/auth/me');
-          if (response.data.success) {
-            const { user: latestUser, company: latestCompany } = response.data;
-            setUser(latestUser);
-            setCompany(latestCompany);
-            localStorage.setItem('user', JSON.stringify(latestUser));
-            if (latestCompany) localStorage.setItem('company', JSON.stringify(latestCompany));
-          }
-        } catch (error) {
-          console.error("Erreur lors de la mise à jour des infos auth:", error);
+    const fetchLatestInfo = async () => {
+      try {
+        const response = await api.get('/auth/me');
+        if (response.data.success) {
+          const { user: latestUser, company: latestCompany } = response.data;
+          setUser(latestUser);
+          setCompany(latestCompany);
+          localStorage.setItem('user', JSON.stringify(latestUser));
+          if (latestCompany) localStorage.setItem('company', JSON.stringify(latestCompany));
         }
-      };
-      fetchLatestInfo();
-    }
+      } catch (error) {
+        console.log("Session non valide au démarrage (utilisateur non connecté).");
+        // On nettoie le localStorage au cas où
+        localStorage.removeItem('user');
+        localStorage.removeItem('company');
+      } finally {
+        setIsLoading(false);
+      }
+    };
     
-    setIsLoading(false);
+    fetchLatestInfo();
   }, []);
 
   /**
    * Connecte l'utilisateur en stockant ses infos localement.
+   * Le token est géré par des cookies HttpOnly par le backend.
    */
-  const login = (newToken: string, newUser: User, newCompany?: Company | null) => {
-    setToken(newToken);
+  const login = (newUser: User, newCompany?: Company | null) => {
     setUser(newUser);
     setCompany(newCompany || null);
-    localStorage.setItem('token', newToken);
     localStorage.setItem('user', JSON.stringify(newUser));
     if (newCompany) localStorage.setItem('company', JSON.stringify(newCompany));
     else localStorage.removeItem('company');
-    
-    // Ajoute le token aux headers Axios pour les prochaines requêtes
-    api.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
   };
 
   /**
    * Déconnecte l'utilisateur et nettoie le stockage local.
    */
-  const logout = () => {
-    setToken(null);
+  const logout = async () => {
+    try {
+      await api.post('/auth/logout');
+    } catch (e) {
+      console.error("Erreur lors de la déconnexion serveur:", e);
+    }
     setUser(null);
     setCompany(null);
-    localStorage.removeItem('token');
     localStorage.removeItem('user');
     localStorage.removeItem('company');
-    delete api.defaults.headers.common['Authorization'];
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, company, login, logout, isLoading }}>
+    <AuthContext.Provider value={{ user, company, login, logout, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

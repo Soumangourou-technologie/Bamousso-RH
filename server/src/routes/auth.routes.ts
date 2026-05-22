@@ -10,6 +10,7 @@ import {
   forgotPassword,
   resetPassword,
   getCurrentUser,
+  logout,
 } from "../controllers/auth.controller.js";
 import { authenticate } from "../middleware/auth.js";
 
@@ -28,6 +29,9 @@ router.post("/register-company", strictLimiter, registerCompany);
 
 // Route pour la connexion
 router.post("/login", login);
+
+// Route pour la déconnexion
+router.post("/logout", authenticate, logout);
 
 // Mot de passe oublié
 router.post("/forgot-password", strictLimiter, forgotPassword);

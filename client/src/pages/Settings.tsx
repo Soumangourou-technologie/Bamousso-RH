@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 
 const SettingsPage = () => {
-  const { company, login, user, token } = useAuth();
+  const { company, login, user } = useAuth();
   const navigate = useNavigate();
   const [logoUrl, setLogoUrl] = useState(company?.logoUrl || '');
   const [isSaving, setIsSaving] = useState(false);
@@ -37,8 +37,8 @@ const SettingsPage = () => {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       // Mettre à jour le contexte avec le nouveau logo
-      if (token && user) {
-        login(token, user, res.data.company);
+      if (user) {
+        login(user, res.data.company);
       }
       setMessage('Logo mis à jour avec succès !');
     } catch (error: any) {
@@ -71,9 +71,9 @@ const SettingsPage = () => {
   };
 
   const getPlanLimit = (plan: string) => {
-    switch(plan) {
-      case 'FITINI': return 5;
-      case 'LOUBA': return 7;
+    switch (plan) {
+      case 'FITINI': return 3;
+      case 'LOUBA': return 10;
       case 'KORO': return Infinity;
       default: return 0;
     }

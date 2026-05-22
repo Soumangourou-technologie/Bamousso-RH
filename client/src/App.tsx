@@ -37,6 +37,7 @@ import ClientRegistration from './pages/ClientRegistration';
 import ClientRegistrationAdmin from './pages/ClientRegistrationAdmin';
 import Support from './pages/Support';
 import Upgrade from './pages/Upgrade';
+import Missions from './pages/Missions';
 
 import { NotificationProvider } from './context/NotificationContext';
 
@@ -102,6 +103,7 @@ function App() {
                   <Route path="/explanations" element={<Explanations />} />
                   <Route path="/salaries" element={<Salaries />} />
                   <Route path="/conflicts" element={<Conflicts />} />
+                  <Route path="/missions/:type" element={<Missions />} />
 
                   {/* Commercial: Enregistrement Client */}
                   <Route element={<ProtectedRoute allowedRoles={['COMMERCIAL']} />}>

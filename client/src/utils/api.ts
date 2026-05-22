@@ -6,6 +6,7 @@ export const API_URL = rawApiUrl.endsWith('/api') ? rawApiUrl.slice(0, -4) : raw
 
 const api = axios.create({
   baseURL: `${API_URL}/api`,
+  withCredentials: true,
 });
 
 export const getFileUrl = (path?: string) => {
@@ -15,18 +16,7 @@ export const getFileUrl = (path?: string) => {
     return path;
 }
 
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+// Plus besoin d'intercepteur pour ajouter le token car on utilise HttpOnly cookies
 
 api.interceptors.response.use(
   (response) => response,
@@ -36,8 +26,8 @@ api.interceptors.response.use(
 
     if (status === 401) {
       // Session expirée ou invalide -> Logout
-      localStorage.removeItem('token');
       localStorage.removeItem('user');
+      localStorage.removeItem('company');
       if (window.location.pathname !== '/login') {
         window.location.assign('/login?expired=true');
       }

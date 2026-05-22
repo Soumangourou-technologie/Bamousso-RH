@@ -5,7 +5,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
   Building2, LayoutDashboard, LogOut, Moon, Sun, Users, Layers, X, 
   Calendar, Clock, FileText, Megaphone, Settings as SettingsIcon,
-  ListTodo, Banknote, MessageCircle, MessageSquare, FileWarning, BarChart3, Shield, UserPlus, LifeBuoy
+  ListTodo, Banknote, MessageCircle, MessageSquare, FileWarning, BarChart3, Shield, UserPlus, LifeBuoy, Truck, Target
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
@@ -44,6 +44,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
       case 'HR_MANAGER': return 'RH Manager';
       case 'HR_ASSISTANT': return 'Assistant RH';
       case 'COMMERCIAL': return 'Commercial';
+      case 'LIVREUR': return 'Livreur';
       case 'EMPLOYEE': return 'Employé';
       default: return role;
     }
@@ -223,6 +224,20 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                 <Megaphone className="w-5 h-5" />
                 Annonces
                 <SidebarBadge count={badgeCounts.announcements} />
+              </Link>
+            </>
+          )}
+
+          {/* Missions: Livraison & Prospection */}
+          {!isSuperAdmin && (canManageHr || isCommercial || user.role === 'LIVREUR') && (
+            <>
+              <Link to="/missions/livraison" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname.startsWith('/missions/livraison') ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
+                <Truck className="w-5 h-5" />
+                Livraisons
+              </Link>
+              <Link to="/missions/prospection" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname.startsWith('/missions/prospection') ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
+                <Target className="w-5 h-5" />
+                Prospections
               </Link>
             </>
           )}

@@ -8,6 +8,7 @@ import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
 import { apiLimiter, authLimiter } from "./middleware/rateLimit.js";
 import errorHandler from "./middleware/errorHandler.js";
 
@@ -37,6 +38,7 @@ import rolesRoutes from "./routes/roles.routes.js";
 import conflictsRoutes from "./routes/conflicts.routes.js";
 import clientRegistrationRoutes from "./routes/clientRegistration.routes.js";
 import supportRoutes from "./routes/support.routes.js";
+import missionsRoutes from "./routes/missions.routes.js";
 
 // Chargement des variables d'environnement
 dotenv.config();
@@ -56,10 +58,11 @@ app.use(cors({
   credentials: true
 }));
 
+app.use(cookieParser());
+
 // Sécurisation des headers HTTP avec Helmet
 app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" },
-  contentSecurityPolicy: false, // Désactivé temporairement pour diagnostic
 }));
 
 // Journalisation des requêtes HTTP en mode développement
@@ -102,6 +105,7 @@ app.use("/api/roles", apiLimiter, rolesRoutes);
 app.use("/api/conflicts", apiLimiter, conflictsRoutes);
 app.use("/api/client-registrations", apiLimiter, clientRegistrationRoutes);
 app.use("/api/support", apiLimiter, supportRoutes);
+app.use("/api/missions", apiLimiter, missionsRoutes);
 
 // Route de test pour vérifier que l'API est en ligne
 app.get("/", (req, res) => {

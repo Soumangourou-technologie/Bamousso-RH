@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import api from '../utils/api';
 import { useAuth } from '../context/AuthContext';
-import { Clock, Play, Square, AlertCircle, MapPin, Navigation } from 'lucide-react';
+import { Clock, Play, Square, AlertCircle, MapPin, Navigation, Download } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { supabase } from '../utils/supabase';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 interface Attendance {
   id: string;
@@ -110,6 +112,33 @@ const AttendancePage = () => {
     if (!checkIn || !checkOut) return '-';
     const diff = new Date(checkOut).getTime() - new Date(checkIn).getTime();
     return (diff / (1000 * 60 * 60)).toFixed(2) + ' h';
+  };
+
+  const exportToPDF = () => {
+    const doc = new jsPDF();
+    doc.setFontSize(18);
+    doc.text('Historique des Pointages', 14, 22);
+
+    const tableData = logs.map(log => [
+      new Date(log.date).toLocaleDateString('fr-FR'),
+      canManage ? (log.employee ? `${log.employee.firstName} ${log.employee.lastName}` : '-') : '-',
+      log.checkIn ? new Date(log.checkIn).toLocaleTimeString('fr-FR') : '-',
+      log.checkOut ? new Date(log.checkOut).toLocaleTimeString('fr-FR') : '-',
+      calculateHours(log.checkIn, log.checkOut),
+      log.status
+    ]);
+
+    const headers = canManage 
+      ? ['Date', 'Employé', 'Arrivée', 'Départ', 'Durée', 'Statut']
+      : ['Date', '-', 'Arrivée', 'Départ', 'Durée', 'Statut'];
+
+    autoTable(doc, {
+      startY: 30,
+      head: [headers],
+      body: tableData,
+    });
+    
+    doc.save('rapport_pointages.pdf');
   };
 
   // Points GPS pour la carte
@@ -219,10 +248,16 @@ const AttendancePage = () => {
           transition={{ delay: 0.1 }}
           className={`${canManage ? 'lg:col-span-3' : 'lg:col-span-2'} bg-white dark:bg-gray-800 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden`}
         >
-          <div className="p-6 border-b border-gray-100 dark:border-gray-700">
+          <div className="p-6 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
             <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">
               {canManage ? "Pointages de l'équipe" : 'Mon Historique'}
             </h2>
+            <button
+              onClick={exportToPDF}
+              className="px-4 py-2 bg-orange-500 text-white rounded-lg text-sm font-bold shadow hover:bg-orange-600 transition flex items-center gap-2"
+            >
+              <Download className="w-4 h-4" /> Exporter (PDF)
+            </button>
           </div>
 
           <div className="overflow-x-auto">

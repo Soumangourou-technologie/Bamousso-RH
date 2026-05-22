@@ -8,7 +8,7 @@ import { motion } from 'framer-motion';
 
 const plans = [
   { id: 'FITINI', name: 'FITINI', price: '4.500 FCFA', rawPrice: 4500, maxBase: 5 },
-  { id: 'LOUBA', name: 'LOUBA', price: '7.500 FCFA', rawPrice: 7500, maxBase: 7 },
+  { id: 'LOUBA', name: 'LOUBA', price: '7.500 FCFA', rawPrice: 7500, maxBase: 10 },
   { id: 'KORO', name: 'Kôrô', price: '14.700 FCFA', rawPrice: 14700, maxBase: Infinity }
 ];
 
@@ -38,7 +38,7 @@ const Register = () => {
       });
       
       // 2. Connexion automatique
-      login(response.data.token, response.data.user, response.data.company);
+      login(response.data.user, response.data.company);
       
       // 3. Redirection vers le paiement
       navigate('/payment', { 

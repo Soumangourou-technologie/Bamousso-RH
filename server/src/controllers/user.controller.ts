@@ -18,6 +18,7 @@ const createUserSchema = z.object({
     "COMPANY_ADMIN", 
     "HR_MANAGER", 
     "COMMERCIAL", 
+    "LIVREUR",
     "EMPLOYEE", 
   ]), 
   companyId: z.string().optional(), 
@@ -137,6 +138,7 @@ export const getUsers = async (req: AuthRequest, res: Response) => {
       "COMPANY_ADMIN",
       "HR_MANAGER",
       "COMMERCIAL",
+      "LIVREUR",
       "EMPLOYEE",
     ];
 
@@ -243,7 +245,7 @@ export const updateUser = async (req: AuthRequest, res: Response) => {
       if (data.role !== undefined) updateData.role = data.role;
       if (data.companyId !== undefined) updateData.companyId = data.companyId;
     } else if (data.role !== undefined || data.companyId !== undefined || data.email !== undefined) {
-        if (data.role && ["HR_MANAGER", "COMMERCIAL", "EMPLOYEE"].includes(data.role)) {
+        if (data.role && ["HR_MANAGER", "COMMERCIAL", "LIVREUR", "EMPLOYEE"].includes(data.role)) {
            updateData.role = data.role;
         } else if (data.role) {
            return res.status(403).json({ message: "Action non autorisée : vous ne pouvez pas attribuer ce rôle." });

@@ -11,10 +11,30 @@ import { generateSubscriptionPDF } from '../utils/pdfGenerator.js';
  */
 export const initiatePayment = async (req: Request, res: Response) => {
   try {
-    const { amount, description, companyId, plan } = req.body;
+    const { description, companyId, plan } = req.body;
 
-    if (!amount || !companyId) {
-      return res.status(400).json({ success: false, message: "Montant et ID entreprise requis." });
+    if (!companyId || !plan) {
+      return res.status(400).json({ success: false, message: "ID entreprise et Plan requis." });
+    }
+
+    const isAddOn = req.body.isAddOn === 'true' || req.body.isAddOn === true;
+    const extraEmployees = parseInt(req.body.extraEmployees) || 0;
+
+    // Calcul sécurisé du montant côté serveur
+    let calculatedAmount = 0;
+    if (isAddOn) {
+      calculatedAmount = extraEmployees * 850;
+    } else {
+      let basePrice = 0;
+      if (plan === 'LOUBA') basePrice = 7500;
+      else if (plan === 'KORO') basePrice = 14700;
+
+      const extraCost = plan === 'KORO' ? 0 : (extraEmployees * 850);
+      calculatedAmount = basePrice + extraCost;
+    }
+
+    if (calculatedAmount <= 0) {
+      return res.status(400).json({ success: false, message: "Montant invalide ou formule gratuite (aucune transaction requise)." });
     }
 
     const apiKey = process.env.GENIUSPAY_KEY;
@@ -29,10 +49,10 @@ export const initiatePayment = async (req: Request, res: Response) => {
     // Log diagnostic (affiche juste le début pour vérification)
     await logger.info(`Diagnostic Clés: KEY=${apiKey.substring(0, 10)}... SECRET=${apiSecret.substring(0, 10)}...`, null, "PaymentController");
 
-    await logger.info("Initiating payment request", { amount, companyId, plan }, "PaymentController");
+    await logger.info("Initiating payment request", { amount: calculatedAmount, companyId, plan }, "PaymentController");
 
     const response = await axios.post('https://pay.genius.ci/api/v1/merchant/payments', {
-      amount: parseInt(amount),
+      amount: calculatedAmount,
       description: description || "Abonnement Bamousso RH",
       currency: "XOF",
       metadata: {
@@ -61,7 +81,7 @@ export const initiatePayment = async (req: Request, res: Response) => {
       // Sauvegarde de la transaction en attente dans la DB
       await prisma.payment.create({
         data: {
-          amount: parseFloat(amount),
+          amount: calculatedAmount,
           reference: `BAM-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
           externalId: transactionId.toString(),
           status: "PENDING",

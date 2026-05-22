@@ -40,6 +40,7 @@ model Company {
   customRoles CustomRole[]
   disciplinaryCases DisciplinaryCase[]
   clientRegistrations ClientRegistration[]
+  missions    Mission[]
 
   // Relations avec le Support Client
   supportTickets     SupportTicket[]
@@ -88,7 +89,7 @@ model User {
   password  String // Mot de passe crypté (Haché)
   firstName String
   lastName  String
-  role      String  @default("EMPLOYEE") // SUPER_ADMIN, COMPANY_ADMIN, HR_MANAGER, HR_ASSISTANT, COMMERCIAL, EMPLOYEE
+  role      String  @default("EMPLOYEE") // SUPER_ADMIN, COMPANY_ADMIN, HR_MANAGER, HR_ASSISTANT, COMMERCIAL, LIVREUR, EMPLOYEE
   isOnline  Boolean @default(false)
 
   // Champs RH
@@ -150,6 +151,9 @@ model User {
   updatedAt     DateTime @updatedAt
   assignedTasks Task[]   @relation("AssignedTasks")
   createdTasks  Task[]   @relation("CreatedTasks")
+  
+  assignedMissions Mission[] @relation("AssignedMissions")
+  createdMissions  Mission[] @relation("CreatedMissions")
 
   // Relations avec le Support Client
   createdSupportTickets SupportTicket[]        @relation("TicketCreator")
@@ -510,4 +514,39 @@ model SupportChatMessage {
   createdAt DateTime        @default(now())
 
   @@index([roomId])
+}
+
+/// Modèle Mission (Livraison & Prospection)
+model Mission {
+  id           String    @id @default(uuid())
+  title        String
+  description  String?
+  type         String    // LIVRAISON, PROSPECTION
+  status       String    @default("EN_ATTENTE") // EN_ATTENTE, VALIDEE
+  dueDate      DateTime?
+  
+  // Client Info
+  clientName   String?
+  clientPhone  String?
+  address      String?
+  
+  // Validation
+  validationMode String? // SIGNATURE, CHECKBOX
+  signatureUrl   String? // Base64 de la signature
+  validatedAt    DateTime?
+  
+  companyId    String
+  company      Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  
+  assignedToId String
+  assignedTo   User      @relation("AssignedMissions", fields: [assignedToId], references: [id], onDelete: Cascade)
+  
+  createdById  String
+  createdBy    User      @relation("CreatedMissions", fields: [createdById], references: [id], onDelete: Cascade)
+  
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([companyId])
+  @@index([assignedToId])
 }

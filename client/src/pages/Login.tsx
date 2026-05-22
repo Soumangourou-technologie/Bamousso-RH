@@ -19,7 +19,7 @@ const Login = () => {
     setError('');
     try {
       const response = await api.post('/auth/login', data);
-      login(response.data.token, response.data.user, response.data.company);
+      login(response.data.user, response.data.company);
       if (response.data.company?.isLocked) {
         navigate('/locked');
       } else {

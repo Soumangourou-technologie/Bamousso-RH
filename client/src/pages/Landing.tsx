@@ -186,9 +186,9 @@ const Landing = () => {
               title="LOUBA (Moyen)"
               price="7.500"
               period="/mois"
-              description="Idéal pour 1 à 7 employés."
+              description="Idéal pour 1 à 10 employés."
               features={[
-                'Jusqu\'à 7 employés', 
+                'Jusqu\'à 10 employés', 
                 'Analytique RH avancé', 
                 'Messagerie Interne (Boss/Staff)', 
                 'Gestion des conflits (Anonymat)', 

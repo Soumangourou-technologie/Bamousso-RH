@@ -2,6 +2,8 @@ import { motion } from 'framer-motion';
 import { Banknote, TrendingUp, Download, Wallet, History, Edit2, Check, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import api from '../utils/api';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 interface SalaryEmployee {
   id: string;
@@ -85,6 +87,31 @@ const Salaries = () => {
 
   const totalMasse = employees.reduce((acc, curr) => acc + (curr.baseSalary || 0), 0);
 
+  const exportToPDF = () => {
+    const doc = new jsPDF();
+    doc.setFontSize(20);
+    doc.text('Rapport des Salaires', 14, 22);
+    
+    doc.setFontSize(12);
+    doc.text(`Masse Salariale Totale : ${totalMasse.toLocaleString()} FCFA`, 14, 32);
+    
+    const tableData = employees.map(emp => [
+      `${emp.firstName} ${emp.lastName}`,
+      emp.jobTitle || 'Non défini',
+      (emp.baseSalary || 0).toLocaleString(),
+      emp.salaryCurrency,
+      emp.bankDetails || '--'
+    ]);
+
+    autoTable(doc, {
+      startY: 40,
+      head: [['Employé', 'Poste', 'Salaire de base', 'Devise', 'Infos Bancaires']],
+      body: tableData,
+    });
+    
+    doc.save('rapport_salaires.pdf');
+  };
+
   return (
     <div className="space-y-8">
       <motion.div 
@@ -97,7 +124,10 @@ const Salaries = () => {
           <p className="text-gray-400 font-medium mt-1">Suivi des rémunérations et fiches de paie.</p>
         </div>
         <div className="flex gap-4">
-          <button className="glass-card px-6 py-3 rounded-xl font-bold text-sm text-white flex items-center gap-2 hover:border-brand-primary/50 transition-all">
+          <button 
+            onClick={exportToPDF}
+            className="glass-card px-6 py-3 rounded-xl font-bold text-sm text-white flex items-center gap-2 hover:border-brand-primary/50 transition-all"
+          >
             <Download className="w-4 h-4" /> Rapport global
           </button>
           <button 
