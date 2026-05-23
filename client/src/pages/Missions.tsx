@@ -300,29 +300,29 @@ const Missions = () => {
               <form onSubmit={handleCreate} className="p-6 space-y-4">
                 <div>
                   <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Titre de la mission *</label>
-                  <input required type="text" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="w-full p-3 rounded-xl bg-gray-50 dark:bg-white/5 border-none" />
+                  <input required type="text" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="w-full p-3 rounded-xl bg-gray-50 dark:bg-white/5 border-none text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-brand-primary/50" />
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Nom du Client</label>
-                  <input type="text" value={formData.clientName} onChange={e => setFormData({...formData, clientName: e.target.value})} className="w-full p-3 rounded-xl bg-gray-50 dark:bg-white/5 border-none" />
+                  <input type="text" value={formData.clientName} onChange={e => setFormData({...formData, clientName: e.target.value})} className="w-full p-3 rounded-xl bg-gray-50 dark:bg-white/5 border-none text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-brand-primary/50" />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Téléphone Client</label>
-                    <input type="text" value={formData.clientPhone} onChange={e => setFormData({...formData, clientPhone: e.target.value})} className="w-full p-3 rounded-xl bg-gray-50 dark:bg-white/5 border-none" />
+                    <input type="text" value={formData.clientPhone} onChange={e => setFormData({...formData, clientPhone: e.target.value})} className="w-full p-3 rounded-xl bg-gray-50 dark:bg-white/5 border-none text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-brand-primary/50" />
                   </div>
                   <div>
                     <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Date d'échéance</label>
-                    <input type="date" value={formData.dueDate} onChange={e => setFormData({...formData, dueDate: e.target.value})} className="w-full p-3 rounded-xl bg-gray-50 dark:bg-white/5 border-none" />
+                    <input type="date" value={formData.dueDate} onChange={e => setFormData({...formData, dueDate: e.target.value})} className="w-full p-3 rounded-xl bg-gray-50 dark:bg-white/5 border-none text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-brand-primary/50" />
                   </div>
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Adresse</label>
-                  <input type="text" value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} className="w-full p-3 rounded-xl bg-gray-50 dark:bg-white/5 border-none" />
+                  <input type="text" value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} className="w-full p-3 rounded-xl bg-gray-50 dark:bg-white/5 border-none text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-brand-primary/50" />
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Assigner à *</label>
-                  <select required value={formData.assignedToId} onChange={e => setFormData({...formData, assignedToId: e.target.value})} className="w-full p-3 rounded-xl bg-gray-50 dark:bg-white/5 border-none">
+                  <select required value={formData.assignedToId} onChange={e => setFormData({...formData, assignedToId: e.target.value})} className="w-full p-3 rounded-xl bg-gray-50 dark:bg-white/5 border-none text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-brand-primary/50">
                     <option value="">Sélectionner un employé</option>
                     {employees.map(emp => (
                       <option key={emp.id} value={emp.id}>{emp.firstName} {emp.lastName} ({emp.role})</option>
