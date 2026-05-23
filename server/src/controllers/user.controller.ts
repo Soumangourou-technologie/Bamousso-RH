@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import prisma from "../utils/prisma.js"; 
 import { z } from "zod"; 
 import type { AuthRequest } from "../middleware/auth.js"; 
+import crypto from "crypto";
 
 // ======================= 
 // SCHEMAS 
@@ -67,11 +68,9 @@ export const createUser = async (req: AuthRequest, res: Response) => {
       }); 
     } 
 
-    const rawPassword = 
-      data.password && data.password.length >= 6 
-        ? data.password 
-        : Math.random().toString(36).slice(2) + 
-          Math.random().toString(36).slice(2); 
+    const rawPassword = data.password 
+      ? data.password 
+      : crypto.randomBytes(8).toString("hex");
 
     const hashedPassword = await bcrypt.hash(rawPassword, 10); 
 

@@ -5,7 +5,7 @@ import { rateLimit } from 'express-rate-limit';
  */
 export const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limite chaque IP à 100 requêtes par fenêtre
+  max: 1000, // Augmenté à 1000 pour éviter de bloquer l'usage normal (SPA React)
   standardHeaders: true,
   legacyHeaders: false,
   message: "Trop de requêtes effectuées depuis cette adresse IP, veuillez réessayer plus tard.",
