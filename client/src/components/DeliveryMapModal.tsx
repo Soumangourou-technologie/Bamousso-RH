@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { motion } from 'framer-motion';
 import { X, RefreshCw } from 'lucide-react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
@@ -57,8 +58,8 @@ const DeliveryMapModal = ({ onClose }: DeliveryMapModalProps) => {
     ? [activeLivreurs[0].currentLat!, activeLivreurs[0].currentLng!] as [number, number]
     : defaultCenter;
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-6">
+  return createPortal(
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6">
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
       <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} className="relative bg-white dark:bg-[#1a0f0a] rounded-3xl w-full max-w-5xl h-[80vh] overflow-hidden shadow-2xl border border-gray-200 dark:border-white/10 flex flex-col">
         <div className="p-4 md:p-6 border-b border-gray-100 dark:border-white/5 flex justify-between items-center bg-white dark:bg-[#1a0f0a] z-10">
@@ -110,7 +111,8 @@ const DeliveryMapModal = ({ onClose }: DeliveryMapModalProps) => {
           )}
         </div>
       </motion.div>
-    </div>
+    </div>,
+    document.body
   );
 };
 
