@@ -102,6 +102,11 @@ model User {
   salaryCurrency String  @default("XOF") // Devise (FCFA, etc.)
   bankDetails    String? // Infos bancaires (RIB, etc.)
 
+  // GPS Tracking (pour les livreurs)
+  currentLat         Float?
+  currentLng         Float?
+  lastLocationUpdate DateTime?
+
   passwordResetToken     String?
   passwordResetExpiresAt DateTime?
 

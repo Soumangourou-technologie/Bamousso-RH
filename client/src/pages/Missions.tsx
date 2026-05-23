@@ -7,6 +7,7 @@ import api from '../utils/api';
 import SignatureCanvas from 'react-signature-canvas';
 import jsPDF from 'jspdf';
 import * as XLSX from 'xlsx';
+import DeliveryMapModal from '../components/DeliveryMapModal';
 
 interface Mission {
   id: string;
@@ -36,6 +37,7 @@ const Missions = () => {
   const [showValidateModal, setShowValidateModal] = useState<Mission | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [employees, setEmployees] = useState<any[]>([]);
+  const [showMapModal, setShowMapModal] = useState(false);
 
   // Validation Form State
   const sigPad = useRef<SignatureCanvas>(null);
@@ -213,6 +215,15 @@ const Missions = () => {
              Export Excel
            </button>
           )}
+          {canManage && missionType === 'LIVRAISON' && (
+            <button
+              onClick={() => setShowMapModal(true)}
+              className="flex items-center justify-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-xl font-bold hover:bg-indigo-700 transition-all w-full md:w-auto"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon><line x1="9" y1="3" x2="9" y2="18"></line><line x1="15" y1="6" x2="15" y2="21"></line></svg>
+              Carte en direct
+            </button>
+          )}
         </div>
       </div>
 
@@ -384,6 +395,10 @@ const Missions = () => {
             </motion.div>
           </div>
         )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showMapModal && <DeliveryMapModal onClose={() => setShowMapModal(false)} />}
       </AnimatePresence>
     </div>
   );

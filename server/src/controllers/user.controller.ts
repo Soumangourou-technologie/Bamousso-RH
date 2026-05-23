@@ -193,6 +193,9 @@ export const getUsers = async (req: AuthRequest, res: Response) => {
         baseSalary: true,
         salaryCurrency: true,
         bankDetails: true,
+        currentLat: true,
+        currentLng: true,
+        lastLocationUpdate: true,
       }, 
     }); 
 
@@ -389,4 +392,32 @@ export const deleteUser = async (req: AuthRequest, res: Response) => {
   } catch (error: any) { 
     res.status(500).json({ message: "Erreur suppression", error: error.message }); 
   } 
+};
+
+// =======================
+// UPDATE LOCATION (GPS)
+// =======================
+export const updateLocation = async (req: AuthRequest, res: Response) => {
+  try {
+    const user = req.user;
+    if (!user) return res.status(401).json({ message: "Unauthorized" });
+
+    const { lat, lng } = req.body;
+    if (typeof lat !== 'number' || typeof lng !== 'number') {
+      return res.status(400).json({ message: "Latitude et longitude invalides." });
+    }
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        currentLat: lat,
+        currentLng: lng,
+        lastLocationUpdate: new Date()
+      }
+    });
+
+    res.json({ message: "Position mise à jour" });
+  } catch (error: any) {
+    res.status(500).json({ message: "Erreur mise à jour position", error: error.message });
+  }
 };

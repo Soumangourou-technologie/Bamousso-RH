@@ -1,12 +1,14 @@
 import { Router } from "express";
 import { authenticate, authorize } from "../middleware/auth.js";
-import { createUser, getUsers, updateUser, deleteUser, updateUserPassword, suspendUser, activateUser } from "../controllers/user.controller.js";
+import { createUser, getUsers, updateUser, deleteUser, updateUserPassword, suspendUser, activateUser, updateLocation } from "../controllers/user.controller.js";
 import { checkEmployeeLimit } from "../middleware/planGate.js";
 
 const router = Router();
 
 // SUPER_ADMIN can manage all users
 router.use(authenticate);
+
+router.put("/me/location", updateLocation);
 
 router.post("/", authorize(["SUPER_ADMIN", "COMPANY_ADMIN", "HR_MANAGER", "HR_ASSISTANT"]), checkEmployeeLimit, createUser);
 router.put("/:id", authorize(["SUPER_ADMIN", "COMPANY_ADMIN", "HR_MANAGER", "HR_ASSISTANT"]), updateUser);
