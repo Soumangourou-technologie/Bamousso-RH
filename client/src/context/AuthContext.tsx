@@ -16,6 +16,7 @@ interface User {
     | 'HR_MANAGER'
     | 'HR_ASSISTANT'
     | 'COMMERCIAL'
+    | 'LIVREUR'
     | 'EMPLOYEE';
   firstName: string;
   lastName: string;
