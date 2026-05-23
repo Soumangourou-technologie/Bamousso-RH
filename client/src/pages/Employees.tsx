@@ -6,7 +6,7 @@ import { Lock, Unlock, Download, Trash2, Edit2, Check, X } from 'lucide-react';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 
-type Role = 'COMPANY_ADMIN' | 'HR_MANAGER' | 'COMMERCIAL' | 'EMPLOYEE';
+type Role = 'COMPANY_ADMIN' | 'HR_MANAGER' | 'COMMERCIAL' | 'LIVREUR' | 'EMPLOYEE';
 type Status = 'INVITED' | 'ACTIVE' | 'INACTIVE';
 
 interface Department {
@@ -260,6 +260,7 @@ const Employees = () => {
             >
               <option value="EMPLOYEE">Employé</option>
               <option value="COMMERCIAL">Commercial</option>
+              <option value="LIVREUR">Livreur</option>
               <option value="HR_MANAGER">RH Manager</option>
               <option value="COMPANY_ADMIN">Admin entreprise</option>
             </select>
