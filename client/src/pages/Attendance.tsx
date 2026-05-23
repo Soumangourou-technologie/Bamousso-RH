@@ -23,7 +23,7 @@ interface Attendance {
 
 const AttendancePage = () => {
   const { user } = useAuth();
-  const canManage = user?.role === 'COMPANY_ADMIN' || user?.role === 'HR_MANAGER' || user?.role === 'COMMERCIAL';
+  const canManage = user?.role === 'COMPANY_ADMIN' || user?.role === 'HR_MANAGER' || user?.role === 'HR_ASSISTANT';
   
   const [logs, setLogs] = useState<Attendance[]>([]);
   const [isLoading, setIsLoading] = useState(false);

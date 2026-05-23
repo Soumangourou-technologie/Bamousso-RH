@@ -49,7 +49,7 @@ const DocumentsPage = () => {
     }
   };
 
-  const canManage = user?.role === 'COMPANY_ADMIN' || user?.role === 'HR_MANAGER' || user?.role === 'COMMERCIAL';
+  const canManage = user?.role === 'COMPANY_ADMIN' || user?.role === 'HR_MANAGER' || user?.role === 'HR_ASSISTANT';
 
   useEffect(() => {
     void fetchDocuments();
