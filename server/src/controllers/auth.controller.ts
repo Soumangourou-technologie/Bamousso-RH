@@ -94,7 +94,7 @@ export const registerCompany = catchAsync(async (req: Request, res: Response) =>
         data: {
           name: companyName,
           isActive: false,
-          subscriptionStatus: "PAST_DUE", 
+          subscriptionStatus: "PENDING", 
           subscriptionEndsAt: null,
           trialEndsAt: null,
           plan: plan || "FITINI",
@@ -165,7 +165,10 @@ export const registerCompany = catchAsync(async (req: Request, res: Response) =>
       company: { 
         id: registrationResult.company.id, 
         name: registrationResult.company.name,
-        plan: registrationResult.company.plan
+        plan: registrationResult.company.plan,
+        extraEmployees: registrationResult.company.extraEmployees,
+        isActive: registrationResult.company.isActive,
+        subscriptionStatus: registrationResult.company.subscriptionStatus
       }
     });
   } catch (error: any) {

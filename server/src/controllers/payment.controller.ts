@@ -216,7 +216,9 @@ export const handleWebhook = async (req: Request, res: Response) => {
         } else {
           // Cas "Nouvel abonnement / Renouvellement" : on écrase avec le plan et le quota choisi
           updateData.plan = plan;
-          updateData.extraEmployees = extraEmployees;
+          if (metadata.extraEmployees !== undefined) {
+            updateData.extraEmployees = extraEmployees;
+          }
         }
 
         const company = await (prisma.company.update({
@@ -345,7 +347,9 @@ export const confirmPayment = async (req: Request, res: Response) => {
         } else {
           // Cas "Nouvel abonnement / Renouvellement"
           updateData.plan = plan;
-          updateData.extraEmployees = extraEmployees;
+          if (metadata.extraEmployees !== undefined) {
+            updateData.extraEmployees = extraEmployees;
+          }
         }
 
         await prisma.company.update({

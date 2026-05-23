@@ -1,0 +1,55 @@
+================================================
+ VARIABLES FRONTEND (Vite) - TRÈS IMPORTANT
+================================================
+
+VITE_SUPABASE_URL
+https://ntqbwmvwhtmovdcmwyrr.supabase.co
+
+VITE_SUPABASE_ANON_KEY
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50cWJ3bXZ3aHRtb3ZkY213eXJyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMDc2MjksImV4cCI6MjA5Mjg4MzYyOX0.IrnBYXI6rv2pHqgUMdRwrQA5ziAmkFvd0QNQUWBtAsw
+
+VITE_API_URL
+https://bamousso.com
+
+
+================================================
+ VARIABLES BACKEND (Base de données, Paiement, Sécurité)
+================================================
+
+DATABASE_URL
+postgresql://postgres.ntqbwmvwhtmovdcmwyrr:vuLcI3upe2LPk2jE@aws-1-eu-central-1.pooler.supabase.com:6543/postgres?pgbouncer=true
+
+FRONTEND_URL
+https://bamousso.com
+
+JWT_SECRET
+supersecretkeybamoussorh1234567890!
+
+SUPABASE_SERVICE_KEY
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50cWJ3bXZ3aHRtb3ZkY213eXJyIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NzMwNzYyOSwiZXhwIjoyMDkyODgzNjI5fQ.aZV6MdHK27VIypqEXVcdQnHezL7BCgcDX_H2gq-ensQ
+
+SUPABASE_ANON_KEY
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50cWJ3bXZ3aHRtb3ZkY213eXJyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMDc2MjksImV4cCI6MjA5Mjg4MzYyOX0.IrnBYXI6rv2pHqgUMdRwrQA5ziAmkFvd0QNQUWBtAsw
+
+SUPABASE_URL
+https://ntqbwmvwhtmovdcmwyrr.supabase.co
+
+GENIUSPAY_KEY
+pk_sandbox_9U6UucLrncT03TkRupPla0NNR2PgXaq6
+
+GENIUSPAY_SECRET
+sk_sandbox_9bd9aed97ce1dbbb3cd0e976bd7a92fd5ed707a07de4cd2bd886fe8dbaa76fde
+
+GENIUSPAY_WEBHOOK_SECRET
+sk_sandbox_9bd9aed97ce1dbbb3cd0e976bd7a92fd5ed707a07de4cd2bd886fe8dbaa76fde
+
+RESEND_API_KEY
+re_your_api_key
+
+================================================
+ INSTRUCTIONS APRÈS AJOUT DANS VERCEL
+================================================
+1. Allez dans l'onglet "Deployments" de votre projet Vercel.
+2. Cliquez sur les 3 petits points à côté du déploiement le plus récent.
+3. Cliquez sur "Redeploy".
+4. Attendez la fin du processus, et votre site fonctionnera parfaitement !

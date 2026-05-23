@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { Settings as SettingsIcon, Image as ImageIcon, Save, CreditCard, Users, Plus } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { usePlan } from '../hooks/usePlan';
 
 const SettingsPage = () => {
   const { company, login, user } = useAuth();
@@ -70,16 +71,8 @@ const SettingsPage = () => {
     });
   };
 
-  const getPlanLimit = (plan: string) => {
-    switch (plan) {
-      case 'FITINI': return 3;
-      case 'LOUBA': return 10;
-      case 'KORO': return Infinity;
-      default: return 0;
-    }
-  };
-
-  const maxEmployees = getPlanLimit(company?.plan || 'FITINI') + (company?.extraEmployees || 0);
+  const { maxEmployees: getMaxEmployees } = usePlan();
+  const maxEmployees = getMaxEmployees();
 
   return (
     <div className="space-y-8 max-w-4xl mx-auto pb-12">

@@ -61,7 +61,7 @@ const CompactCountdown = ({ endsAt }: { endsAt: string }) => {
 const DashboardAdmin = () => {
   const { company, user } = useAuth();
   const navigate = useNavigate();
-  const { plan, canUse } = usePlan();
+  const { plan, canUse, maxEmployees } = usePlan();
   const [stats, setStats] = useState({ employees: 0, departments: 0 });
 
   const fetchStats = async () => {
@@ -95,7 +95,7 @@ const DashboardAdmin = () => {
     };
   }, [user?.companyId]);
 
-  const maxEmp = PLAN_MAX_EMPLOYEES[plan];
+  const maxEmp = maxEmployees();
   const badge = PLAN_BADGE[plan] || PLAN_BADGE['FITINI'];
 
   const modules = [
