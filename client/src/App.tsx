@@ -76,16 +76,16 @@ function App() {
                     <Route path="/roles" element={<Roles />} />
                   </Route>
 
-                  <Route element={<ProtectedRoute allowedRoles={['HR_MANAGER', 'HR_ASSISTANT', 'COMMERCIAL']} />}>
+                  <Route element={<ProtectedRoute allowedRoles={['HR_MANAGER', 'HR_ASSISTANT']} />}>
                     <Route path="/dashboard/hr" element={<DashboardHR />} />
                   </Route>
 
-                  <Route element={<ProtectedRoute allowedRoles={['EMPLOYEE']} />}>
+                  <Route element={<ProtectedRoute allowedRoles={['EMPLOYEE', 'LIVREUR', 'COMMERCIAL']} />}>
                     <Route path="/dashboard/employee" element={<DashboardEmployee />} />
                   </Route>
 
                   {/* Pages RH */}
-                  <Route element={<ProtectedRoute allowedRoles={['COMPANY_ADMIN', 'HR_MANAGER', 'HR_ASSISTANT', 'COMMERCIAL']} />}>
+                  <Route element={<ProtectedRoute allowedRoles={['COMPANY_ADMIN', 'HR_MANAGER', 'HR_ASSISTANT']} />}>
                     <Route path="/employees" element={<Employees />} />
                     <Route path="/departments" element={<Departments />} />
                     <Route path="/settings" element={<Settings />} />
