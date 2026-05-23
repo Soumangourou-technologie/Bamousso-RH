@@ -40,9 +40,15 @@ export const markAsRead = async (req: AuthRequest, res: Response) => {
     const id = req.params.id as string;
     const userId = req.user?.id;
 
-    const notification = await prisma.notification.findFirst({
+    let notification = await prisma.notification.findFirst({
       where: { id, userId },
     });
+
+    if (!notification) {
+      notification = await prisma.notification.findFirst({
+        where: { id, userId: null, companyId: req.user?.companyId },
+      });
+    }
 
     if (!notification) {
       return res.status(404).json({ message: "Notification not found" });
@@ -65,9 +71,15 @@ export const deleteNotification = async (req: AuthRequest, res: Response) => {
     const userId = req.user?.id;
 
     // Users can delete their own notifications
-    const notification = await prisma.notification.findFirst({
+    let notification = await prisma.notification.findFirst({
         where: { id, userId }
     });
+
+    if (!notification) {
+      notification = await prisma.notification.findFirst({
+          where: { id, userId: null, companyId: req.user?.companyId }
+      });
+    }
 
     if (!notification) {
         return res.status(404).json({ message: "Notification not found" });
