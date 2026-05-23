@@ -1,6 +1,7 @@
 import { Response } from "express";
 import prisma from "../utils/prisma.js";
 import { AuthRequest } from "../middleware/auth.js";
+import { createNotification, notifyAdmins } from "../utils/notifications.js";
 
 // =======================
 // CREATE MISSION
@@ -35,6 +36,16 @@ export const createMission = async (req: AuthRequest, res: Response) => {
         assignedToId,
         createdById: user.id
       }
+    });
+
+    // Notify the assigned user
+    await createNotification({
+      title: `Nouvelle Mission : ${mission.title}`,
+      message: `Vous avez été assigné à une nouvelle mission de ${mission.type}.`,
+      type: "MISSION_CREATED",
+      resourceId: mission.id,
+      userId: mission.assignedToId,
+      companyId: user.companyId
     });
 
     res.status(201).json(mission);
@@ -134,25 +145,13 @@ export const validateMission = async (req: AuthRequest, res: Response) => {
     });
 
     // 🔔 Envoyer une notification en temps réel aux admins
-    const admins = await prisma.user.findMany({
-      where: { 
-        companyId: user.companyId,
-        role: { in: ["COMPANY_ADMIN", "SUPER_ADMIN"] }
-      }
-    });
-
-    const notifications = admins.map(admin => ({
-      title: `Mission Validée : ${updatedMission.title}`,
-      message: `${updatedMission.assignedTo.firstName} a validé une mission de ${updatedMission.type}.`,
-      type: "MISSION_VALIDATED",
-      resourceId: updatedMission.id,
-      userId: admin.id,
-      companyId: user.companyId,
-    }));
-
-    if (notifications.length > 0) {
-      await prisma.notification.createMany({ data: notifications });
-    }
+    await notifyAdmins(
+      user.companyId,
+      `Mission Validée : ${updatedMission.title}`,
+      `${updatedMission.assignedTo.firstName} a validé une mission de ${updatedMission.type}.`,
+      "MISSION_VALIDATED",
+      updatedMission.id
+    );
 
     res.json(updatedMission);
   } catch (error: any) {

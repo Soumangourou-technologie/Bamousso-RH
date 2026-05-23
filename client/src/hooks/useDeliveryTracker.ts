@@ -21,7 +21,7 @@ export const useDeliveryTracker = () => {
         async (position) => {
           const { latitude, longitude } = position.coords;
           try {
-            await api.put('/users/me/location', { lat: latitude, lng: longitude });
+            await api.put('/employees/me/location', { lat: latitude, lng: longitude });
           } catch (error) {
             console.error("Erreur lors de l'envoi de la position:", error);
           }
