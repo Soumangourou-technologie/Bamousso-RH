@@ -24,6 +24,7 @@ interface Attendance {
 const AttendancePage = () => {
   const { user } = useAuth();
   const canManage = user?.role === 'COMPANY_ADMIN' || user?.role === 'HR_MANAGER' || user?.role === 'HR_ASSISTANT';
+  const shouldShowClockIn = user?.role !== 'COMPANY_ADMIN' && user?.role !== 'SUPER_ADMIN';
   
   const [logs, setLogs] = useState<Attendance[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -101,7 +102,7 @@ const AttendancePage = () => {
   // Pour EMPLOYEE: l'API ne renvoie pas le champ employee, on cherche juste par date
   // Pour ADMIN: l'API renvoie tous les logs avec employee
   const today = new Date().toDateString();
-  const todayLog = canManage
+  const todayLog = !shouldShowClockIn
     ? undefined // L'admin n'a pas de module de pointage personnel
     : logs.find(log => log.date && new Date(log.date).toDateString() === today);
 
@@ -168,8 +169,8 @@ const AttendancePage = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Module de Pointage (Employé uniquement) */}
-        {!canManage && (
+        {/* Module de Pointage (Visible pour tous sauf Admin) */}
+        {shouldShowClockIn && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -246,7 +247,7 @@ const AttendancePage = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className={`${canManage ? 'lg:col-span-3' : 'lg:col-span-2'} bg-white dark:bg-gray-800 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden`}
+          className={`${!shouldShowClockIn ? 'lg:col-span-3' : 'lg:col-span-2'} bg-white dark:bg-gray-800 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden`}
         >
           <div className="p-6 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
             <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">
