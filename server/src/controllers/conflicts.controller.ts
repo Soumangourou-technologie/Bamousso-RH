@@ -47,6 +47,18 @@ export const createDisciplinaryCase = async (req: Request, res: Response): Promi
       }
     });
 
+    // Notifier l'employé concerné
+    await prisma.notification.create({
+      data: {
+        title: "Nouveau cas disciplinaire",
+        message: `Un cas disciplinaire vous concernant a été ouvert : ${title}`,
+        type: "EXPLANATION",
+        resourceId: newCase.id,
+        userId: involvedEmployeeId,
+        companyId: currentUser.companyId
+      }
+    });
+
     res.status(201).json(newCase);
   } catch (error: any) {
     res.status(500).json({ message: "Erreur serveur.", error: error.message });

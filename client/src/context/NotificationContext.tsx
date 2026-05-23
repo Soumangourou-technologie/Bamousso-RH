@@ -98,6 +98,9 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
         // Only process if for this specific user or global to company
         if (!newNotif.userId || newNotif.userId === user?.id) {
           setNotifications(prev => {
+            // Prevent duplicate notifications from being added to the list
+            if (prev.some(n => n.id === newNotif.id)) return prev;
+            
             const updated = [newNotif, ...prev];
             calculateBadgeCounts(updated);
             return updated;

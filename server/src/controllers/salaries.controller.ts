@@ -58,6 +58,18 @@ export const generatePayroll = async (req: any, res: Response) => {
         }
       });
       payslips.push(doc);
+
+      // Notifier l'employé que sa fiche de paie est disponible
+      await prisma.notification.create({
+        data: {
+          title: "Fiche de paie disponible",
+          message: `Votre fiche de paie pour la période ${month}/${year} est maintenant disponible.`,
+          type: "DOCUMENT",
+          resourceId: doc.id,
+          userId: emp.id,
+          companyId: emp.companyId
+        }
+      });
     }
 
     res.status(201).json({ message: `${payslips.length} fiches de paie générées avec succès.`, data: payslips });
