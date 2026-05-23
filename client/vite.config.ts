@@ -14,6 +14,9 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
+      workbox: {
+        maximumFileSizeToCacheInBytes: 5000000 // Augmente la limite à ~5MB
+      },
       manifest: {
         name: 'BAMOUSSO',
         short_name: 'Bamousso',
