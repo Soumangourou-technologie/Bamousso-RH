@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Shield, PlusCircle, Edit, Trash2 } from 'lucide-react';
+import { Shield, Plus, Edit, Trash2, X, Check } from 'lucide-react';
 import api from '../utils/api';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -88,101 +88,157 @@ const RolesPage = () => {
 
   return (
     <div className="space-y-8">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white flex items-center gap-3">
-          <Shield className="w-8 h-8 text-blue-500" />
-          Rôles & Permissions
-        </h1>
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex justify-between items-center"
+      >
+        <div>
+          <h1 className="text-4xl font-black text-white tracking-tight flex items-center gap-4">
+            <Shield className="w-10 h-10 text-brand-primary" />
+            Rôles & Permissions
+          </h1>
+          <p className="text-gray-400 font-medium mt-1">Gérez les accès et les droits de vos employés.</p>
+        </div>
         <button
           onClick={() => handleOpenModal()}
-          className="flex items-center gap-2 bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-lg hover:bg-blue-700 transition-colors"
+          className="bg-brand-primary hover:bg-brand-800 text-white px-8 py-4 rounded-2xl font-black text-sm uppercase tracking-widest transition-all shadow-lg shadow-brand-primary/20 flex items-center gap-2"
         >
-          <PlusCircle className="w-5 h-5" />
-          Créer un rôle
+          <Plus className="w-5 h-5" /> Créer un rôle
         </button>
-      </div>
+      </motion.div>
 
-      {isLoading ? <p>Chargement...</p> : (
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md">
-          <ul className="divide-y divide-gray-200 dark:divide-gray-700">
-            {roles.map(role => (
-              <li key={role.id} className="py-4 flex justify-between items-center">
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-800 dark:text-white">{role.name}</h3>
-                  <div className="flex flex-wrap gap-2 mt-2">
+      {isLoading ? (
+        <div className="text-center py-20">
+          <p className="text-brand-primary font-black uppercase tracking-widest animate-pulse">Chargement...</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {roles.map(role => (
+            <motion.div 
+              key={role.id}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="glass-card p-8 rounded-[2.5rem] border border-white/5 relative group hover:border-white/20 transition-all"
+            >
+              <div className="absolute top-6 right-6 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button onClick={() => handleOpenModal(role)} className="p-2 text-gray-400 hover:text-white bg-white/5 rounded-xl transition-colors">
+                  <Edit size={16} />
+                </button>
+                <button onClick={() => handleDeleteRole(role.id)} className="p-2 text-gray-400 hover:text-rose-500 bg-white/5 rounded-xl transition-colors">
+                  <Trash2 size={16} />
+                </button>
+              </div>
+
+              <h3 className="text-2xl font-black text-white mb-6 pr-16">{role.name}</h3>
+              
+              <div className="space-y-3">
+                <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Permissions Accordées</p>
+                {role.permissions.length === 0 ? (
+                  <p className="text-sm text-gray-500 italic">Aucune permission spéciale.</p>
+                ) : (
+                  <ul className="space-y-2">
                     {role.permissions.map(p => (
-                      <span key={p} className="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-200">
+                      <li key={p} className="flex items-center gap-2 text-sm text-gray-300 font-medium">
+                        <Check className="w-4 h-4 text-brand-primary" />
                         {allPermissions.find(ap => ap.id === p)?.label || p}
-                      </span>
+                      </li>
                     ))}
-                  </div>
-                </div>
-                <div className="flex gap-4">
-                  <button onClick={() => handleOpenModal(role)} className="text-gray-400 hover:text-blue-500"><Edit size={20} /></button>
-                  <button onClick={() => handleDeleteRole(role.id)} className="text-gray-400 hover:text-red-500"><Trash2 size={20} /></button>
-                </div>
-              </li>
-            ))}
-          </ul>
+                  </ul>
+                )}
+              </div>
+            </motion.div>
+          ))}
+          {roles.length === 0 && (
+            <div className="col-span-full py-12 text-center">
+               <p className="text-gray-500 font-bold">Aucun rôle personnalisé défini.</p>
+            </div>
+          )}
         </div>
       )}
 
       {/* Modal pour la création/modification */}
       <AnimatePresence>
         {isModalOpen && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
-            onClick={() => setIsModalOpen(false)}
-          >
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+              onClick={() => setIsModalOpen(false)}
+            />
             <motion.div
-              initial={{ y: -50, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: -50, opacity: 0 }}
-              className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-2xl p-8"
-              onClick={e => e.stopPropagation()}
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="relative bg-brand-900 border border-white/10 p-8 rounded-[2.5rem] max-w-2xl w-full shadow-2xl"
             >
-              <h2 className="text-2xl font-bold mb-6">{editingRole ? 'Modifier le rôle' : 'Créer un nouveau rôle'}</h2>
-              <form onSubmit={handleSaveRole} className="space-y-6">
+              <button onClick={() => setIsModalOpen(false)} className="absolute top-6 right-6 text-gray-500 hover:text-white transition-colors">
+                <X className="w-6 h-6" />
+              </button>
+
+              <h2 className="text-2xl font-black text-white mb-8">{editingRole ? 'Modifier le rôle' : 'Créer un nouveau rôle'}</h2>
+              
+              <form onSubmit={handleSaveRole} className="space-y-8">
                 <div>
-                  <label htmlFor="roleName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nom du rôle</label>
+                  <label htmlFor="roleName" className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Nom du rôle</label>
                   <input 
                     id="roleName"
                     type="text" 
-                    placeholder="Ex: Comptable, Commercial"
+                    placeholder="Ex: Comptable, Manager..."
                     value={formData.name}
                     onChange={e => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full p-3 rounded-lg bg-gray-100 dark:bg-gray-700 border dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                    className="w-full bg-white/5 border border-white/10 p-4 rounded-2xl text-white font-bold outline-none focus:ring-2 focus:ring-brand-primary transition-all"
                   />
                 </div>
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Permissions</label>
+                  <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-4">Permissions attribuées</label>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {allPermissions.map(permission => (
-                      <label key={permission.id} className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-700/50 cursor-pointer">
-                        <input 
-                          type="checkbox"
-                          checked={formData.permissions.includes(permission.id)}
-                          onChange={() => handlePermissionChange(permission.id)}
-                          className="h-5 w-5 rounded text-blue-600 focus:ring-blue-500 border-gray-300"
-                        />
-                        <span className="text-sm text-gray-800 dark:text-gray-200">{permission.label}</span>
-                      </label>
-                    ))}
+                    {allPermissions.map(permission => {
+                      const isSelected = formData.permissions.includes(permission.id);
+                      return (
+                        <label 
+                          key={permission.id} 
+                          className={`flex items-center gap-3 p-4 rounded-2xl cursor-pointer border transition-all ${
+                            isSelected 
+                              ? 'bg-brand-primary/10 border-brand-primary/50' 
+                              : 'bg-white/5 border-white/5 hover:border-white/20'
+                          }`}
+                        >
+                          <div className={`w-5 h-5 rounded flex items-center justify-center border transition-colors ${
+                            isSelected ? 'bg-brand-primary border-brand-primary' : 'border-gray-500'
+                          }`}>
+                            {isSelected && <Check className="w-3 h-3 text-white" />}
+                          </div>
+                          <input 
+                            type="checkbox"
+                            className="hidden"
+                            checked={isSelected}
+                            onChange={() => handlePermissionChange(permission.id)}
+                          />
+                          <span className={`text-sm font-bold ${isSelected ? 'text-white' : 'text-gray-400'}`}>
+                            {permission.label}
+                          </span>
+                        </label>
+                      );
+                    })}
                   </div>
                 </div>
-                <div className="flex justify-end gap-4 pt-4">
-                  <button type="button" onClick={() => setIsModalOpen(false)} className="py-2 px-4 rounded-lg text-gray-600 dark:text-gray-300">Annuler</button>
-                  <button type="submit" className="py-2 px-6 rounded-lg bg-blue-600 text-white font-semibold">Enregistrer</button>
-                </div>
+
+                <button 
+                  type="submit" 
+                  className="w-full bg-brand-primary text-white py-5 rounded-2xl font-black text-lg uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-brand-primary/20 mt-4"
+                >
+                  {editingRole ? 'Enregistrer les modifications' : 'Créer le rôle'}
+                </button>
               </form>
             </motion.div>
-          </motion.div>
+          </div>
         )}
       </AnimatePresence>
-
     </div>
   );
 };
