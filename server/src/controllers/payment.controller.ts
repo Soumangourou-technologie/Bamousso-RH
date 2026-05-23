@@ -26,7 +26,8 @@ export const initiatePayment = async (req: Request, res: Response) => {
       calculatedAmount = extraEmployees * 850;
     } else {
       let basePrice = 0;
-      if (plan === 'LOUBA') basePrice = 7500;
+      if (plan === 'FITINI') basePrice = 4500;
+      else if (plan === 'LOUBA') basePrice = 7500;
       else if (plan === 'KORO') basePrice = 14700;
 
       const extraCost = plan === 'KORO' ? 0 : (extraEmployees * 850);
