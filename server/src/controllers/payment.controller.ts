@@ -236,15 +236,15 @@ export const handleWebhook = async (req: Request, res: Response) => {
         const updateData: any = {
           subscriptionStatus: "ACTIVE",
           isActive: true,
-          isLocked: false,
-          subscriptionEndsAt: new Date(Date.now() + (billingCycle === 'YEARLY' ? 365 : 30) * 24 * 60 * 60 * 1000)
+          isLocked: false
         };
 
         if (isAddOn) {
-          // Cas "Ajout d'employé" : on incrémente
+          // Cas "Ajout d'employé" : on incrémente UNIQUEMENT
           updateData.extraEmployees = { increment: extraEmployees };
         } else {
-          // Cas "Nouvel abonnement / Renouvellement" : on écrase avec le plan et le quota choisi
+          // Cas "Nouvel abonnement / Renouvellement" : on écrase avec le plan et le quota choisi, et on prolonge la date
+          updateData.subscriptionEndsAt = new Date(Date.now() + (billingCycle === 'YEARLY' ? 365 : 30) * 24 * 60 * 60 * 1000);
           updateData.plan = plan;
           updateData.billingCycle = billingCycle;
           if (metadata.extraEmployees !== undefined) {
@@ -384,15 +384,15 @@ export const confirmPayment = async (req: Request, res: Response) => {
         const updateData: any = {
           subscriptionStatus: "ACTIVE",
           isActive: true,
-          isLocked: false,
-          subscriptionEndsAt: new Date(Date.now() + (billingCycle === 'YEARLY' ? 365 : 30) * 24 * 60 * 60 * 1000)
+          isLocked: false
         };
 
         if (isAddOn) {
-          // Cas "Ajout d'employé" : on incrémente
+          // Cas "Ajout d'employé" : on incrémente UNIQUEMENT
           updateData.extraEmployees = { increment: extraEmployees };
         } else {
           // Cas "Nouvel abonnement / Renouvellement"
+          updateData.subscriptionEndsAt = new Date(Date.now() + (billingCycle === 'YEARLY' ? 365 : 30) * 24 * 60 * 60 * 1000);
           updateData.plan = plan;
           updateData.billingCycle = billingCycle;
           if (metadata.extraEmployees !== undefined) {
