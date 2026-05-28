@@ -16,7 +16,7 @@ export const sendSubscriptionConfirmation = async (
 ) => {
   try {
     await resend.emails.send({
-      from: 'Bamousso RH <facturation@bamousso.com>',
+      from: 'Bamousso RH <onboarding@resend.dev>', // REMPLACER PAR @bamousso.com UNE FOIS LE DOMAINE VÉRIFIÉ SUR RESEND
       to: email,
       subject: `Confirmation de votre abonnement Bamousso - ${companyName}`,
       html: `
@@ -58,7 +58,7 @@ export const sendAdminSubscriptionNotification = async (
   try {
     const adminEmail = process.env.ADMIN_EMAIL || 'admin@bamousso.ci';
     await resend.emails.send({
-      from: 'System Bamousso <system@bamousso.com>',
+      from: 'System Bamousso <onboarding@resend.dev>', // REMPLACER PAR @bamousso.com UNE FOIS LE DOMAINE VÉRIFIÉ SUR RESEND
       to: adminEmail,
       subject: `🚀 Nouvelle Souscription : ${companyName} (${plan})`,
       html: `
@@ -92,7 +92,7 @@ export const sendPasswordResetEmail = async (email: string, name: string, token:
     const resetUrl = `${frontendUrl}/reset-password?token=${token}`;
     
     await resend.emails.send({
-      from: 'Bamousso RH <securite@bamousso.com>',
+      from: 'Bamousso RH <onboarding@resend.dev>', // REMPLACER PAR @bamousso.com UNE FOIS LE DOMAINE VÉRIFIÉ SUR RESEND
       to: email,
       subject: '🔒 Réinitialisation de votre mot de passe Bamousso',
       html: `
