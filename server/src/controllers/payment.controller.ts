@@ -207,7 +207,7 @@ export const handleWebhook = async (req: Request, res: Response) => {
           subscriptionStatus: "ACTIVE",
           isActive: true,
           isLocked: false,
-          subscriptionEndsAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+          subscriptionEndsAt: new Date(Date.now() + (billingCycle === 'YEARLY' ? 365 : 30) * 24 * 60 * 60 * 1000)
         };
 
         if (isAddOn) {
@@ -340,7 +340,7 @@ export const confirmPayment = async (req: Request, res: Response) => {
           subscriptionStatus: "ACTIVE",
           isActive: true,
           isLocked: false,
-          subscriptionEndsAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+          subscriptionEndsAt: new Date(Date.now() + (billingCycle === 'YEARLY' ? 365 : 30) * 24 * 60 * 60 * 1000)
         };
 
         if (isAddOn) {

@@ -15,44 +15,73 @@ const PLAN_BADGE: Record<string, { label: string; color: string }> = {
   KORO:   { label: 'Kôrô',     color: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400' },
 };
 
-const CompactCountdown = ({ endsAt }: { endsAt: string }) => {
+const CompactCountdown = ({ endsAt, billingCycle }: { endsAt: string, billingCycle?: string }) => {
   const [text, setText] = useState('');
+  const [progress, setProgress] = useState(0);
+  const [startDateStr, setStartDateStr] = useState('');
+  const [endDateStr, setEndDateStr] = useState('');
 
   useEffect(() => {
+    const end = new Date(endsAt);
+    const start = new Date(endsAt);
+    if (billingCycle === 'YEARLY') {
+      start.setFullYear(start.getFullYear() - 1);
+    } else {
+      start.setMonth(start.getMonth() - 1);
+    }
+
+    setStartDateStr(start.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' }));
+    setEndDateStr(end.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' }));
+
     const update = () => {
-      const diff = +new Date(endsAt) - +new Date();
+      const now = new Date();
+      const diff = +end - +now;
+      
+      const totalDuration = +end - +start;
+      const elapsed = +now - +start;
+      let percent = (elapsed / totalDuration) * 100;
+      if (percent < 0) percent = 0;
+      if (percent > 100) percent = 100;
+      setProgress(percent);
+
       if (diff <= 0) {
         setText('Expiré');
         return;
       }
       const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-      const mins = Math.floor((diff / 1000 / 60) % 60);
-
+      
       if (days > 0) {
-        setText(`${days}j ${hours}h restants`);
-      } else if (hours > 0) {
-        setText(`${hours}h ${mins}m restants`);
+        setText(`${days} jours restants`);
       } else {
-        setText(`${mins}m restants`);
+        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        setText(`${hours} heures restantes`);
       }
     };
 
     update();
     const itv = setInterval(update, 60000);
     return () => clearInterval(itv);
-  }, [endsAt]);
+  }, [endsAt, billingCycle]);
 
   if (!text) return null;
 
   return (
-    <div className="flex items-center gap-2.5 bg-orange-50/80 dark:bg-orange-950/20 border border-orange-200/60 dark:border-orange-800/30 rounded-2xl px-4 py-2 shadow-inner">
-      <div className="w-7 h-7 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-500 shrink-0">
-        <Clock className="w-4 h-4 animate-pulse" />
+    <div className="flex flex-col gap-1.5 bg-gray-50/50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700 rounded-2xl px-5 py-3 w-72 shadow-sm">
+      <div className="flex justify-between items-center text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
+        <span>Début : {startDateStr}</span>
+        <span>Fin : {endDateStr}</span>
       </div>
-      <div className="flex flex-col text-left">
-        <span className="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Temps Restant</span>
-        <span className="text-sm font-black text-orange-600 dark:text-orange-400 tracking-tight truncate">{text}</span>
+      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-1 overflow-hidden relative">
+        <div 
+          className={`absolute top-0 left-0 h-full rounded-full transition-all duration-1000 ${progress > 90 ? 'bg-red-500' : progress > 75 ? 'bg-orange-500' : 'bg-brand-primary'}`}
+          style={{ width: `${progress}%` }}
+        />
+      </div>
+      <div className="flex justify-between items-center mt-1">
+        <span className="text-[10px] font-black text-gray-800 dark:text-gray-200 uppercase tracking-widest">{billingCycle === 'YEARLY' ? 'Annuel' : 'Mensuel'}</span>
+        <span className={`text-[11px] font-black tracking-tight ${progress > 90 ? 'text-red-500' : progress > 75 ? 'text-orange-500' : 'text-brand-primary'}`}>
+          {text}
+        </span>
       </div>
     </div>
   );
@@ -158,9 +187,9 @@ const DashboardAdmin = () => {
           
           {/* Compteur de durée compact */}
           {(isTrialActive && company?.trialEndsAt) ? (
-            <CompactCountdown endsAt={company.trialEndsAt} />
+            <CompactCountdown endsAt={company.trialEndsAt} billingCycle="MONTHLY" />
           ) : (isSubscriptionActive && company?.subscriptionEndsAt) ? (
-            <CompactCountdown endsAt={company.subscriptionEndsAt} />
+            <CompactCountdown endsAt={company.subscriptionEndsAt} billingCycle={(company as any).billingCycle} />
           ) : null}
 
           <div className="flex items-center gap-3">
