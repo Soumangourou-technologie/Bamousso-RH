@@ -1,12 +1,16 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Building2, CheckCircle, Users, Clock, Calendar, ArrowRight, Loader2 } from 'lucide-react';
+import { PricingToggle } from '../components/PricingToggle';
+import { BillingCycle, PRICING_PLANS } from '@shared/pricing';
 
 const Landing = () => {
   const navigate = useNavigate();
+  const [billingCycle, setBillingCycle] = useState<BillingCycle>('MONTHLY');
 
   const handleSelectPlan = (planId: string) => {
-    navigate('/register', { state: { selectedPlanId: planId } });
+    navigate('/register', { state: { selectedPlanId: planId, billingCycle } });
   };
 
   return (
@@ -30,8 +34,8 @@ const Landing = () => {
       {/* Hero Section */}
       <div className="relative pt-20 pb-32 lg:pb-40 overflow-hidden">
         {/* Background Decorations */}
-        <div className="absolute top-10 right-0 w-[600px] h-[600px] bg-brand-primary/20 blur-[120px] rounded-full pointer-events-none animate-pulse"></div>
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-brand-accent/10 blur-[100px] rounded-full pointer-events-none animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-10 right-0 w-150 h-150 bg-brand-primary/20 blur-[120px] rounded-full pointer-events-none animate-pulse"></div>
+        <div className="absolute bottom-0 left-0 w-125 h-125 bg-brand-accent/10 blur-[100px] rounded-full pointer-events-none animate-pulse" style={{ animationDelay: '1s' }}></div>
         
         <div className="container mx-auto px-6 relative z-10">
           <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-8">
@@ -56,7 +60,7 @@ const Landing = () => {
               
               <motion.h1 
                 variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
-                className="text-6xl md:text-7xl lg:text-8xl font-black mb-8 tracking-tighter leading-[1] text-white"
+                className="text-6xl md:text-7xl lg:text-8xl font-black mb-8 tracking-tighter leading-none text-white"
               >
                 BAMOUSSO : La <span className="text-brand-primary">Mère</span> de votre Gestion RH.
               </motion.h1>
@@ -89,16 +93,16 @@ const Landing = () => {
             >
               <div className="relative rounded-[3rem] overflow-hidden shadow-2xl shadow-black/50 border border-white/10 transform lg:-rotate-2 hover:rotate-0 transition-transform duration-700">
                 <img src="/hero-masks.jpg" alt="Masques Africains Bamousso" className="w-full h-auto object-cover object-center aspect-square" />
-                <div className="absolute inset-0 bg-gradient-to-t from-brand-900/60 to-transparent mix-blend-multiply"></div>
+                <div className="absolute inset-0 bg-linear-to-t from-brand-900/60 to-transparent mix-blend-multiply"></div>
               </div>
               
               {/* Floating element */}
               <motion.div 
                 animate={{ y: [0, -10, 0] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute -bottom-8 -left-8 glass-card p-8 rounded-[2rem] shadow-2xl flex items-center gap-5"
+                className="absolute -bottom-8 -left-8 glass-card p-8 rounded-4xl shadow-2xl flex items-center gap-5"
               >
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-primary to-brand-accent flex items-center justify-center shadow-lg">
+                <div className="w-14 h-14 rounded-2xl bg-linear-to-br from-brand-primary to-brand-accent flex items-center justify-center shadow-lg">
                   <Users className="w-7 h-7 text-white" />
                 </div>
                 <div>
@@ -118,7 +122,7 @@ const Landing = () => {
             <div className="lg:w-2/5">
               <h2 className="text-5xl font-black text-white mb-8 tracking-tighter leading-tight">La Force d'une Gestion <span className="text-brand-primary">Centralisée</span></h2>
               <p className="text-gray-400 text-lg mb-10 font-medium leading-relaxed">Une suite complète d'outils pensés pour l'excellence opérationnelle en Afrique. Libérez-vous de la paperasse et concentrez-vous sur l'essentiel : l'humain.</p>
-              <div className="rounded-[2rem] overflow-hidden shadow-2xl border border-white/10 group">
+              <div className="rounded-4xl overflow-hidden shadow-2xl border border-white/10 group">
                 <img src="/africa-collage.jpg" alt="Art Africain" className="w-full h-64 object-cover transition-transform duration-700 group-hover:scale-110" />
               </div>
             </div>
@@ -156,17 +160,18 @@ const Landing = () => {
       {/* Pricing Section */}
       <div id="pricing" className="py-24 bg-surface-base relative bg-senufo">
         <div className="container mx-auto px-6">
-          <div className="text-center mb-16">
+          <div className="text-center mb-10">
             <h2 className="text-4xl font-extrabold mb-4 text-brand-900">Nos Formules</h2>
-            <p className="text-text-secondary text-lg">Choisissez le pilier qui soutiendra votre croissance.</p>
+            <p className="text-text-secondary text-lg mb-8">Choisissez le pilier qui soutiendra votre croissance.</p>
+            <PricingToggle billingCycle={billingCycle} onChange={setBillingCycle} />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
             {/* FITINI */}
             <PricingCard 
               title="FITINI (Petit)"
-              price="4.500"
-              period="/mois"
+              price={billingCycle === 'YEARLY' ? PRICING_PLANS.FITINI.priceYearly.toLocaleString() : PRICING_PLANS.FITINI.priceMonthly.toLocaleString()}
+              period={billingCycle === 'YEARLY' ? '/an' : '/mois'}
               description="L'essentiel pour 1 à 5 employés."
               features={[
                 'Jusqu\'à 5 employés', 
@@ -184,8 +189,8 @@ const Landing = () => {
             {/* LOUBA (Popular) */}
             <PricingCard 
               title="LOUBA (Moyen)"
-              price="7.500"
-              period="/mois"
+              price={billingCycle === 'YEARLY' ? PRICING_PLANS.LOUBA.priceYearly.toLocaleString() : PRICING_PLANS.LOUBA.priceMonthly.toLocaleString()}
+              period={billingCycle === 'YEARLY' ? '/an' : '/mois'}
               description="Idéal pour 1 à 10 employés."
               features={[
                 'Jusqu\'à 10 employés', 
@@ -205,8 +210,8 @@ const Landing = () => {
             {/* Kôrô */}
             <PricingCard 
               title="Kôrô (Grand)"
-              price="14.700"
-              period="/mois"
+              price={billingCycle === 'YEARLY' ? PRICING_PLANS.KORO.priceYearly.toLocaleString() : PRICING_PLANS.KORO.priceMonthly.toLocaleString()}
+              period={billingCycle === 'YEARLY' ? '/an' : '/mois'}
               description="L'excellence avec employés illimités."
               features={[
                 'Employés illimités', 
@@ -279,8 +284,19 @@ const PricingCard = ({ title, price, period, description, features, isPopular, d
     <h3 className="text-3xl font-black text-white mb-3 tracking-tight">{title}</h3>
     <p className="text-gray-400 text-sm mb-8 h-12 font-medium leading-relaxed">{description}</p>
     <div className="mb-10 flex items-end gap-1">
-      <span className="text-6xl font-black text-white tracking-tighter">{price}</span>
-      <div className="flex flex-col mb-1">
+      <AnimatePresence mode="wait">
+        <motion.span 
+          key={price}
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 10 }}
+          transition={{ duration: 0.2 }}
+          className="text-5xl font-black text-white tracking-tighter"
+        >
+          {price}
+        </motion.span>
+      </AnimatePresence>
+      <div className="flex flex-col mb-1 ml-2">
         <span className="text-xs font-black text-brand-primary uppercase tracking-widest leading-none mb-1">FCFA</span>
         <span className="text-gray-500 font-bold text-sm leading-none">{period}</span>
       </div>

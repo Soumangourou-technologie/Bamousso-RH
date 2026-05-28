@@ -29,6 +29,7 @@ const registerCompanySchema = z.object({
   firstName: z.string().min(1, "Le prénom est requis"),
   lastName: z.string().min(1, "Le nom est requis"),
   plan: z.string().optional(),
+  billingCycle: z.enum(['MONTHLY', 'YEARLY']).optional(),
   extraEmployees: z.coerce.number().optional(),
 });
 
@@ -73,7 +74,7 @@ export const registerCompany = catchAsync(async (req: Request, res: Response) =>
       });
     }
 
-    const { companyName, email, phone, password, firstName, lastName, plan, extraEmployees } = result.data;
+    const { companyName, email, phone, password, firstName, lastName, plan, billingCycle, extraEmployees } = result.data;
 
     // Vérifier si l'utilisateur existe déjà
     const existingUser = await prisma.user.findUnique({ where: { email } });
@@ -98,6 +99,7 @@ export const registerCompany = catchAsync(async (req: Request, res: Response) =>
           subscriptionEndsAt: null,
           trialEndsAt: null,
           plan: plan || "FITINI",
+          billingCycle: billingCycle || "MONTHLY",
           extraEmployees: extraEmployees || 0,
           isLocked: false,
           lockedAt: null,
@@ -166,6 +168,7 @@ export const registerCompany = catchAsync(async (req: Request, res: Response) =>
         id: registrationResult.company.id, 
         name: registrationResult.company.name,
         plan: registrationResult.company.plan,
+        billingCycle: registrationResult.company.billingCycle,
         extraEmployees: registrationResult.company.extraEmployees,
         isActive: registrationResult.company.isActive,
         subscriptionStatus: registrationResult.company.subscriptionStatus
@@ -300,6 +303,7 @@ export const login = catchAsync(async (req: Request, res: Response, next: NextFu
       id: user.company.id,
       name: user.company.name,
       plan: (user.company as any).plan,
+      billingCycle: (user.company as any).billingCycle,
       isLocked: (user.company as any).isLocked,
       isActive: user.company.isActive,
       trialEndsAt: (user.company as any).trialEndsAt,
@@ -338,6 +342,7 @@ export const getCurrentUser = catchAsync(async (req: any, res: Response) => {
       id: user.company.id,
       name: user.company.name,
       plan: (user.company as any).plan,
+      billingCycle: (user.company as any).billingCycle,
       isActive: user.company.isActive,
       isLocked: (user.company as any).isLocked,
       trialEndsAt: (user.company as any).trialEndsAt,

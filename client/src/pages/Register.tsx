@@ -4,12 +4,14 @@ import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../utils/api';
 import { Eye, EyeOff, Building2, CheckCircle } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { PricingToggle } from '../components/PricingToggle';
+import { BillingCycle, PlanType, PRICING_PLANS, calculateTotalAmount, EXTRA_EMPLOYEE_COST_MONTHLY } from '@shared/pricing';
 
-const plans = [
-  { id: 'FITINI', name: 'FITINI', price: '4.500 FCFA', rawPrice: 4500, maxBase: 5 },
-  { id: 'LOUBA', name: 'LOUBA', price: '7.500 FCFA', rawPrice: 7500, maxBase: 10 },
-  { id: 'KORO', name: 'Kôrô', price: '14.700 FCFA', rawPrice: 14700, maxBase: Infinity }
+const plansList = [
+  PRICING_PLANS.FITINI,
+  PRICING_PLANS.LOUBA,
+  PRICING_PLANS.KORO
 ];
 
 const Register = () => {
@@ -19,7 +21,8 @@ const Register = () => {
   const location = useLocation();
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState(location.state?.selectedPlanId || 'FITINI');
+  const [selectedPlan, setSelectedPlan] = useState<PlanType>(location.state?.selectedPlanId || 'FITINI');
+  const [billingCycle, setBillingCycle] = useState<BillingCycle>(location.state?.billingCycle || 'MONTHLY');
   const [extraEmployees, setExtraEmployees] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -27,13 +30,14 @@ const Register = () => {
     setIsLoading(true);
     setError('');
     try {
-      const planDetails = plans.find(p => p.id === selectedPlan);
-      const totalAmount = (planDetails?.rawPrice || 0) + (extraEmployees * 850);
+      const planDetails = PRICING_PLANS[selectedPlan];
+      const totalAmount = calculateTotalAmount(selectedPlan, billingCycle, extraEmployees);
 
       // 1. Appel API pour créer l'entreprise et l'utilisateur
       const response = await api.post('/auth/register-company', {
         ...data,
         plan: selectedPlan,
+        billingCycle,
         extraEmployees: extraEmployees
       });
       
@@ -43,7 +47,8 @@ const Register = () => {
       // 3. Redirection vers le paiement
       navigate('/payment', { 
         state: { 
-          plan: { ...planDetails, finalPrice: totalAmount }, // Paiement MENSUEL
+          plan: { ...planDetails, finalPrice: totalAmount },
+          billingCycle,
           extraEmployees,
           companyName: data.companyName,
           companyId: response.data.company?.id || response.data.user?.companyId
@@ -77,9 +82,12 @@ const Register = () => {
           
           {/* Panneau de gauche : Sélection de l'offre */}
           <div className="md:w-1/3 bg-gray-50 dark:bg-gray-900/50 p-8 border-r border-gray-100 dark:border-gray-700">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6">Choisissez votre forfait</h3>
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Choisissez votre forfait</h3>
+            
+            <PricingToggle billingCycle={billingCycle} onChange={setBillingCycle} />
+
             <div className="space-y-4">
-              {plans.map((plan) => (
+              {plansList.map((plan) => (
                 <label 
                   key={plan.id}
                   className={`block relative p-4 rounded-2xl border-2 cursor-pointer transition-all ${selectedPlan === plan.id ? 'border-orange-500 bg-orange-50 dark:bg-orange-500/10' : 'border-gray-200 dark:border-gray-700 hover:border-orange-300'}`}
@@ -89,14 +97,16 @@ const Register = () => {
                     name="plan" 
                     value={plan.id} 
                     checked={selectedPlan === plan.id}
-                    onChange={(e) => setSelectedPlan(e.target.value)}
+                    onChange={(e) => setSelectedPlan(e.target.value as PlanType)}
                     className="sr-only"
                   />
                   <div className="flex justify-between items-center mb-1">
                     <span className={`font-bold ${selectedPlan === plan.id ? 'text-orange-600 dark:text-orange-400' : 'text-gray-900 dark:text-white'}`}>{plan.name}</span>
                     {selectedPlan === plan.id && <CheckCircle className="w-5 h-5 text-orange-500" />}
                   </div>
-                  <span className="text-sm font-medium text-gray-500 dark:text-gray-400">{plan.price} / mois</span>
+                  <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                    {(billingCycle === 'YEARLY' ? plan.priceYearly : plan.priceMonthly).toLocaleString()} FCFA / {billingCycle === 'YEARLY' ? 'an' : 'mois'}
+                  </span>
                 </label>
               ))}
             </div>
@@ -104,7 +114,7 @@ const Register = () => {
             {selectedPlan !== 'KORO' && (
               <div className="mt-8 p-4 bg-orange-50 dark:bg-orange-900/20 rounded-2xl border border-orange-200 dark:border-orange-800">
                 <label className="block text-xs font-black text-orange-600 dark:text-orange-400 uppercase tracking-widest mb-2">
-                  Employés supplémentaires (+850/mois)
+                  Employés supplémentaires (+{billingCycle === 'YEARLY' ? EXTRA_EMPLOYEE_COST_MONTHLY * 12 : EXTRA_EMPLOYEE_COST_MONTHLY}/{billingCycle === 'YEARLY' ? 'an' : 'mois'})
                 </label>
                 <div className="flex items-center gap-4">
                   <input 
@@ -113,7 +123,7 @@ const Register = () => {
                     className="w-20 p-2 bg-white dark:bg-gray-800 border border-orange-200 dark:border-orange-700 rounded-lg text-gray-900 dark:text-white font-bold"
                   />
                   <span className="text-xs text-gray-500 font-medium">
-                    Total : {(plans.find(p => p.id === selectedPlan)?.maxBase || 0) + extraEmployees} employés max
+                    Total : {(PRICING_PLANS[selectedPlan]?.maxBase || 0) + extraEmployees} employés max
                   </span>
                 </div>
               </div>
@@ -121,10 +131,19 @@ const Register = () => {
 
             <div className="mt-8 pt-6 border-t border-gray-100 dark:border-gray-700">
               <div className="flex justify-between items-center">
-                <span className="text-sm font-bold text-gray-500">Total Mensuel</span>
-                <span className="text-xl font-black text-orange-500">
-                  {((plans.find(p => p.id === selectedPlan)?.rawPrice || 0) + (extraEmployees * 850))} FCFA
-                </span>
+                <span className="text-sm font-bold text-gray-500">Total {billingCycle === 'YEARLY' ? 'Annuel' : 'Mensuel'}</span>
+                <AnimatePresence mode="wait">
+                  <motion.span 
+                    key={calculateTotalAmount(selectedPlan, billingCycle, extraEmployees)}
+                    initial={{ opacity: 0, y: -5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 5 }}
+                    transition={{ duration: 0.2 }}
+                    className="text-xl font-black text-orange-500"
+                  >
+                    {calculateTotalAmount(selectedPlan, billingCycle, extraEmployees).toLocaleString()} FCFA
+                  </motion.span>
+                </AnimatePresence>
               </div>
             </div>
           </div>

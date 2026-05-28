@@ -5,6 +5,7 @@ import prisma from '../utils/prisma.js';
 import { logger } from '../utils/logger.js';
 import { sendSubscriptionConfirmation, sendAdminSubscriptionNotification } from '../utils/mailer.js';
 import { generateSubscriptionPDF } from '../utils/pdfGenerator.js';
+import { calculateTotalAmount, PlanType, BillingCycle } from '../shared/pricing.js';
 
 /**
  * Initialise un paiement avec GeniusPay
@@ -19,19 +20,15 @@ export const initiatePayment = async (req: Request, res: Response) => {
 
     const isAddOn = req.body.isAddOn === 'true' || req.body.isAddOn === true;
     const extraEmployees = parseInt(req.body.extraEmployees) || 0;
+    const billingCycle: BillingCycle = req.body.billingCycle === 'YEARLY' ? 'YEARLY' : 'MONTHLY';
 
     // Calcul sécurisé du montant côté serveur
     let calculatedAmount = 0;
     if (isAddOn) {
-      calculatedAmount = extraEmployees * 850;
+      // Pour les add-ons d'employés, on doit savoir le billingCycle actuel de l'entreprise
+      calculatedAmount = calculateTotalAmount('FITINI', billingCycle, extraEmployees) - calculateTotalAmount('FITINI', billingCycle, 0); // Hack to get extra cost
     } else {
-      let basePrice = 0;
-      if (plan === 'FITINI') basePrice = 4500;
-      else if (plan === 'LOUBA') basePrice = 7500;
-      else if (plan === 'KORO') basePrice = 14700;
-
-      const extraCost = plan === 'KORO' ? 0 : (extraEmployees * 850);
-      calculatedAmount = basePrice + extraCost;
+      calculatedAmount = calculateTotalAmount(plan as PlanType, billingCycle, extraEmployees);
     }
 
     if (calculatedAmount <= 0) {
@@ -59,6 +56,7 @@ export const initiatePayment = async (req: Request, res: Response) => {
       metadata: {
         companyId: companyId,
         plan: plan,
+        billingCycle: billingCycle,
         extraEmployees: req.body.extraEmployees || 0,
         isAddOn: req.body.isAddOn || false
       },
@@ -177,6 +175,7 @@ export const handleWebhook = async (req: Request, res: Response) => {
       
       const isAddOn = metadata.isAddOn === 'true' || metadata.isAddOn === true;
       let plan = metadata.plan;
+      let billingCycle = metadata.billingCycle || 'MONTHLY';
 
       await logger.info("Webhook Data Received", { 
         companyId, 
@@ -217,6 +216,7 @@ export const handleWebhook = async (req: Request, res: Response) => {
         } else {
           // Cas "Nouvel abonnement / Renouvellement" : on écrase avec le plan et le quota choisi
           updateData.plan = plan;
+          updateData.billingCycle = billingCycle;
           if (metadata.extraEmployees !== undefined) {
             updateData.extraEmployees = extraEmployees;
           }
@@ -327,6 +327,7 @@ export const confirmPayment = async (req: Request, res: Response) => {
         plan = plan.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
         // Extraire les données isAddOn et extraEmployees depuis les métadonnées
         const metadata = externalData.metadata || {};
+        let billingCycle = metadata.billingCycle || 'MONTHLY';
         const isAddOn = metadata.isAddOn === 'true' || metadata.isAddOn === true;
         let extraEmployees = 0;
         if (metadata.extraEmployees !== undefined) {
@@ -348,6 +349,7 @@ export const confirmPayment = async (req: Request, res: Response) => {
         } else {
           // Cas "Nouvel abonnement / Renouvellement"
           updateData.plan = plan;
+          updateData.billingCycle = billingCycle;
           if (metadata.extraEmployees !== undefined) {
             updateData.extraEmployees = extraEmployees;
           }

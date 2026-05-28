@@ -24,6 +24,7 @@ model Company {
   subscriptionEndsAt DateTime?
   trialEndsAt        DateTime? // Fin de la période d'essai (7j)
   plan               String    @default("FITINI") // FITINI | LOUBA | KORO
+  billingCycle       String    @default("MONTHLY") // MONTHLY | YEARLY
   extraEmployees     Int       @default(0)
   isLocked           Boolean   @default(false)
   lockedAt           DateTime?
@@ -33,27 +34,27 @@ model Company {
   managerId String? @unique
   manager   User?   @relation("CompanyManager", fields: [managerId], references: [id])
 
-  users       User[]       @relation("CompanyUsers")
-  departments Department[]
-  payments    Payment[]
-  tasks       Task[]
-  customRoles CustomRole[]
-  disciplinaryCases DisciplinaryCase[]
+  users               User[]               @relation("CompanyUsers")
+  departments         Department[]
+  payments            Payment[]
+  tasks               Task[]
+  customRoles         CustomRole[]
+  disciplinaryCases   DisciplinaryCase[]
   clientRegistrations ClientRegistration[]
-  missions    Mission[]
+  missions            Mission[]
 
   // Relations avec le Support Client
-  supportTickets     SupportTicket[]
-  supportChatRoom    SupportChatRoom?
+  supportTickets  SupportTicket[]
+  supportChatRoom SupportChatRoom?
 }
 
 /// Modèle Cas Disciplinaire (Conflit)
 model DisciplinaryCase {
-  id          String   @id @default(uuid())
+  id          String @id @default(uuid())
   title       String
   description String
-  status      String   @default("OPEN") // OPEN, UNDER_INVESTIGATION, RESOLVED, CLOSED
-  
+  status      String @default("OPEN") // OPEN, UNDER_INVESTIGATION, RESOLVED, CLOSED
+
   involvedEmployeeId String
   involvedEmployee   User   @relation("DisciplinaryCases", fields: [involvedEmployeeId], references: [id], onDelete: Cascade)
 
@@ -149,14 +150,14 @@ model User {
   customRoleId String?
   customRole   CustomRole? @relation(fields: [customRoleId], references: [id], onDelete: SetNull)
 
-  disciplinaryCases DisciplinaryCase[] @relation("DisciplinaryCases")
+  disciplinaryCases   DisciplinaryCase[]   @relation("DisciplinaryCases")
   clientRegistrations ClientRegistration[] @relation("CommercialRegistrations")
 
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   assignedTasks Task[]   @relation("AssignedTasks")
   createdTasks  Task[]   @relation("CreatedTasks")
-  
+
   assignedMissions Mission[] @relation("AssignedMissions")
   createdMissions  Mission[] @relation("CreatedMissions")
 
@@ -282,15 +283,15 @@ model Message {
 
 /// Modèle Notification
 model Notification {
-  id        String   @id @default(uuid())
-  title     String
-  message   String
-  type      String?  // SUGGESTION, EXPLANATION, DOCUMENT, ANNOUNCEMENT, etc.
+  id         String   @id @default(uuid())
+  title      String
+  message    String
+  type       String? // SUGGESTION, EXPLANATION, DOCUMENT, ANNOUNCEMENT, etc.
   resourceId String? // ID of the related resource
-  userId    String?
-  companyId String? // Pour les annonces globales à l'entreprise
-  read      Boolean  @default(false)
-  createdAt DateTime @default(now())
+  userId     String?
+  companyId  String? // Pour les annonces globales à l'entreprise
+  read       Boolean  @default(false)
+  createdAt  DateTime @default(now())
 }
 
 /// Modèle Tâche (Task)
@@ -366,7 +367,7 @@ model CustomRole {
 
 /// Modèle Client enregistré par un commercial sur le terrain
 model ClientRegistration {
-  id               String   @id @default(uuid())
+  id String @id @default(uuid())
 
   // Relation commercial
   commercialId     String
@@ -374,13 +375,13 @@ model ClientRegistration {
   registrationDate DateTime @default(now())
 
   // Identité Client
-  lastName         String
-  firstName        String
-  gender           String?  // HOMME | FEMME
-  birthDate        DateTime?
+  lastName  String
+  firstName String
+  gender    String? // HOMME | FEMME
+  birthDate DateTime?
 
   // Type de client
-  clientType       String   @default("PARTICULIER") // ENTREPRISE | PARTICULIER
+  clientType String @default("PARTICULIER") // ENTREPRISE | PARTICULIER
 
   // Infos Entreprise (si applicable)
   companyName        String?
@@ -389,10 +390,10 @@ model ClientRegistration {
   companyDescription String?
 
   // Localisation
-  address  String?
-  city     String?
-  commune  String?
-  country  String? @default("Mali")
+  address String?
+  city    String?
+  commune String?
+  country String? @default("Mali")
 
   // Contacts
   phoneFix    String?
@@ -416,8 +417,8 @@ model ClientRegistration {
   commercialSignatureUrl String?
 
   // Consentement
-  consentMode String?  @default("SIGNATURE") // SIGNATURE | CHECKBOX
-  consentGiven Boolean @default(false)
+  consentMode  String?   @default("SIGNATURE") // SIGNATURE | CHECKBOX
+  consentGiven Boolean   @default(false)
   consentDate  DateTime?
 
   // Statut — directement validé à la soumission
@@ -436,10 +437,10 @@ model ClientRegistration {
 
 /// Documents attachés à un enregistrement client
 model ClientDocument {
-  id                   String   @id @default(uuid())
-  title                String
-  url                  String
-  type                 String   @default("LEGAL") // LEGAL | CONTRACT | OTHER
+  id    String @id @default(uuid())
+  title String
+  url   String
+  type  String @default("LEGAL") // LEGAL | CONTRACT | OTHER
 
   clientRegistrationId String
   clientRegistration   ClientRegistration @relation(fields: [clientRegistrationId], references: [id], onDelete: Cascade)
@@ -453,21 +454,21 @@ model ClientDocument {
 
 /// Modèle Ticket de Support (Formule FITINI)
 model SupportTicket {
-  id          String   @id @default(uuid())
-  title       String   // Objet du ticket
-  status      String   @default("OPEN") // OPEN | IN_PROGRESS | RESOLVED | CLOSED
-  priority    String   @default("MEDIUM") // LOW | MEDIUM | HIGH
+  id       String @id @default(uuid())
+  title    String // Objet du ticket
+  status   String @default("OPEN") // OPEN | IN_PROGRESS | RESOLVED | CLOSED
+  priority String @default("MEDIUM") // LOW | MEDIUM | HIGH
 
-  companyId   String
-  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
   createdById String
-  createdBy   User     @relation("TicketCreator", fields: [createdById], references: [id], onDelete: Cascade)
+  createdBy   User   @relation("TicketCreator", fields: [createdById], references: [id], onDelete: Cascade)
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  messages    SupportTicketMessage[]
+  messages SupportTicketMessage[]
 
   @@index([companyId])
   @@index([createdById])
@@ -475,82 +476,82 @@ model SupportTicket {
 
 /// Messages associés à un Ticket de Support
 model SupportTicketMessage {
-  id         String        @id @default(uuid())
-  content    String        // Contenu de la réponse
-  
-  ticketId   String
-  ticket     SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  id      String @id @default(uuid())
+  content String // Contenu de la réponse
 
-  senderId   String
-  sender     User          @relation("TicketMessageSender", fields: [senderId], references: [id], onDelete: Cascade)
+  ticketId String
+  ticket   SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
 
-  createdAt  DateTime      @default(now())
+  senderId String
+  sender   User   @relation("TicketMessageSender", fields: [senderId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
 
   @@index([ticketId])
 }
 
 /// Salon de Chat Support (Formules LOUBA & KORO - un salon par entreprise)
 model SupportChatRoom {
-  id        String   @id @default(uuid())
-  
-  companyId String   @unique
-  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  id String @id @default(uuid())
+
+  companyId String  @unique
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  messages  SupportChatMessage[]
+  messages SupportChatMessage[]
 
   @@index([companyId])
 }
 
 /// Messages instantanés du Salon de Chat Support
 model SupportChatMessage {
-  id        String          @id @default(uuid())
-  content   String          // Texte du message
-  isRead    Boolean         @default(false) // Pour les notifications non lues
-  
-  roomId    String
-  room      SupportChatRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  id      String  @id @default(uuid())
+  content String // Texte du message
+  isRead  Boolean @default(false) // Pour les notifications non lues
 
-  senderId  String
-  sender    User            @relation("SupportChatMessageSender", fields: [senderId], references: [id], onDelete: Cascade)
+  roomId String
+  room   SupportChatRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
 
-  createdAt DateTime        @default(now())
+  senderId String
+  sender   User   @relation("SupportChatMessageSender", fields: [senderId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
 
   @@index([roomId])
 }
 
 /// Modèle Mission (Livraison & Prospection)
 model Mission {
-  id           String    @id @default(uuid())
-  title        String
-  description  String?
-  type         String    // LIVRAISON, PROSPECTION
-  status       String    @default("EN_ATTENTE") // EN_ATTENTE, VALIDEE
-  dueDate      DateTime?
-  
+  id          String    @id @default(uuid())
+  title       String
+  description String?
+  type        String // LIVRAISON, PROSPECTION
+  status      String    @default("EN_ATTENTE") // EN_ATTENTE, VALIDEE
+  dueDate     DateTime?
+
   // Client Info
-  clientName   String?
-  clientPhone  String?
-  address      String?
-  
+  clientName  String?
+  clientPhone String?
+  address     String?
+
   // Validation
   validationMode String? // SIGNATURE, CHECKBOX
   signatureUrl   String? // Base64 de la signature
   validatedAt    DateTime?
-  
-  companyId    String
-  company      Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  
+
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
   assignedToId String
-  assignedTo   User      @relation("AssignedMissions", fields: [assignedToId], references: [id], onDelete: Cascade)
-  
-  createdById  String
-  createdBy    User      @relation("CreatedMissions", fields: [createdById], references: [id], onDelete: Cascade)
-  
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  assignedTo   User   @relation("AssignedMissions", fields: [assignedToId], references: [id], onDelete: Cascade)
+
+  createdById String
+  createdBy   User   @relation("CreatedMissions", fields: [createdById], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([companyId])
   @@index([assignedToId])
