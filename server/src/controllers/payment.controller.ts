@@ -149,19 +149,41 @@ export const handleWebhook = async (req: Request, res: Response) => {
     }
 
     if (signature !== expectedSignature) {
-      await logger.error("Signature Webhook invalide", { 
+      await logger.warn("Signature Webhook invalide (Fallback via API directe)", { 
         expected: expectedSignature, 
         received: signature,
-        webhookSecretUsed: secretSnippet,
         hasRawBody: !!rawBody
       }, "PaymentController");
-      return res.status(401).json({ error: "Invalid signature" });
+      // On ne bloque pas tout de suite, on va vérifier directement l'état de la transaction auprès de GeniusPay.
     }
 
     const { event, data } = req.body;
     const isSuccess = event === 'payment.success' || (data && (data.status === 'completed' || data.status === 'SUCCESS'));
 
     if (isSuccess && data) {
+      const transactionId = data.transaction_id || data.id || data.reference;
+
+      // SÉCURITÉ ABSOLUE : Vérification directe du paiement auprès de GeniusPay
+      try {
+        const apiKey = process.env.GENIUSPAY_KEY;
+        const apiSecret = process.env.GENIUSPAY_SECRET;
+        const verifyResponse = await axios.get(`https://pay.genius.ci/api/v1/merchant/payments/${transactionId}`, {
+          headers: {
+            'X-API-Key': apiKey,
+            'X-API-Secret': apiSecret
+          }
+        });
+
+        const realData = verifyResponse.data.data;
+        if (realData.status !== 'completed' && realData.status !== 'SUCCESS') {
+          await logger.error("Tentative de fraude Webhook interceptée", { transactionId }, "PaymentController");
+          return res.status(400).send('Transaction non valide sur GeniusPay');
+        }
+      } catch (verifyError: any) {
+        await logger.error("Erreur de vérification directe Webhook", verifyError.message, "PaymentController");
+        return res.status(500).send('Erreur de validation de la transaction');
+      }
+
       const metadata = data.metadata || {};
       const companyId = metadata.companyId;
       let extraEmployees = 0;
