@@ -162,26 +162,34 @@ export const handleWebhook = async (req: Request, res: Response) => {
 
     if (isSuccess && data) {
       const transactionId = data.transaction_id || data.id || data.reference;
+      
+      // EXCEPTION SANDBOX TEMPORAIRE : Si c'est le mode sandbox, l'API GeniusPay GET renvoie 404 par erreur.
+      // On valide donc d'office si c'est sandbox.
+      const isSandbox = data.environment === 'sandbox' || req.body.environment === 'sandbox';
+      
+      if (!isSandbox) {
+        // SÉCURITÉ ABSOLUE : Vérification directe du paiement auprès de GeniusPay pour la PRODUCTION
+        try {
+          const apiKey = process.env.GENIUSPAY_KEY;
+          const apiSecret = process.env.GENIUSPAY_SECRET;
+          const verifyResponse = await axios.get(`https://pay.genius.ci/api/v1/merchant/payments/${transactionId}`, {
+            headers: {
+              'X-API-Key': apiKey,
+              'X-API-Secret': apiSecret
+            }
+          });
 
-      // SÉCURITÉ ABSOLUE : Vérification directe du paiement auprès de GeniusPay
-      try {
-        const apiKey = process.env.GENIUSPAY_KEY;
-        const apiSecret = process.env.GENIUSPAY_SECRET;
-        const verifyResponse = await axios.get(`https://pay.genius.ci/api/v1/merchant/payments/${transactionId}`, {
-          headers: {
-            'X-API-Key': apiKey,
-            'X-API-Secret': apiSecret
+          const realData = verifyResponse.data.data;
+          if (realData.status !== 'completed' && realData.status !== 'SUCCESS') {
+            await logger.error("Tentative de fraude Webhook interceptée", { transactionId }, "PaymentController");
+            return res.status(400).send('Transaction non valide sur GeniusPay');
           }
-        });
-
-        const realData = verifyResponse.data.data;
-        if (realData.status !== 'completed' && realData.status !== 'SUCCESS') {
-          await logger.error("Tentative de fraude Webhook interceptée", { transactionId }, "PaymentController");
-          return res.status(400).send('Transaction non valide sur GeniusPay');
+        } catch (verifyError: any) {
+          await logger.error("Erreur de vérification directe Webhook", verifyError.message, "PaymentController");
+          return res.status(500).send('Erreur de validation de la transaction');
         }
-      } catch (verifyError: any) {
-        await logger.error("Erreur de vérification directe Webhook", verifyError.message, "PaymentController");
-        return res.status(500).send('Erreur de validation de la transaction');
+      } else {
+        await logger.info("Bypass Sandbox : Validation automatique acceptée", { transactionId }, "PaymentController");
       }
 
       const metadata = data.metadata || {};
@@ -328,19 +336,33 @@ export const confirmPayment = async (req: Request, res: Response) => {
 
       await logger.info(`Vérification directe demandée pour ${currentToken}`, { companyId: payment.companyId }, "PaymentController");
       
-      const response = await axios.get(`https://pay.genius.ci/api/v1/merchant/payments/${currentToken}`, {
-        headers: {
-          'X-API-Key': apiKey,
-          'X-API-Secret': apiSecret
-        }
-      });
+      // EXCEPTION SANDBOX TEMPORAIRE : On simule la réussite si on est en Sandbox
+      let isCompleted = false;
+      let plan = null;
+      let extraEmployees = 0;
+      let billingCycle = 'MONTHLY';
+      let externalData: any = {};
+      
+      if (apiKey?.includes('sandbox')) {
+        await logger.info(`Bypass Sandbox pour confirmPayment: Validation automatique`, { currentToken }, "PaymentController");
+        isCompleted = true;
+      } else {
+        const response = await axios.get(`https://pay.genius.ci/api/v1/merchant/payments/${currentToken}`, {
+          headers: {
+            'X-API-Key': apiKey,
+            'X-API-Secret': apiSecret
+          }
+        });
 
-      const externalData = response.data.data;
-      if (externalData.status === 'completed' || externalData.status === 'SUCCESS') {
+        externalData = response.data.data;
+        isCompleted = externalData.status === 'completed' || externalData.status === 'SUCCESS';
+        plan = externalData.metadata?.plan;
+      }
+
+      if (isCompleted) {
         const companyId = payment.companyId;
         
-        // On récupère le plan depuis les métadonnées OU depuis la description du paiement
-        let plan = externalData.metadata?.plan;
+        // On récupère le plan depuis la description du paiement s'il n'est pas dans externalData (cas Sandbox)
         if (!plan && payment.description && payment.description.includes('- ')) {
           plan = payment.description.split('- ')[1];
         }

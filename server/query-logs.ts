@@ -2,7 +2,6 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 async function main() {
   const logs = await prisma.systemLog.findMany({
-    where: { source: 'Mailer' },
     orderBy: { createdAt: 'desc' },
     take: 10
   });
