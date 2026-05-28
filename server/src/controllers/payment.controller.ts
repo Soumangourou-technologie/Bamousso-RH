@@ -275,7 +275,8 @@ export const handleWebhook = async (req: Request, res: Response) => {
             plan: plan,
             amount: amount,
             date: new Date().toLocaleDateString(),
-            transactionId: (data.transaction_id || data.id || 'GP-' + Date.now()).toString()
+            transactionId: (data.transaction_id || data.id || 'GP-' + Date.now()).toString(),
+            billingCycle: billingCycle
           });
 
           if (adminEmail) {
@@ -426,7 +427,8 @@ export const confirmPayment = async (req: Request, res: Response) => {
             plan: plan,
             amount: amount,
             date: new Date().toLocaleDateString(),
-            transactionId: currentToken.toString()
+            transactionId: currentToken.toString(),
+            billingCycle: billingCycle
           });
 
           if (adminEmail) {

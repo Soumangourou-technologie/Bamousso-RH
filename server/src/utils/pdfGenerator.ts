@@ -7,6 +7,7 @@ export const generateSubscriptionPDF = (data: {
   amount: number;
   date: string;
   transactionId: string;
+  billingCycle?: string;
 }): Promise<any> => {
   return new Promise((resolve) => {
     const doc = new PDFDocument({ margin: 50 });
@@ -42,9 +43,13 @@ export const generateSubscriptionPDF = (data: {
     doc.text('Quantité', 350, 257);
     doc.text('Prix Total', 480, 257);
 
+    const isYearly = data.billingCycle === 'YEARLY';
+    const cycleText = isYearly ? 'Annuel' : 'Mensuel';
+    const durationText = isYearly ? '365 jours' : '30 jours';
+
     // Table Content
     doc.fillColor('#333333');
-    doc.text(`Abonnement Mensuel - Formule ${data.plan}`, 60, 285);
+    doc.text(`Abonnement ${cycleText} - Formule ${data.plan}`, 60, 285);
     doc.text('1', 350, 285);
     doc.text(`${data.amount.toLocaleString()} FCFA`, 450, 285);
 
@@ -56,7 +61,7 @@ export const generateSubscriptionPDF = (data: {
 
     // Footer
     doc.fontSize(10).fillColor('#999999').text(
-      'Merci de votre confiance. Votre abonnement est activé pour une durée de 30 jours.',
+      `Merci de votre confiance. Votre abonnement est activé pour une durée de ${durationText}.`,
       50, 700, { align: 'center', width: 500 }
     );
 
