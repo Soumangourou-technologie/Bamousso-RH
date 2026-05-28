@@ -38,6 +38,7 @@ const Payment = () => {
         description: `Abonnement Bamousso - Formule ${plan.name}${location.state?.extraEmployees > 0 ? ` (+${location.state.extraEmployees} employés)` : ''}`,
         companyId: companyId,
         plan: plan.name,
+        billingCycle: location.state?.billingCycle || 'MONTHLY',
         extraEmployees: location.state?.extraEmployees || 0,
         isAddOn: location.state?.isAddOn || false
       });
