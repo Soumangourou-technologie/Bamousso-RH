@@ -5,7 +5,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
   Building2, LayoutDashboard, LogOut, Moon, Sun, Users, Layers, X, 
   Calendar, Clock, FileText, Megaphone, Settings as SettingsIcon,
-  ListTodo, Banknote, MessageCircle, MessageSquare, FileWarning, BarChart3, Shield, UserPlus, LifeBuoy, Truck, Target
+  ListTodo, Banknote, MessageCircle, MessageSquare, FileWarning, BarChart3, Shield, UserPlus, LifeBuoy, Truck, Target, Wallet
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
@@ -107,7 +107,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
               {company?.logoUrl && !isSuperAdmin ? (
                 <img src={company.logoUrl} alt="Logo Entreprise" className="w-9 h-9 object-contain rounded-xl" />
               ) : (
-                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-primary to-brand-accent flex items-center justify-center shadow-lg">
+                <div className="w-9 h-9 rounded-xl bg-linear-to-br from-brand-primary to-brand-accent flex items-center justify-center shadow-lg">
                   <Building2 className="w-5 h-5 text-white" />
                 </div>
               )}
@@ -123,10 +123,17 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
         </div>
 
         <nav className="flex-1 p-4 space-y-2 overflow-y-auto custom-scrollbar">
-          <Link to={dashboardPath} className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname.startsWith('/dashboard') ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
+          <Link to={dashboardPath} className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === dashboardPath ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
             <LayoutDashboard className="w-5 h-5" />
             Tableau de bord
           </Link>
+
+          {isSuperAdmin && (
+            <Link to="/dashboard/super-admin/offline" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/dashboard/super-admin/offline' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
+              <Wallet className="w-5 h-5" />
+              Clients Hors-Ligne
+            </Link>
+          )}
 
           {(isSuperAdmin || user.role === 'COMPANY_ADMIN') && (
             <Link to="/support" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/support' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
@@ -290,7 +297,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           </button>
 
           <div className="flex items-center gap-3 p-3 glass-card rounded-2xl">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-brand-primary to-brand-accent flex items-center justify-center text-white shrink-0 shadow-lg">
+              <div className="w-10 h-10 rounded-full bg-linear-to-br from-brand-primary to-brand-accent flex items-center justify-center text-white shrink-0 shadow-lg">
                   <span className="font-black text-lg">{user.firstName[0]}{user.lastName[0]}</span>
               </div>
               <div className="min-w-0">

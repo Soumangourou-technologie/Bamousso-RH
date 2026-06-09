@@ -9,6 +9,7 @@ import bcrypt from "bcryptjs";
 import prisma from "../utils/prisma.js";
 import { z } from "zod";
 import type { AuthRequest } from "../middleware/auth.js";
+import { sendOfflineWelcomeEmail } from "../utils/mailer.js";
 
 // ─── Schémas de Validation ────────────────────────────────────────────────────
 
@@ -22,6 +23,17 @@ const createSuperAdminSchema = z.object({
 const changePasswordSchema = z.object({
   currentPassword: z.string().min(1, "Le mot de passe actuel est requis"),
   newPassword: z.string().min(6, "Le nouveau mot de passe doit contenir au moins 6 caractères"),
+});
+
+const createOfflineCompanySchema = z.object({
+  companyName: z.string().min(2, "Le nom de l'entreprise est requis"),
+  email: z.string().email("Format d'email invalide"),
+  phone: z.string().min(8, "Numéro de téléphone invalide"),
+  password: z.string().min(6, "Le mot de passe doit contenir au moins 6 caractères"),
+  firstName: z.string().min(1, "Le prénom est requis"),
+  lastName: z.string().min(1, "Le nom est requis"),
+  plan: z.enum(['FITINI', 'LOUBA', 'KORO']),
+  billingCycle: z.enum(['MONTHLY', 'YEARLY']),
 });
 
 // ─── Tableau de bord SUPER_ADMIN ──────────────────────────────────────────────
@@ -46,6 +58,8 @@ export const getAllCompanies = async (req: AuthRequest, res: Response): Promise<
         isLocked: true,
         subscriptionStatus: true,
         subscriptionEndsAt: true,
+        // @ts-ignore: Prisma client needs IDE TS Server restart to recognize this new field
+        paymentMode: true,
         plan: true,
         createdAt: true,
         _count: {
@@ -381,5 +395,123 @@ export const getPaymentInvoice = async (req: AuthRequest, res: Response): Promis
     res.send(pdfBuffer);
   } catch (error: any) {
     res.status(500).json({ message: "Erreur lors de la génération de la facture.", error: error.message });
+  }
+};
+
+/**
+ * Crée une entreprise en mode hors-ligne (Paiement Comptant).
+ */
+export const createOfflineCompany = async (req: AuthRequest, res: Response): Promise<any> => {
+  try {
+    const data = createOfflineCompanySchema.parse(req.body);
+
+    const existingUser = await prisma.user.findUnique({ where: { email: data.email } });
+    if (existingUser) return res.status(400).json({ message: "Cet email est déjà utilisé." });
+
+    const existingCompany = await prisma.company.findFirst({ where: { name: data.companyName } });
+    if (existingCompany) return res.status(400).json({ message: "Ce nom d'entreprise existe déjà." });
+
+    const hashedPassword = await bcrypt.hash(data.password, 10);
+    const months = data.billingCycle === 'YEARLY' ? 12 : 1;
+    const endsAt = new Date();
+    endsAt.setMonth(endsAt.getMonth() + months);
+
+    const result = await prisma.$transaction(async (tx) => {
+      const company = await tx.company.create({
+        data: {
+          name: data.companyName,
+          isActive: true,
+          subscriptionStatus: "ACTIVE",
+          subscriptionEndsAt: endsAt,
+          plan: data.plan,
+          billingCycle: data.billingCycle,
+          paymentMode: "OFFLINE",
+          isLocked: false,
+        } as any,
+      });
+
+      const user = await tx.user.create({
+        data: {
+          email: data.email,
+          phone: data.phone,
+          password: hashedPassword,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          role: "COMPANY_ADMIN",
+          companyId: company.id,
+          status: "ACTIVE",
+        },
+      });
+
+      await tx.company.update({
+        where: { id: company.id },
+        data: { managerId: user.id }
+      });
+
+      return { company, user };
+    });
+
+    // Envoi de l'email à l'admin de l'entreprise
+    await sendOfflineWelcomeEmail(result.user.email, result.user.firstName, result.company.name, result.company.plan, data.password);
+
+    res.status(201).json({ message: "Entreprise hors-ligne créée avec succès.", company: result.company });
+  } catch (error: any) {
+    if (error instanceof z.ZodError) return res.status(400).json({ message: error.issues[0].message });
+    res.status(500).json({ message: "Erreur lors de la création de l'entreprise hors-ligne.", error: error.message });
+  }
+};
+
+/**
+ * Renouvelle l'abonnement d'une entreprise hors-ligne en prolongeant la date de fin.
+ */
+export const renewOfflineSubscription = async (req: AuthRequest, res: Response): Promise<any> => {
+  try {
+    const id = String(req.params.id);
+    const company = await prisma.company.findUnique({ where: { id } });
+    
+    if (!company) return res.status(404).json({ message: "Entreprise introuvable." });
+    if ((company as any).paymentMode !== 'OFFLINE') return res.status(400).json({ message: "Cette entreprise n'est pas en mode paiement hors-ligne." });
+
+    let currentEnd = company.subscriptionEndsAt ? new Date(company.subscriptionEndsAt) : new Date();
+    if (currentEnd < new Date()) currentEnd = new Date();
+
+    const monthsToAdd = (company as any).billingCycle === 'YEARLY' ? 12 : 1;
+    currentEnd.setMonth(currentEnd.getMonth() + monthsToAdd);
+
+    const updated = await prisma.company.update({
+      where: { id },
+      data: {
+        subscriptionEndsAt: currentEnd,
+        subscriptionStatus: "ACTIVE",
+        isActive: true,
+        isLocked: false,
+      }
+    });
+
+    res.json({ message: "Abonnement renouvelé avec succès.", company: updated });
+  } catch (error: any) {
+    res.status(500).json({ message: "Erreur lors du renouvellement.", error: error.message });
+  }
+};
+
+/**
+ * Change le plan ou le cycle d'une entreprise hors-ligne.
+ */
+export const changeOfflinePlan = async (req: AuthRequest, res: Response): Promise<any> => {
+  try {
+    const id = String(req.params.id);
+    const { plan, billingCycle } = req.body;
+    
+    const updated = await prisma.company.update({
+      where: { id },
+      data: {
+        ...(plan && { plan }),
+        ...(billingCycle && { billingCycle }),
+      }
+    });
+
+    res.json({ message: "Plan/Cycle mis à jour avec succès.", company: updated });
+  } catch (error: any) {
+    res.status(500).json({ message: "Erreur lors de la modification du plan.", error: error.message });
   }
 };

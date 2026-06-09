@@ -14,6 +14,7 @@ import Documents from './pages/Documents';
 import Announcements from './pages/Announcements';
 import Settings from './pages/Settings';
 import DashboardSuperAdmin from './pages/DashboardSuperAdmin';
+import SuperAdminOfflineClients from './pages/SuperAdminOfflineClients';
 import Unauthorized from './pages/Unauthorized';
 import DashboardRedirect from './pages/DashboardRedirect';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -68,6 +69,7 @@ function App() {
                   {/* Super Admin Route */}
                   <Route element={<ProtectedRoute allowedRoles={['SUPER_ADMIN']} />}>
                     <Route path="/dashboard/super-admin" element={<DashboardSuperAdmin />} />
+                    <Route path="/dashboard/super-admin/offline" element={<SuperAdminOfflineClients />} />
                   </Route>
 
                   {/* Modules protégés par rôle (RH/Admin) */}

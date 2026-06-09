@@ -25,6 +25,7 @@ model Company {
   trialEndsAt        DateTime? // Fin de la période d'essai (7j)
   plan               String    @default("FITINI") // FITINI | LOUBA | KORO
   billingCycle       String    @default("MONTHLY") // MONTHLY | YEARLY
+  paymentMode        String    @default("ONLINE") // ONLINE | OFFLINE
   extraEmployees     Int       @default(0)
   isLocked           Boolean   @default(false)
   lockedAt           DateTime?

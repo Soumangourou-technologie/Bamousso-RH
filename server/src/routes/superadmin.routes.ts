@@ -14,6 +14,9 @@ import {
   getSystemLogs,
   getAllPayments,
   getPaymentInvoice,
+  createOfflineCompany,
+  renewOfflineSubscription,
+  changeOfflinePlan,
 } from "../controllers/superadmin.controller.js";
 
 const router = Router();
@@ -28,6 +31,12 @@ router.post("/super-admins", authorize(["SUPER_ADMIN"]), createSuperAdmin);
 router.patch("/companies/:id/toggle-lock", authorize(["SUPER_ADMIN"]), toggleCompanyLock);
 router.patch("/companies/:id/plan", authorize(["SUPER_ADMIN"]), updateCompanyPlan);
 router.delete("/companies/:id", authorize(["SUPER_ADMIN"]), deleteCompany);
+
+// Routes pour les clients hors-ligne
+router.post("/companies/offline", authorize(["SUPER_ADMIN"]), createOfflineCompany);
+router.patch("/companies/offline/:id/renew", authorize(["SUPER_ADMIN"]), renewOfflineSubscription);
+router.patch("/companies/offline/:id/plan", authorize(["SUPER_ADMIN"]), changeOfflinePlan);
+
 router.get("/logs", authorize(["SUPER_ADMIN"]), getSystemLogs);
 router.get("/payments", authorize(["SUPER_ADMIN"]), getAllPayments);
 router.get("/payments/:id/invoice", authorize(["SUPER_ADMIN"]), getPaymentInvoice);
