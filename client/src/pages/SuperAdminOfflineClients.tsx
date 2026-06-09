@@ -114,7 +114,9 @@ const SuperAdminOfflineClients = () => {
       void fetchData();
       alert("Entreprise créée et e-mail envoyé à l'administrateur !");
     } catch (error: any) {
-      alert(error.response?.data?.message || 'Erreur lors de la création');
+      const errorMessage = error.response?.data?.message || 'Erreur lors de la création';
+      const errorDetails = error.response?.data?.error ? `\nDétails: ${error.response.data.error}` : '';
+      alert(errorMessage + errorDetails);
     } finally {
       setLoading(false);
     }

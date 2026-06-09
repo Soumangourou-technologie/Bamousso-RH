@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
+    "postinstall": "npx prisma@5 generate --schema=server/prisma/schema.prisma",
     "build": "npx prisma@5 generate --schema=server/prisma/schema.prisma && cd client && npm install && npm run build && cd .. && rm -rf dist && mkdir -p dist && cp -r client/dist/* dist/"
   },
   "dependencies": {
