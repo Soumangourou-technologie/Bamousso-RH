@@ -59,9 +59,10 @@ export const usePlan = () => {
    */
   const maxEmployees = (): number | null => {
     if (isSuperAdmin) return null;
-    const base = PLAN_MAX_EMPLOYEES[plan] || 3;
+    const base = PLAN_MAX_EMPLOYEES[plan];
+    if (base === null) return null;
     const extra = (company as any)?.extraEmployees || 0;
-    return base + extra;
+    return (base === undefined ? 3 : base) + extra;
   };
 
   /**

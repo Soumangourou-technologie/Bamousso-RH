@@ -158,7 +158,7 @@ const SettingsPage = () => {
                 <div>
                   <p className="text-sm font-bold text-gray-900 dark:text-white">Capacité d'employés</p>
                   <p className="text-xs text-gray-500">
-                    <span className="font-black text-orange-500">{maxEmployees === Infinity ? 'Illimité' : maxEmployees}</span> collaborateurs autorisés
+                    <span className="font-black text-orange-500">{maxEmployees === null || maxEmployees === Infinity ? 'Illimité' : maxEmployees}</span> collaborateurs autorisés
                   </p>
                 </div>
               </div>
