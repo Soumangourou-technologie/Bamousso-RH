@@ -66,8 +66,13 @@ const DashboardSuperAdmin = () => {
   const [superAdmins, setSuperAdmins] = useState<SuperAdmin[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterPlan, setFilterPlan] = useState('ALL');
-  const [activeTab, setActiveTab] = useState<'companies' | 'payments'>('companies');
+  const [activeTab, setActiveTab] = useState<'companies' | 'payments' | 'settings'>('companies');
   const [payments, setPayments] = useState<any[]>([]);
+  
+  // Settings State
+  const [whatsappContacts, setWhatsappContacts] = useState<string[]>(['', '']);
+  const [isSavingSettings, setIsSavingSettings] = useState(false);
+
 
   // Modal States
   const [isPlanModalOpen, setIsPlanModalOpen] = useState(false);
@@ -85,14 +90,20 @@ const DashboardSuperAdmin = () => {
 
   const fetchData = async () => {
     try {
-      const [compRes, statsRes, payRes] = await Promise.all([
+      const [compRes, statsRes, payRes, settingsRes] = await Promise.all([
         api.get('/admin/companies'),
         api.get('/admin/stats'),
-        api.get('/admin/payments')
+        api.get('/admin/payments'),
+        api.get('/admin/settings')
       ]);
       setCompanies(compRes.data);
       setSuperAdmins(statsRes.data.superAdmins);
       setPayments(payRes.data);
+      if (settingsRes.data?.WHATSAPP_CONTACTS) {
+        // Ensure at least 2 inputs
+        const contacts = settingsRes.data.WHATSAPP_CONTACTS;
+        setWhatsappContacts([contacts[0] || '', contacts[1] || '']);
+      }
     } catch (error) {
       console.error('Error fetching data', error);
     }
@@ -161,6 +172,24 @@ const DashboardSuperAdmin = () => {
       alert(error.response?.data?.message || 'Erreur lors de la création');
     } finally {
       setAdminLoading(false);
+    }
+  };
+
+  const handleSaveSettings = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSavingSettings(true);
+    try {
+      // Filter out empty strings before saving
+      const validContacts = whatsappContacts.filter(c => c.trim() !== '');
+      await api.put('/admin/settings', {
+        WHATSAPP_CONTACTS: validContacts
+      });
+      alert('Paramètres enregistrés avec succès !');
+    } catch (error) {
+      console.error('Error saving settings', error);
+      alert('Erreur lors de la sauvegarde des paramètres');
+    } finally {
+      setIsSavingSettings(false);
     }
   };
 
@@ -258,10 +287,10 @@ const DashboardSuperAdmin = () => {
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}
         className="glass-card rounded-[2.5rem] p-10 relative overflow-hidden group">
-        <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-to-bl from-brand-primary/20 to-transparent rounded-bl-full pointer-events-none transition-transform group-hover:scale-110 duration-700" />
+        <div className="absolute top-0 right-0 w-80 h-80 bg-linear-to-bl from-brand-primary/20 to-transparent rounded-bl-full pointer-events-none transition-transform group-hover:scale-110 duration-700" />
         <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-6">
-            <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-brand-primary to-brand-accent text-white flex items-center justify-center shadow-2xl shadow-brand-primary/30">
+            <div className="w-20 h-20 rounded-3xl bg-linear-to-br from-brand-primary to-brand-accent text-white flex items-center justify-center shadow-2xl shadow-brand-primary/30">
               <ShieldCheck className="w-10 h-10" />
             </div>
             <div>
@@ -304,9 +333,9 @@ const DashboardSuperAdmin = () => {
           <motion.div 
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
             key={stat.label} 
-            className="glass-card p-8 rounded-[2rem] relative overflow-hidden group min-w-[280px] md:min-w-0 snap-center"
+            className="glass-card p-8 rounded-4xl relative overflow-hidden group min-w-70 md:min-w-0 snap-center"
           >
-            <div className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${stat.color} opacity-10 rounded-bl-[3rem] transition-transform group-hover:scale-125 duration-500`} />
+            <div className={`absolute top-0 right-0 w-24 h-24 bg-linear-to-br ${stat.color} opacity-10 rounded-bl-[3rem] transition-transform group-hover:scale-125 duration-500`} />
             <stat.icon className="w-8 h-8 text-white/20 mb-6" />
             <p className="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] mb-1">{stat.label}</p>
             <p className="text-3xl font-black text-white tracking-tighter">{stat.value}</p>
@@ -324,9 +353,9 @@ const DashboardSuperAdmin = () => {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
            {superAdmins.map((admin) => (
-             <div key={admin.id} className="p-6 bg-white/5 border border-white/10 rounded-[2rem] flex items-center gap-4 group hover:bg-white/10 transition-all">
+             <div key={admin.id} className="p-6 bg-white/5 border border-white/10 rounded-4xl flex items-center gap-4 group hover:bg-white/10 transition-all">
                 <div className="relative">
-                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-primary to-brand-accent flex items-center justify-center text-white font-black text-xl shadow-lg">
+                  <div className="w-14 h-14 rounded-2xl bg-linear-to-br from-brand-primary to-brand-accent flex items-center justify-center text-white font-black text-xl shadow-lg">
                     {admin.firstName[0]}
                   </div>
                   <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-4 border-[#1a0f0a] ${admin.isOnline ? 'bg-emerald-500' : 'bg-gray-500'}`} />
@@ -342,18 +371,24 @@ const DashboardSuperAdmin = () => {
       </motion.div>
 
       {/* Tabs */}
-      <div className="flex gap-4 border-b border-white/10 pb-4">
+      <div className="flex gap-4 border-b border-white/10 pb-4 overflow-x-auto no-scrollbar">
         <button 
           onClick={() => setActiveTab('companies')}
-          className={`px-8 py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all ${activeTab === 'companies' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20' : 'text-gray-500 hover:text-white'}`}
+          className={`px-8 py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === 'companies' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20' : 'text-gray-500 hover:text-white'}`}
         >
           Entreprises
         </button>
         <button 
           onClick={() => setActiveTab('payments')}
-          className={`px-8 py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all ${activeTab === 'payments' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20' : 'text-gray-500 hover:text-white'}`}
+          className={`px-8 py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === 'payments' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20' : 'text-gray-500 hover:text-white'}`}
         >
           Factures (Paiements)
+        </button>
+        <button 
+          onClick={() => setActiveTab('settings')}
+          className={`px-8 py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === 'settings' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20' : 'text-gray-500 hover:text-white'}`}
+        >
+          Paramètres Système
         </button>
       </div>
 
@@ -392,7 +427,7 @@ const DashboardSuperAdmin = () => {
                 {filteredCompanies.map(company => (
                   <motion.div 
                     layout initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-                    key={company.id} className={`p-8 rounded-[2rem] border transition-all duration-300 group hover:shadow-2xl min-w-[320px] md:min-w-0 snap-center ${company.isLocked ? 'bg-rose-500/10 border-rose-500/20' : 'bg-white/5 border-white/10 hover:border-brand-primary/30'}`}
+                    key={company.id} className={`p-8 rounded-4xl border transition-all duration-300 group hover:shadow-2xl min-w-[320px] md:min-w-0 snap-center ${company.isLocked ? 'bg-rose-500/10 border-rose-500/20' : 'bg-white/5 border-white/10 hover:border-brand-primary/30'}`}
                   >
                     <div className="flex justify-between items-start mb-6">
                       <div className="min-w-0">
@@ -449,7 +484,7 @@ const DashboardSuperAdmin = () => {
               </AnimatePresence>
             </div>
           </>
-        ) : (
+        ) : activeTab === 'payments' ? (
           <>
             <div id="payments-section" className="flex justify-between items-center mb-10 scroll-mt-24">
               <h2 className="text-3xl font-black text-white tracking-tight">Historique des Factures</h2>
@@ -492,6 +527,50 @@ const DashboardSuperAdmin = () => {
               </table>
             </div>
           </>
+        ) : (
+          <>
+            <div className="flex justify-between items-center mb-10">
+              <h2 className="text-3xl font-black text-white tracking-tight">Paramètres Globaux</h2>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="p-8 bg-white/5 border border-white/10 rounded-4xl">
+                <h3 className="text-xl font-black text-white mb-6">Contact WhatsApp (Paiements Hors-Ligne)</h3>
+                <p className="text-sm text-gray-400 mb-6">
+                  Ces numéros apparaîtront sur la page d'accueil pour les clients souhaitant souscrire en payant en espèces directement au siège ou par mobile money hors plateforme.
+                </p>
+                <form onSubmit={handleSaveSettings} className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-black uppercase text-gray-500 tracking-widest mb-2">Numéro 1 (Principal)</label>
+                    <input 
+                      type="text" 
+                      placeholder="+2250000000000" 
+                      value={whatsappContacts[0]}
+                      onChange={(e) => setWhatsappContacts([e.target.value, whatsappContacts[1]])}
+                      className="w-full p-4 bg-black/30 border border-white/10 rounded-2xl text-white font-bold focus:ring-2 focus:ring-brand-primary"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-black uppercase text-gray-500 tracking-widest mb-2">Numéro 2 (Optionnel)</label>
+                    <input 
+                      type="text" 
+                      placeholder="+2250000000000" 
+                      value={whatsappContacts[1]}
+                      onChange={(e) => setWhatsappContacts([whatsappContacts[0], e.target.value])}
+                      className="w-full p-4 bg-black/30 border border-white/10 rounded-2xl text-white font-bold focus:ring-2 focus:ring-brand-primary"
+                    />
+                  </div>
+                  <button 
+                    type="submit" 
+                    disabled={isSavingSettings}
+                    className="w-full py-4 mt-4 bg-brand-primary hover:bg-orange-600 text-white font-black rounded-2xl shadow-lg shadow-brand-primary/20 transition-all active:scale-95 disabled:opacity-50"
+                  >
+                    {isSavingSettings ? 'Enregistrement...' : 'Enregistrer les contacts'}
+                  </button>
+                </form>
+              </div>
+            </div>
+          </>
         )}
       </div>
 
@@ -505,7 +584,7 @@ const DashboardSuperAdmin = () => {
                 {Object.keys(PLAN_LABELS).map(p => (
                   <button 
                     key={p} onClick={() => handleUpdatePlan(p)}
-                    className={`w-full p-6 rounded-[2rem] border-2 text-left transition-all duration-300 ${selectedCompany.plan === p ? 'border-brand-primary bg-brand-primary/10' : 'border-white/5 hover:border-white/20 bg-white/5'}`}
+                    className={`w-full p-6 rounded-4xl border-2 text-left transition-all duration-300 ${selectedCompany.plan === p ? 'border-brand-primary bg-brand-primary/10' : 'border-white/5 hover:border-white/20 bg-white/5'}`}
                   >
                     <p className="font-black text-white text-lg">{PLAN_LABELS[p]}</p>
                     <p className="text-sm text-brand-accent font-bold mt-1">{PLAN_PRICES[p]} FCFA / mois</p>

@@ -17,7 +17,10 @@ import {
   createOfflineCompany,
   renewOfflineSubscription,
   changeOfflinePlan,
+  getSystemSettings,
+  updateSystemSettings
 } from "../controllers/superadmin.controller.js";
+
 
 const router = Router();
 
@@ -40,6 +43,10 @@ router.patch("/companies/offline/:id/plan", authorize(["SUPER_ADMIN"]), changeOf
 router.get("/logs", authorize(["SUPER_ADMIN"]), getSystemLogs);
 router.get("/payments", authorize(["SUPER_ADMIN"]), getAllPayments);
 router.get("/payments/:id/invoice", authorize(["SUPER_ADMIN"]), getPaymentInvoice);
+
+router.get("/settings", authorize(["SUPER_ADMIN"]), getSystemSettings);
+router.put("/settings", authorize(["SUPER_ADMIN"]), updateSystemSettings);
+
 
 // ─── Route accessible à tous les rôles (changer son propre mot de passe) ─────
 router.patch("/change-password", changePassword);

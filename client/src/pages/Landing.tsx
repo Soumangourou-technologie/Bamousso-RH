@@ -1,13 +1,30 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Building2, CheckCircle, Users, Clock, Calendar, ArrowRight, Loader2 } from 'lucide-react';
+import { Building2, CheckCircle, Users, Clock, Calendar, ArrowRight, Loader2, MessageCircle, X } from 'lucide-react';
 import { PricingToggle } from '../components/PricingToggle';
 import { BillingCycle, PRICING_PLANS } from '@shared/pricing';
+import api from '../utils/api';
 
 const Landing = () => {
   const navigate = useNavigate();
   const [billingCycle, setBillingCycle] = useState<BillingCycle>('MONTHLY');
+  const [whatsappContacts, setWhatsappContacts] = useState<string[]>([]);
+  const [isWhatsappOpen, setIsWhatsappOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchContacts = async () => {
+      try {
+        const res = await api.get('/settings/public');
+        if (res.data.contacts && res.data.contacts.length > 0) {
+          setWhatsappContacts(res.data.contacts.filter((c: string) => c.trim() !== ''));
+        }
+      } catch (err) {
+        console.error('Failed to fetch whatsapp contacts', err);
+      }
+    };
+    void fetchContacts();
+  }, []);
 
   const handleSelectPlan = (planId: string) => {
     navigate('/register', { state: { selectedPlanId: planId, billingCycle } });
@@ -248,6 +265,63 @@ const Landing = () => {
           </div>
         </div>
       </footer>
+
+      {/* WhatsApp Floating Button */}
+      {whatsappContacts.length > 0 && (
+        <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+          <AnimatePresence>
+            {isWhatsappOpen && (
+              <motion.div 
+                initial={{ opacity: 0, y: 20, scale: 0.9 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 20, scale: 0.9 }}
+                className="mb-4 bg-white p-6 rounded-4xl shadow-2xl border border-gray-100 flex flex-col gap-4 min-w-70"
+              >
+                <div className="flex justify-between items-center mb-2">
+                  <h4 className="font-black text-gray-900">Payer en espèces</h4>
+                  <button onClick={() => setIsWhatsappOpen(false)} className="text-gray-400 hover:text-gray-600">
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+                <p className="text-sm text-gray-500 font-medium mb-2">
+                  Contactez-nous sur WhatsApp pour souscrire à un abonnement Bamousso RH ou payer en espèces.
+                </p>
+                {whatsappContacts.map((contact, idx) => {
+                  // Format for WhatsApp API: remove spaces/plus
+                  const formattedContact = contact.replace(/\D/g, '');
+                  const message = encodeURIComponent("Bonjour, je souhaite souscrire à un abonnement Bamousso RH");
+                  const whatsappUrl = `https://wa.me/${formattedContact}?text=${message}`;
+                  return (
+                    <a 
+                      key={idx}
+                      href={whatsappUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-3 w-full p-4 bg-green-50 hover:bg-green-100 text-green-700 rounded-2xl transition-colors group"
+                    >
+                      <div className="w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                        <MessageCircle className="w-5 h-5 fill-current" />
+                      </div>
+                      <div>
+                        <div className="text-[10px] font-black uppercase tracking-widest text-green-600/70">Contact {idx + 1}</div>
+                        <div className="font-black">{contact}</div>
+                      </div>
+                    </a>
+                  );
+                })}
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <button 
+            onClick={() => setIsWhatsappOpen(!isWhatsappOpen)}
+            className="w-16 h-16 bg-[#25D366] hover:bg-[#1ebd5a] text-white rounded-full shadow-[0_8px_30px_rgb(37,211,102,0.4)] flex items-center justify-center transition-transform hover:scale-110 active:scale-95"
+            title="Nous contacter sur WhatsApp"
+          >
+            {isWhatsappOpen ? <X className="w-7 h-7" /> : <MessageCircle className="w-8 h-8 fill-current" />}
+          </button>
+        </div>
+      )}
     </div>
   );
 };

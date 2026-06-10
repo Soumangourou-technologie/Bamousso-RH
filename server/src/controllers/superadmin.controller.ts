@@ -515,3 +515,42 @@ export const changeOfflinePlan = async (req: AuthRequest, res: Response): Promis
     res.status(500).json({ message: "Erreur lors de la modification du plan.", error: error.message });
   }
 };
+
+/**
+ * Récupère les paramètres globaux (ex: Numéros WhatsApp).
+ */
+export const getSystemSettings = async (req: AuthRequest, res: Response): Promise<any> => {
+  try {
+    // @ts-ignore: Prisma client needs IDE TS Server restart to recognize this new model
+    const setting = await prisma.systemSetting.findUnique({
+      where: { key: 'WHATSAPP_CONTACTS' }
+    });
+    const contacts = setting ? setting.value : [];
+    res.json({ WHATSAPP_CONTACTS: contacts });
+  } catch (error: any) {
+    res.status(500).json({ message: "Erreur lors de la récupération des paramètres.", error: error.message });
+  }
+};
+
+/**
+ * Met à jour les paramètres globaux (ex: Numéros WhatsApp).
+ */
+export const updateSystemSettings = async (req: AuthRequest, res: Response): Promise<any> => {
+  try {
+    const { WHATSAPP_CONTACTS } = req.body;
+    
+    if (WHATSAPP_CONTACTS !== undefined) {
+      // @ts-ignore: Prisma client needs IDE TS Server restart to recognize this new model
+      await prisma.systemSetting.upsert({
+        where: { key: 'WHATSAPP_CONTACTS' },
+        update: { value: WHATSAPP_CONTACTS },
+        create: { key: 'WHATSAPP_CONTACTS', value: WHATSAPP_CONTACTS }
+      });
+    }
+    
+    res.json({ message: "Paramètres mis à jour avec succès." });
+  } catch (error: any) {
+    res.status(500).json({ message: "Erreur lors de la mise à jour des paramètres.", error: error.message });
+  }
+};
+
