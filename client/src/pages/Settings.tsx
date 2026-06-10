@@ -121,7 +121,7 @@ const SettingsPage = () => {
                 <button 
                   type="submit" 
                   disabled={isSaving || !selectedFile}
-                  className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white px-6 py-3.5 rounded-2xl font-black shadow-lg shadow-orange-500/20 hover:shadow-orange-500/40 transition-all disabled:opacity-30 disabled:grayscale"
+                  className="w-full flex items-center justify-center gap-2 bg-linear-to-r from-orange-500 to-orange-600 text-white px-6 py-3.5 rounded-2xl font-black shadow-lg shadow-orange-500/20 hover:shadow-orange-500/40 transition-all disabled:opacity-30 disabled:grayscale"
                 >
                   {isSaving ? 'Enregistrement...' : <><Save className="w-5 h-5" /> Enregistrer</>}
                 </button>
