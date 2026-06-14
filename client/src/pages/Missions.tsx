@@ -6,7 +6,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import api from '../utils/api';
 import SignatureCanvas from 'react-signature-canvas';
 import jsPDF from 'jspdf';
-import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 import DeliveryMapModal from '../components/DeliveryMapModal';
 
 interface Mission {
@@ -159,24 +160,40 @@ const Missions = () => {
     doc.save(`mission_${mission.id.substring(0, 8)}.pdf`);
   };
 
-  const exportExcel = () => {
-    const dataToExport = filteredMissions.map(m => ({
-      ID: m.id.substring(0, 8),
-      Titre: m.title,
-      Type: m.type,
-      Client: m.clientName || '-',
-      Téléphone: m.clientPhone || '-',
-      Adresse: m.address || '-',
-      Assigné: `${m.assignedTo?.firstName} ${m.assignedTo?.lastName}`,
-      Statut: m.status,
-      ValidationMode: m.validationMode || '-',
-      DateValidation: m.validatedAt ? new Date(m.validatedAt).toLocaleString() : '-'
-    }));
+  const exportExcel = async () => {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Missions");
 
-    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Missions");
-    XLSX.writeFile(workbook, `Missions_${missionType}.xlsx`);
+    worksheet.columns = [
+      { header: 'ID', key: 'ID', width: 15 },
+      { header: 'Titre', key: 'Titre', width: 25 },
+      { header: 'Type', key: 'Type', width: 15 },
+      { header: 'Client', key: 'Client', width: 20 },
+      { header: 'Téléphone', key: 'Téléphone', width: 15 },
+      { header: 'Adresse', key: 'Adresse', width: 30 },
+      { header: 'Assigné', key: 'Assigné', width: 20 },
+      { header: 'Statut', key: 'Statut', width: 15 },
+      { header: 'ValidationMode', key: 'ValidationMode', width: 15 },
+      { header: 'DateValidation', key: 'DateValidation', width: 20 },
+    ];
+
+    filteredMissions.forEach(m => {
+      worksheet.addRow({
+        ID: m.id.substring(0, 8),
+        Titre: m.title,
+        Type: m.type,
+        Client: m.clientName || '-',
+        Téléphone: m.clientPhone || '-',
+        Adresse: m.address || '-',
+        Assigné: `${m.assignedTo?.firstName} ${m.assignedTo?.lastName}`,
+        Statut: m.status,
+        ValidationMode: m.validationMode || '-',
+        DateValidation: m.validatedAt ? new Date(m.validatedAt).toLocaleString() : '-'
+      });
+    });
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    saveAs(new Blob([buffer]), `Missions_${missionType}.xlsx`);
   };
 
   const filteredMissions = missions.filter(m => 

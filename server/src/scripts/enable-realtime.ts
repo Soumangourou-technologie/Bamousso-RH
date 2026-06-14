@@ -49,7 +49,7 @@ async function main() {
       if (err.message && err.message.includes('already exists in publication')) {
         console.log(`ℹ️ La table "${table}" est déjà activée pour le temps réel.`);
       } else {
-        console.warn(`⚠️ Impossible d'ajouter la table "${table}" :`, err.message || err);
+        console.warn("⚠️ Impossible d'ajouter la table \"%s\" :", table, err.message || err);
       }
     }
   }

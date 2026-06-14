@@ -2,7 +2,7 @@ import prisma from "./prisma.js";
 
 export const logToDb = async (level: "INFO" | "WARN" | "ERROR", message: string, details?: any, source?: string) => {
   try {
-    console.log(`[${level}] ${source ? `(${source}) ` : ""}${message}`, details || "");
+    console.log('[%s] %s%s', level, source ? `(${source}) ` : "", message, details || "");
     
     await prisma.systemLog.create({
       data: {

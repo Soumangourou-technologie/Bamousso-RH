@@ -13,9 +13,9 @@ async function main() {
   for (const url of urls) {
     try {
       const res = await axios.get(url, { headers: { 'X-API-Key': apiKey, 'X-API-Secret': apiSecret, 'Accept': 'application/json' }});
-      console.log(`✅ Success ${url}:`, res.status);
+      console.log('✅ Success %s:', url, res.status);
     } catch (e: any) {
-      console.log(`❌ Failed ${url}:`, e.response?.status || e.message);
+      console.log('❌ Failed %s:', url, e.response?.status || e.message);
     }
   }
 }

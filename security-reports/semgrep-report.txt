@@ -1,0 +1,76 @@
+                   
+                   
+┌─────────────────┐
+│ 9 Code Findings │
+└─────────────────┘
+                        
+    VERCEL_VARIABLES.txt
+   ❯❯❱ generic.secrets.security.detected-jwt-token.detected-jwt-token
+          ❰❰ Blocking ❱❱
+          JWT token detected          
+          Details: https://sg.run/05N5
+                                      
+            9┆ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50cWJ3bXZ3aHRtb3ZkY2
+               13eXJyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMDc2MjksImV4cCI6MjA5Mjg4MzYyOX0.IrnBYXI6rv2pHqgUM
+               dRwrQA5ziAmkFvd0QNQUWBtAsw                                                                 
+            ⋮┆----------------------------------------
+           29┆ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50cWJ3bXZ3aHRtb3ZkY2
+               13eXJyIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NzMwNzYyOSwiZXhwIjoyMDkyODgzNjI5fQ.aZV6Md
+               HK27VIypqEXVcdQnHezL7BCgcDX_H2gq-ensQ                                                      
+            ⋮┆----------------------------------------
+           32┆ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50cWJ3bXZ3aHRtb3ZkY2
+               13eXJyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMDc2MjksImV4cCI6MjA5Mjg4MzYyOX0.IrnBYXI6rv2pHqgUM
+               dRwrQA5ziAmkFvd0QNQUWBtAsw                                                                 
+                                  
+    server/src/middleware/error.ts
+     ❱ javascript.lang.security.audit.unsafe-formatstring.unsafe-formatstring
+          ❰❰ Blocking ❱❱
+          Detected string concatenation with a non-literal variable in a util.format / console.log function.
+          If an attacker injects a format specifier in the string, it will forge the log message. Try to use
+          constant values for the format string.                                                            
+          Details: https://sg.run/7Y5R                                                                      
+                                                                                                            
+           11┆ console.error(`[Error] ${req.method} ${req.path}:`, err);
+                                         
+    server/src/scripts/enable-realtime.ts
+     ❱ javascript.lang.security.audit.unsafe-formatstring.unsafe-formatstring
+          ❰❰ Blocking ❱❱
+          Detected string concatenation with a non-literal variable in a util.format / console.log function.
+          If an attacker injects a format specifier in the string, it will forge the log message. Try to use
+          constant values for the format string.                                                            
+          Details: https://sg.run/7Y5R                                                                      
+                                                                                                            
+           52┆ console.warn(`⚠️ Impossible d'ajouter la table "${table}" :`, err.message || err);
+                              
+    server/src/utils/logger.ts
+     ❱ javascript.lang.security.audit.unsafe-formatstring.unsafe-formatstring
+          ❰❰ Blocking ❱❱
+          Detected string concatenation with a non-literal variable in a util.format / console.log function.
+          If an attacker injects a format specifier in the string, it will forge the log message. Try to use
+          constant values for the format string.                                                            
+          Details: https://sg.run/7Y5R                                                                      
+                                                                                                            
+            5┆ console.log(`[${level}] ${source ? `(${source}) ` : ""}${message}`, details || "");
+                                
+    server/src/utils/supabase.ts
+     ❱ javascript.lang.security.audit.unsafe-formatstring.unsafe-formatstring
+          ❰❰ Blocking ❱❱
+          Detected string concatenation with a non-literal variable in a util.format / console.log function.
+          If an attacker injects a format specifier in the string, it will forge the log message. Try to use
+          constant values for the format string.                                                            
+          Details: https://sg.run/7Y5R                                                                      
+                                                                                                            
+           52┆ console.error(`Supabase upload error (Bucket: ${bucket}):`, error.message);
+                            
+    server/test-geniuspay.ts
+     ❱ javascript.lang.security.audit.unsafe-formatstring.unsafe-formatstring
+          ❰❰ Blocking ❱❱
+          Detected string concatenation with a non-literal variable in a util.format / console.log function.
+          If an attacker injects a format specifier in the string, it will forge the log message. Try to use
+          constant values for the format string.                                                            
+          Details: https://sg.run/7Y5R                                                                      
+                                                                                                            
+           16┆ console.log(`✅ Success ${url}:`, res.status);
+            ⋮┆----------------------------------------
+           18┆ console.log(`❌ Failed ${url}:`, e.response?.status || e.message);
+

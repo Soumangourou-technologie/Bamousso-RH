@@ -26,6 +26,7 @@ dist-ssr
 # Environment variables
 .env
 .env.local
+VERCEL_VARIABLES.txt
 
 # Database
 server/prisma/dev.db

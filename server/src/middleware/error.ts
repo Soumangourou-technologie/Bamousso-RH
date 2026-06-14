@@ -8,7 +8,7 @@ export const errorHandler = (err: any, req: Request, res: Response, next: NextFu
   const statusCode = err.status || err.statusCode || 500;
   
   // Log de l'erreur pour le serveur
-  console.error(`[Error] ${req.method} ${req.path}:`, err);
+  console.error('[Error] %s %s:', req.method, req.path, err);
 
   const response = {
     message: err.message || 'Une erreur interne est survenue.',
