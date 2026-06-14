@@ -66,26 +66,54 @@ export const getContacts = async (req: any, res: Response) => {
   try {
     const user = req.user;
 
-    // Si c'est un SUPER_ADMIN, il voit les autres SUPER_ADMIN (Chat Interne)
+    // Si c'est un SUPER_ADMIN, il voit les autres SUPER_ADMIN et tous les utilisateurs avec qui il a un historique de messages
     if (user.role === 'SUPER_ADMIN') {
+      // 1. Récupérer les ID de tous les utilisateurs ayant échangé avec ce super admin
+      const messages = await prisma.message.findMany({
+        where: {
+          OR: [
+            { senderId: user.id },
+            { recipientId: user.id }
+          ]
+        },
+        select: { senderId: true, recipientId: true }
+      });
+
+      const contactIds = new Set<string>();
+      messages.forEach((m: any) => {
+        if (m.senderId !== user.id) contactIds.add(m.senderId);
+        if (m.recipientId !== user.id) contactIds.add(m.recipientId);
+      });
+
+      // 2. Ajouter aussi les autres SUPER_ADMIN par défaut
       const superAdmins = await prisma.user.findMany({
         where: { 
           role: 'SUPER_ADMIN',
-          id: { not: user.id } // Exclure soi-même
+          id: { not: user.id }
+        },
+        select: { id: true }
+      });
+      superAdmins.forEach((s: any) => contactIds.add(s.id));
+
+      // 3. Récupérer les informations de tous ces contacts
+      const contactsUsers = await prisma.user.findMany({
+        where: {
+          id: { in: Array.from(contactIds) }
         },
         select: {
           id: true,
           firstName: true,
           lastName: true,
           role: true,
+          company: { select: { name: true } }
         }
       });
 
-      const contacts = superAdmins.map((s: any) => ({
-        id: s.id,
-        name: `${s.firstName} ${s.lastName}`,
-        role: 'SUPER_ADMIN',
-        isSupport: true // On peut le considérer comme support interne
+      const contacts = contactsUsers.map((u: any) => ({
+        id: u.id,
+        name: u.company ? `${u.firstName} ${u.lastName} (${u.company.name})` : `${u.firstName} ${u.lastName}`,
+        role: u.role,
+        isSupport: u.role === 'SUPER_ADMIN'
       }));
 
       return res.json(contacts);
