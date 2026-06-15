@@ -14,6 +14,8 @@ if (supabaseUrl && supabaseAnonKey) {
   const dummyChannel = {
     on: () => dummyChannel,
     subscribe: () => {},
+    presenceState: () => ({}),
+    track: async () => {},
   };
   supabase = {
     channel: () => dummyChannel,

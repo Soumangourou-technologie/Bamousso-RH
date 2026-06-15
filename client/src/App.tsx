@@ -39,6 +39,7 @@ import ClientRegistrationAdmin from './pages/ClientRegistrationAdmin';
 import Support from './pages/Support';
 import Upgrade from './pages/Upgrade';
 import Missions from './pages/Missions';
+import WorkSchedules from './pages/WorkSchedules';
 
 import { NotificationProvider } from './context/NotificationContext';
 
@@ -91,6 +92,7 @@ function App() {
                     <Route path="/employees" element={<Employees />} />
                     <Route path="/departments" element={<Departments />} />
                     <Route path="/settings" element={<Settings />} />
+                    <Route path="/work-schedules" element={<WorkSchedules />} />
                   </Route>
 
                   {/* Modules accessibles à tous selon forfait */}

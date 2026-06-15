@@ -32,12 +32,22 @@ interface Employee {
   department?: { id: string; name: string } | null;
   customRoleId?: string | null;
   customRole?: { id: string; name: string } | null;
+  baseSalary?: number | null;
+  paymentMethod?: string;
+  workScheduleId?: string | null;
+  workSchedule?: { id: string; name: string } | null;
+}
+
+interface WorkSchedule {
+  id: string;
+  name: string;
 }
 
 const Employees = () => {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [departments, setDepartments] = useState<Department[]>([]);
   const [customRoles, setCustomRoles] = useState<CustomRole[]>([]);
+  const [workSchedules, setWorkSchedules] = useState<WorkSchedule[]>([]);
 
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -46,6 +56,11 @@ const Employees = () => {
   const [role, setRole] = useState<Role>('EMPLOYEE');
   const [departmentId, setDepartmentId] = useState<string>('');
   const [customRoleId, setCustomRoleId] = useState<string>('');
+
+  const [editingPayrollId, setEditingPayrollId] = useState<string | null>(null);
+  const [selectedBaseSalary, setSelectedBaseSalary] = useState<number>(0);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>('MONTHLY');
+  const [selectedWorkScheduleId, setSelectedWorkScheduleId] = useState<string>('');
 
   const [error, setError] = useState<string | null>(null);
   const [isCreating, setIsCreating] = useState(false);
@@ -74,10 +89,18 @@ const Employees = () => {
     } catch (err) { console.error(err); }
   };
 
+  const fetchWorkSchedules = async () => {
+    try {
+      const res = await api.get<WorkSchedule[]>('/work-schedules');
+      setWorkSchedules(res.data);
+    } catch (err) { console.error(err); }
+  };
+
   useEffect(() => {
     void fetchEmployees();
     void fetchDepartments();
     void fetchCustomRoles();
+    void fetchWorkSchedules();
   }, []);
 
   const canPickDepartment = departments.length > 0;
@@ -324,6 +347,8 @@ const Employees = () => {
                 <th className="text-left p-3">Rôle</th>
                 <th className="text-left p-3">Statut</th>
                 <th className="text-left p-3">Département</th>
+                <th className="text-left p-3">Rémunération</th>
+                <th className="text-left p-3">Horaire</th>
                 <th className="text-right p-3">Actions</th>
               </tr>
             </thead>
@@ -427,6 +452,74 @@ const Employees = () => {
                           </button>
                         )}
                       </div>
+                    )}
+                  </td>
+                  <td className="p-3 text-gray-700 dark:text-gray-300 text-xs">
+                    {editingPayrollId === e.id ? (
+                      <div className="flex flex-col gap-1">
+                        <input 
+                          type="number" 
+                          value={selectedBaseSalary} 
+                          onChange={e => setSelectedBaseSalary(Number(e.target.value))}
+                          className="p-1 text-xs border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-black dark:text-white"
+                        />
+                        <select
+                          value={selectedPaymentMethod}
+                          onChange={e => setSelectedPaymentMethod(e.target.value)}
+                          className="p-1 text-xs border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-black dark:text-white"
+                        >
+                          <option value="MONTHLY">Mensuel</option>
+                          <option value="HOURLY">Horaire</option>
+                          <option value="DAILY">Journalier</option>
+                        </select>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col group/payroll cursor-pointer" onClick={() => {
+                        if (user?.role === 'COMPANY_ADMIN' || user?.role === 'HR_MANAGER') {
+                          setEditingPayrollId(e.id);
+                          setSelectedBaseSalary(e.baseSalary || 0);
+                          setSelectedPaymentMethod(e.paymentMethod || 'MONTHLY');
+                          setSelectedWorkScheduleId(e.workScheduleId || '');
+                        }
+                      }}>
+                        <span className="font-bold">{e.baseSalary ? e.baseSalary.toLocaleString() + ' FCFA' : 'Non défini'}</span>
+                        <span className="text-[10px] text-gray-500">{e.paymentMethod || 'MONTHLY'}</span>
+                      </div>
+                    )}
+                  </td>
+                  <td className="p-3 text-gray-700 dark:text-gray-300 text-xs">
+                    {editingPayrollId === e.id ? (
+                      <div className="flex items-center gap-1">
+                        <select
+                          value={selectedWorkScheduleId}
+                          onChange={e => setSelectedWorkScheduleId(e.target.value)}
+                          className="p-1 text-xs border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-black dark:text-white"
+                        >
+                          <option value="">— Aucun —</option>
+                          {workSchedules.map(w => <option key={w.id} value={w.id}>{w.name}</option>)}
+                        </select>
+                        <button 
+                          onClick={async () => {
+                            try {
+                              await api.put(`/employees/${e.id}`, { 
+                                baseSalary: selectedBaseSalary,
+                                paymentMethod: selectedPaymentMethod,
+                                workScheduleId: selectedWorkScheduleId || null
+                              });
+                              setEditingPayrollId(null);
+                              void fetchEmployees();
+                            } catch (err) { alert("Erreur lors de la modification"); }
+                          }}
+                          className="p-1 text-green-500 hover:bg-green-500/10 rounded"
+                        >
+                          <Check className="w-3 h-3" />
+                        </button>
+                        <button onClick={() => setEditingPayrollId(null)} className="p-1 text-red-500 hover:bg-red-500/10 rounded">
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ) : (
+                      <span className="font-bold text-gray-500">{e.workSchedule?.name || 'Standard'}</span>
                     )}
                   </td>
                   <td className="p-3 text-right">

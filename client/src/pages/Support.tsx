@@ -228,7 +228,7 @@ function FitiniTicketsDashboard() {
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
-          className="px-5 py-3 rounded-2xl bg-gradient-to-r from-brand-primary to-brand-accent text-white font-black text-sm flex items-center justify-center gap-2 hover:shadow-lg hover:shadow-brand-primary/25 hover:scale-[1.02] transition-all duration-300"
+          className="px-5 py-3 rounded-2xl bg-linear-to-r from-brand-primary to-brand-accent text-white font-black text-sm flex items-center justify-center gap-2 hover:shadow-lg hover:shadow-brand-primary/25 hover:scale-[1.02] transition-all duration-300"
         >
           <Plus className="w-5 h-5" />
           NOUVEAU TICKET
@@ -250,7 +250,7 @@ function FitiniTicketsDashboard() {
       </div>
 
       {/* Layout Split ou Simple */}
-      <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-12 gap-6 min-h-[500px]">
+      <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-12 gap-6 min-h-125">
         
         {/* LISTE DES TICKETS */}
         <div className={`${selectedTicket ? 'lg:col-span-5 hidden lg:block' : 'col-span-12 lg:col-span-12'} space-y-3`}>
@@ -277,7 +277,7 @@ function FitiniTicketsDashboard() {
               <p className="text-gray-400 text-sm mt-1 max-w-xs">Vous n'avez soumis aucun ticket pour le moment. Notre support est là pour vous aider !</p>
             </div>
           ) : (
-            <div className="space-y-3 max-h-[600px] overflow-y-auto pr-1 custom-scrollbar">
+            <div className="space-y-3 max-h-150 overflow-y-auto pr-1 custom-scrollbar">
               {tickets.map((t) => (
                 <motion.div
                   key={t.id}
@@ -286,7 +286,7 @@ function FitiniTicketsDashboard() {
                   className={`glass-card p-5 rounded-3xl border cursor-pointer transition-all duration-300 group relative overflow-hidden ${
                     selectedTicket?.id === t.id 
                       ? 'border-brand-primary bg-brand-primary/5 shadow-xl shadow-brand-primary/10 scale-[0.99]' 
-                      : 'border-white/5 hover:border-white/20 hover:bg-white/[0.02]'
+                      : 'border-white/5 hover:border-white/20 hover:bg-white/2'
                   }`}
                 >
                   <div className="flex items-start justify-between gap-4">
@@ -312,7 +312,7 @@ function FitiniTicketsDashboard() {
 
         {/* DISCUSSION DE TICKET SÉLECTIONNÉ */}
         {selectedTicket && (
-          <div className="lg:col-span-7 col-span-12 flex flex-col h-[500px] md:h-[600px] glass-card rounded-3xl overflow-hidden border border-brand-primary/20 bg-[#1a0f0a]/90">
+          <div className="lg:col-span-7 col-span-12 flex flex-col h-125 md:h-150 glass-card rounded-3xl overflow-hidden border border-brand-primary/20 bg-[#1a0f0a]/90">
             {/* Header de Discussion */}
             <div className="p-5 border-b border-white/5 flex items-center justify-between bg-white/5">
               <div className="flex flex-col gap-0.5">
@@ -363,7 +363,7 @@ function FitiniTicketsDashboard() {
                               {format(new Date(m.createdAt), 'HH:mm')}
                             </span>
                           </div>
-                          <p className="text-sm leading-relaxed whitespace-pre-wrap break-words font-medium">{m.content}</p>
+                          <p className="text-sm leading-relaxed whitespace-pre-wrap wrap-break-word font-medium">{m.content}</p>
                         </div>
                       </motion.div>
                     );
@@ -481,7 +481,7 @@ function FitiniTicketsDashboard() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full mt-4 py-4 rounded-2xl bg-gradient-to-r from-brand-primary to-brand-accent text-white font-black uppercase tracking-widest flex items-center justify-center gap-2 shadow-xl shadow-brand-primary/30 hover:shadow-brand-primary/50 hover:scale-[1.01] transition-all disabled:opacity-50"
+                  className="w-full mt-4 py-4 rounded-2xl bg-linear-to-r from-brand-primary to-brand-accent text-white font-black uppercase tracking-widest flex items-center justify-center gap-2 shadow-xl shadow-brand-primary/30 hover:shadow-brand-primary/50 hover:scale-[1.01] transition-all disabled:opacity-50"
                 >
                   {submitting ? <RefreshCcw className="w-5 h-5 animate-spin" /> : <CheckCircle2 className="w-5 h-5" />}
                   {submitting ? "CREATION EN COURS..." : "OUVRIR LE TICKET"}
@@ -499,7 +499,7 @@ function FitiniTicketsDashboard() {
 // 💬 CHAT DIRECT (LOUBA / KORO)
 // =========================================================
 function PremiumChatDashboard() {
-  const { user } = useAuth();
+  const { user, isSupportOnline } = useAuth();
   const [room, setRoom] = useState<SupportChatRoom | null>(null);
   const [loading, setLoading] = useState(true);
   const [chatText, setChatText] = useState('');
@@ -572,7 +572,7 @@ function PremiumChatDashboard() {
       {/* Header Premium Chat */}
       <div className="flex items-center justify-between shrink-0">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-primary to-brand-accent flex items-center justify-center shadow-lg text-white animate-pulse">
+          <div className="w-12 h-12 rounded-2xl bg-linear-to-br from-brand-primary to-brand-accent flex items-center justify-center shadow-lg text-white animate-pulse">
             <MessageCircle className="w-6 h-6" />
           </div>
           <div>
@@ -582,9 +582,9 @@ function PremiumChatDashboard() {
                 <Sparkles className="w-3 h-3" /> PREMIUM
               </span>
             </h1>
-            <div className="flex items-center gap-2 text-xs text-gray-400 font-medium">
-              <span className="w-2 h-2 bg-emerald-500 rounded-full shadow shadow-emerald-500/50 inline-block animate-ping" />
-              <span>Support BAMOUSSO en ligne</span>
+            <div className="flex items-center gap-2 text-xs font-medium">
+              <span className={`w-2 h-2 rounded-full shadow shadow-emerald-500/50 inline-block ${isSupportOnline ? 'bg-emerald-500 animate-ping' : 'bg-gray-500'}`} />
+              <span className={isSupportOnline ? 'text-emerald-500' : 'text-gray-500'}>{isSupportOnline ? 'Support BAMOUSSO en ligne' : 'Support BAMOUSSO hors-ligne'}</span>
             </div>
           </div>
         </div>
@@ -594,7 +594,7 @@ function PremiumChatDashboard() {
       <div className="flex-1 flex flex-col glass-card rounded-3xl md:rounded-4xl border border-brand-primary/15 overflow-hidden bg-[#1a0f0a]/95 shadow-2xl">
         
         {/* Messages Area */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar bg-white/[0.01]">
+        <div className="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar bg-white/1">
           {loading ? (
             <div className="flex flex-col gap-4 justify-center items-center h-full">
               <RefreshCcw className="w-10 h-10 text-brand-primary animate-spin" />
@@ -630,7 +630,7 @@ function PremiumChatDashboard() {
                             ? 'bg-brand-accent/25 text-white border-brand-accent/40 rounded-bl-none'
                             : 'bg-white/5 text-gray-200 border-white/5 rounded-bl-none'
                       }`}>
-                        <p className="whitespace-pre-wrap break-words leading-relaxed">{msg.content}</p>
+                        <p className="whitespace-pre-wrap wrap-break-word leading-relaxed">{msg.content}</p>
                       </div>
                       
                       <div className={`flex items-center gap-2 text-[10px] text-gray-500 font-bold px-1 ${isMe ? 'justify-end' : 'justify-start'}`}>
@@ -666,7 +666,7 @@ function PremiumChatDashboard() {
             <button
               type="submit"
               disabled={!chatText.trim() || sending || !room}
-              className="w-12 h-12 rounded-2xl bg-gradient-to-r from-brand-primary to-brand-accent text-white flex items-center justify-center shadow-lg shadow-brand-primary/20 hover:shadow-brand-primary/40 hover:scale-[1.05] transition-all disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
+              className="w-12 h-12 rounded-2xl bg-linear-to-r from-brand-primary to-brand-accent text-white flex items-center justify-center shadow-lg shadow-brand-primary/20 hover:shadow-brand-primary/40 hover:scale-[1.05] transition-all disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
             >
               {sending ? <RefreshCcw className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
             </button>
@@ -681,6 +681,7 @@ function PremiumChatDashboard() {
 // 👑 DASHBOARD SUPER ADMIN
 // =========================================================
 function SuperAdminDashboard() {
+  const { onlineCompanies } = useAuth();
   const [activeTab, setActiveTab] = useState<'TICKETS' | 'CHATS'>('CHATS');
 
   // --- STATE TICKETS ---
@@ -901,17 +902,20 @@ function SuperAdminDashboard() {
                           fetchRoomMessages(r.id);
                         }}
                         className={`p-4 border-b border-white/5 cursor-pointer transition-colors relative ${
-                          selectedRoom?.id === r.id ? 'bg-brand-primary/10 border-r-2 border-r-brand-primary' : 'hover:bg-white/[0.02]'
+                          selectedRoom?.id === r.id ? 'bg-brand-primary/10 border-r-2 border-r-brand-primary' : 'hover:bg-white/2'
                         }`}
                       >
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-white/10 to-white/5 flex items-center justify-center shrink-0 border border-white/10 shadow font-black text-white uppercase">
+                          <div className="w-10 h-10 rounded-xl bg-linear-to-br from-white/10 to-white/5 flex items-center justify-center shrink-0 border border-white/10 shadow font-black text-white uppercase">
                             {r.company.name.slice(0,2)}
                           </div>
                           <div className="min-w-0 flex-1">
                             <div className="flex items-center justify-between gap-1">
-                              <h4 className="font-bold text-white text-sm truncate">{r.company.name}</h4>
-                              <span className="text-[9px] text-gray-600 font-bold">{r.company.plan}</span>
+                              <div className="flex items-center gap-2 min-w-0">
+                                <h4 className="font-bold text-white text-sm truncate">{r.company.name}</h4>
+                                {onlineCompanies?.includes(r.companyId) && <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full shadow shadow-emerald-500/50 shrink-0" />}
+                              </div>
+                              <span className="text-[9px] text-gray-600 font-bold shrink-0">{r.company.plan}</span>
                             </div>
                             <p className="text-xs text-gray-500 truncate mt-0.5 font-medium">
                               {latestMsg ? latestMsg.content : "Nouveau salon"}
@@ -931,7 +935,7 @@ function SuperAdminDashboard() {
             </div>
 
             {/* Conversation Actuelle (Droite) */}
-            <div className={`${!selectedRoom ? 'hidden md:flex' : 'flex'} flex-col flex-1 min-w-0 bg-white/[0.01]`}>
+            <div className={`${!selectedRoom ? 'hidden md:flex' : 'flex'} flex-col flex-1 min-w-0 bg-white/1`}>
               {selectedRoom ? (
                 <>
                   {/* Header chat */}
@@ -940,8 +944,9 @@ function SuperAdminDashboard() {
                       <button onClick={() => setSelectedRoom(null)} className="md:hidden text-gray-500 hover:text-white p-2 bg-white/5 rounded-xl"><ChevronRight className="w-5 h-5 rotate-180" /></button>
                       <div>
                         <h3 className="font-black text-white text-base">{selectedRoom.company.name}</h3>
-                        <p className="text-[10px] font-black uppercase text-brand-primary tracking-widest flex items-center gap-1.5">
-                          <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" /> Connecté avec le client
+                        <p className={`text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 ${onlineCompanies?.includes(selectedRoom.companyId) ? 'text-emerald-500' : 'text-gray-500'}`}>
+                          <span className={`w-1.5 h-1.5 rounded-full ${onlineCompanies?.includes(selectedRoom.companyId) ? 'bg-emerald-500' : 'bg-gray-500'}`} /> 
+                          {onlineCompanies?.includes(selectedRoom.companyId) ? 'Client en ligne' : 'Client hors-ligne'}
                         </p>
                       </div>
                     </div>
@@ -957,7 +962,7 @@ function SuperAdminDashboard() {
                             isMe ? 'bg-brand-primary text-white border-brand-primary/50 rounded-br-none' : 'bg-white/5 text-gray-200 border-white/5 rounded-bl-none'
                           }`}>
                             {!isMe && <p className="text-[9px] font-black text-gray-500 uppercase tracking-wider mb-1">{msg.sender.firstName} {msg.sender.lastName}</p>}
-                            <p className="whitespace-pre-wrap break-words leading-relaxed">{msg.content}</p>
+                            <p className="whitespace-pre-wrap wrap-break-word leading-relaxed">{msg.content}</p>
                             <span className="block text-[8px] text-right opacity-50 mt-1 font-bold">{format(new Date(msg.createdAt), 'HH:mm')}</span>
                           </div>
                         </div>
@@ -1015,7 +1020,7 @@ function SuperAdminDashboard() {
                       key={t.id}
                       onClick={() => fetchTicketMessages(t.id)}
                       className={`p-4 border-b border-white/5 cursor-pointer transition-all ${
-                        selectedTicket?.id === t.id ? 'bg-brand-primary/10' : 'hover:bg-white/[0.01]'
+                        selectedTicket?.id === t.id ? 'bg-brand-primary/10' : 'hover:bg-white/1'
                       }`}
                     >
                       <div className="flex flex-wrap gap-1.5 mb-2">
@@ -1034,7 +1039,7 @@ function SuperAdminDashboard() {
             </div>
 
             {/* Vue Ticket Détails */}
-            <div className={`${!selectedTicket ? 'hidden md:flex' : 'flex'} flex-col flex-1 min-w-0 bg-white/[0.01]`}>
+            <div className={`${!selectedTicket ? 'hidden md:flex' : 'flex'} flex-col flex-1 min-w-0 bg-white/1`}>
               {selectedTicket ? (
                 <>
                   {/* Header */}
@@ -1082,7 +1087,7 @@ function SuperAdminDashboard() {
                               {isSupport ? <Shield className="w-2.5 h-2.5" /> : <User className="w-2.5 h-2.5" />}
                               {isSupport ? "Vous (Support)" : `${m.sender.firstName} ${m.sender.lastName}`}
                             </p>
-                            <p className="whitespace-pre-wrap break-words leading-relaxed">{m.content}</p>
+                            <p className="whitespace-pre-wrap wrap-break-word leading-relaxed">{m.content}</p>
                             <span className="block text-[9px] text-right opacity-50 mt-1.5 font-bold">{format(new Date(m.createdAt), 'dd MMM HH:mm', { locale: fr })}</span>
                           </div>
                         </div>

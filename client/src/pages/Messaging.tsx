@@ -25,7 +25,7 @@ interface Message {
 }
 
 const Messaging = () => {
-  const { user } = useAuth();
+  const { user, onlineUsers, isSupportOnline } = useAuth();
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const selectedContactRef = useRef<Contact | null>(null);
@@ -176,7 +176,10 @@ const Messaging = () => {
         attachmentType
       });
       
-      setMessages(prev => [...prev, res.data]);
+      setMessages(prev => {
+        if (prev.some(m => m.id === res.data.id)) return prev;
+        return [...prev, res.data];
+      });
       setNewMessage('');
       setSelectedFile(null);
     } catch (error) {
@@ -194,7 +197,7 @@ const Messaging = () => {
     <div className="h-[calc(100vh-180px)] md:h-[calc(100vh-160px)] flex flex-col md:flex-row gap-4 md:gap-8 overflow-hidden relative">
       {/* Sidebar de messagerie */}
       <div className={`w-full md:w-96 flex flex-col gap-6 h-full transition-all duration-300 ${selectedContact ? 'hidden md:flex' : 'flex'}`}>
-        <div className="glass-card p-4 md:p-6 rounded-[2rem] border border-white/5 flex flex-col h-full overflow-hidden">
+        <div className="glass-card p-4 md:p-6 rounded-4xl border border-white/5 flex flex-col h-full overflow-hidden">
           <div className="relative mb-6">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
             <input 
@@ -213,13 +216,18 @@ const Messaging = () => {
                 onClick={() => setSelectedContact(chat)}
                 className={`w-full p-4 rounded-2xl flex items-center gap-4 transition-all group ${selectedContact?.id === chat.id ? 'bg-brand-primary/20 border border-brand-primary/30' : 'hover:bg-white/5 border border-transparent'}`}
               >
-                <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-black shrink-0 shadow-lg transition-transform group-hover:scale-105 ${chat.isSupport ? 'bg-gradient-to-br from-brand-primary to-brand-accent' : 'bg-gray-700'}`}>
+                <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-black shrink-0 shadow-lg transition-transform group-hover:scale-105 ${chat.isSupport ? 'bg-linear-to-br from-brand-primary to-brand-accent' : 'bg-gray-700'}`}>
                   {chat.name[0]}
                 </div>
                 <div className="min-w-0 text-left flex-1">
                   <div className="flex justify-between items-center mb-1">
-                    <p className="text-sm font-black text-white truncate">{chat.name}</p>
-                    {chat.time && <p className="text-[10px] text-gray-500 font-bold">{chat.time}</p>}
+                    <div className="flex items-center gap-2 min-w-0">
+                      <p className="text-sm font-black text-white truncate">{chat.name}</p>
+                      {(chat.isSupport ? isSupportOnline : onlineUsers?.includes(chat.id)) && (
+                        <span className="w-2 h-2 bg-emerald-500 rounded-full shrink-0 shadow shadow-emerald-500/50" />
+                      )}
+                    </div>
+                    {chat.time && <p className="text-[10px] text-gray-500 font-bold shrink-0">{chat.time}</p>}
                   </div>
                   <p className="text-xs text-gray-400 truncate font-medium">{chat.lastMsg || (chat.isSupport ? 'Comment pouvons-nous vous aider ?' : 'Démarrer une discussion')}</p>
                 </div>
@@ -235,7 +243,7 @@ const Messaging = () => {
       </div>
 
       {/* Zone de chat principale */}
-      <div className={`flex-1 glass-card rounded-[2rem] md:rounded-[2.5rem] border border-white/5 overflow-hidden flex flex-col relative shadow-2xl transition-all duration-300 ${selectedContact ? 'flex' : 'hidden md:flex'}`}>
+      <div className={`flex-1 glass-card rounded-4xl md:rounded-[2.5rem] border border-white/5 overflow-hidden flex flex-col relative shadow-2xl transition-all duration-300 ${selectedContact ? 'flex' : 'hidden md:flex'}`}>
         {selectedContact ? (
           <>
             <div className="p-4 md:p-6 border-b border-white/5 flex justify-between items-center bg-white/5 backdrop-blur-xl z-10">
@@ -246,14 +254,16 @@ const Messaging = () => {
                 >
                   <ArrowLeft className="w-6 h-6" />
                 </button>
-                <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-black shadow-lg ${selectedContact.isSupport ? 'bg-gradient-to-br from-brand-primary to-brand-accent' : 'bg-gray-700'}`}>
+                <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-black shadow-lg ${selectedContact.isSupport ? 'bg-linear-to-br from-brand-primary to-brand-accent' : 'bg-gray-700'}`}>
                   {selectedContact.name[0]}
                 </div>
                 <div>
                   <p className="text-lg font-black text-white">{selectedContact.name}</p>
                   <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    <p className="text-[10px] text-emerald-500 font-black uppercase tracking-widest">{selectedContact.isSupport ? 'Support Actif' : 'En ligne'}</p>
+                    <div className={`w-2 h-2 rounded-full ${(selectedContact.isSupport ? isSupportOnline : onlineUsers?.includes(selectedContact.id)) ? 'bg-emerald-500 animate-pulse' : 'bg-gray-500'}`} />
+                    <p className={`text-[10px] font-black uppercase tracking-widest ${(selectedContact.isSupport ? isSupportOnline : onlineUsers?.includes(selectedContact.id)) ? 'text-emerald-500' : 'text-gray-500'}`}>
+                      {selectedContact.isSupport ? (isSupportOnline ? 'Support Actif' : 'Support Hors-ligne') : (onlineUsers?.includes(selectedContact.id) ? 'En ligne' : 'Hors ligne')}
+                    </p>
                   </div>
                 </div>
               </div>

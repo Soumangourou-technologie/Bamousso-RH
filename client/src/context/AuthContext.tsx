@@ -5,6 +5,7 @@
  */
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import api from '../utils/api';
+import { supabase } from '../utils/supabase';
 
 // Structure d'un utilisateur
 interface User {
@@ -45,6 +46,9 @@ interface AuthContextType {
   login: (user: User, company?: Company | null) => void; // Fonction de connexion
   logout: () => void;     // Fonction de déconnexion
   isLoading: boolean;     // État de chargement initial
+  onlineUsers: string[];
+  isSupportOnline: boolean;
+  onlineCompanies: string[];
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -57,6 +61,58 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [company, setCompany] = useState<Company | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  // --- Online Presence Tracking ---
+  const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
+  const [isSupportOnline, setIsSupportOnline] = useState<boolean>(false);
+  const [onlineCompanies, setOnlineCompanies] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (!user || !supabase.channel || typeof supabase.channel !== 'function') return;
+
+    const presenceChannel = supabase.channel('bamousso-global-presence', {
+      config: {
+        presence: {
+          key: user.id,
+        },
+      },
+    });
+
+    presenceChannel.on('presence', { event: 'sync' }, () => {
+      try {
+        const state = presenceChannel.presenceState<any>();
+        const presences = Object.values(state).flat();
+        
+        setOnlineUsers(presences.map(p => p.user_id));
+        setIsSupportOnline(presences.some(p => p.role === 'SUPER_ADMIN'));
+        
+        const companies = presences.map(p => p.companyId).filter(Boolean);
+        setOnlineCompanies([...new Set(companies)]);
+      } catch (e) {
+        console.error('Error syncing presence', e);
+      }
+    });
+
+    presenceChannel.subscribe(async (status) => {
+      if (status === 'SUBSCRIBED') {
+        try {
+          await presenceChannel.track({
+            user_id: user.id,
+            role: user.role,
+            companyId: user.companyId,
+            online_at: new Date().toISOString(),
+          });
+        } catch (e) {
+          console.error('Error tracking presence', e);
+        }
+      }
+    });
+
+    return () => {
+      void supabase.removeChannel(presenceChannel);
+    };
+  }, [user?.id]);
+  // --------------------------------
 
   // Au chargement, on vérifie si l'utilisateur a une session valide via cookie HttpOnly
   useEffect(() => {
@@ -111,7 +167,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, company, login, logout, isLoading }}>
+    <AuthContext.Provider value={{ user, company, login, logout, isLoading, onlineUsers, isSupportOnline, onlineCompanies }}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,52 +1,56 @@
 import { motion } from 'framer-motion';
-import { Banknote, TrendingUp, Download, Wallet, History, Edit2, Check, X } from 'lucide-react';
+import { Banknote, Download, Wallet, CheckCircle, FileText, Calendar, Play } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import api from '../utils/api';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
-
-interface SalaryEmployee {
-  id: string;
-  firstName: string;
-  lastName: string;
-  baseSalary: number | null;
-  salaryCurrency: string;
-  bankDetails: string | null;
-  jobTitle: string | null;
-}
-
 import { useAuth } from '../context/AuthContext';
 import { Navigate } from 'react-router-dom';
 
-const CURRENCIES = [
-  { code: 'XOF', label: 'FCFA' },
-  { code: 'EUR', label: 'Euro (€)' },
-  { code: 'USD', label: 'Dollar ($)' },
-  { code: 'GNF', label: 'FG (Guinée)' },
-];
+interface Payslip {
+  id: string;
+  periodStart: string;
+  periodEnd: string;
+  paymentMethod: string;
+  baseSalary: number;
+  daysWorked: number;
+  hoursWorked: number;
+  overtimeHours: number;
+  paidLeaveDays: number;
+  unpaidLeaveDays: number;
+  overtimeAmount: number;
+  bonusAmount: number;
+  deductionAmount: number;
+  netSalary: number;
+  status: string;
+  employee: {
+    firstName: string;
+    lastName: string;
+    jobTitle: string | null;
+  };
+  createdAt: string;
+}
 
 const Salaries = () => {
   const { user } = useAuth();
-  const [employees, setEmployees] = useState<SalaryEmployee[]>([]);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [newSalary, setNewSalary] = useState<number>(0);
-  const [newCurrency, setNewCurrency] = useState<string>('XOF');
+  const [payslips, setPayslips] = useState<Payslip[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  
+  const [targetMonth, setTargetMonth] = useState(String(new Date().getMonth() + 1).padStart(2, '0'));
+  const [targetYear, setTargetYear] = useState(String(new Date().getFullYear()));
 
   const canManageHr = user?.role === 'COMPANY_ADMIN' || user?.role === 'HR_MANAGER' || user?.role === 'HR_ASSISTANT';
 
-  const fetchSalaries = async () => {
+  const fetchPayslips = async () => {
     try {
-      const res = await api.get('/salaries');
-      setEmployees(res.data);
+      const res = await api.get('/salaries/payslips');
+      setPayslips(res.data);
     } catch (error) {
-      console.error('Error fetching salaries', error);
+      console.error('Error fetching payslips', error);
     }
   };
 
   useEffect(() => {
     if (canManageHr) {
-      void fetchSalaries();
+      void fetchPayslips();
     }
   }, [canManageHr]);
 
@@ -54,30 +58,16 @@ const Salaries = () => {
     return <Navigate to="/dashboard" replace />;
   }
 
-  const handleUpdateSalary = async (id: string) => {
-    try {
-      await api.put(`/employees/${id}`, { 
-        baseSalary: newSalary,
-        salaryCurrency: newCurrency 
-      });
-      setEditingId(null);
-      void fetchSalaries();
-    } catch (error) {
-      console.error('Error updating salary', error);
-      alert('Erreur lors de la mise à jour du salaire.');
-    }
-  };
-
   const handleGeneratePay = async () => {
-    if (!window.confirm('Voulez-vous générer les fiches de paie pour tous les employés pour le mois en cours ?')) return;
+    if (!window.confirm(`Voulez-vous générer les fiches de paie pour ${targetMonth}/${targetYear} ?`)) return;
     setIsLoading(true);
     try {
-      const now = new Date();
       const res = await api.post('/salaries/generate', { 
-        month: String(now.getMonth() + 1).padStart(2, '0'), 
-        year: String(now.getFullYear()) 
+        month: parseInt(targetMonth, 10), 
+        year: parseInt(targetYear, 10) 
       });
       alert(res.data.message);
+      void fetchPayslips();
     } catch (error: any) {
       alert(error.response?.data?.message || 'Erreur lors de la génération');
     } finally {
@@ -85,162 +75,136 @@ const Salaries = () => {
     }
   };
 
-  const totalMasse = employees.reduce((acc, curr) => acc + (curr.baseSalary || 0), 0);
-
-  const exportToPDF = () => {
-    const doc = new jsPDF();
-    doc.setFontSize(20);
-    doc.text('Rapport des Salaires', 14, 22);
-    
-    doc.setFontSize(12);
-    doc.text(`Masse Salariale Totale : ${totalMasse.toLocaleString()} FCFA`, 14, 32);
-    
-    const tableData = employees.map(emp => [
-      `${emp.firstName} ${emp.lastName}`,
-      emp.jobTitle || 'Non défini',
-      (emp.baseSalary || 0).toLocaleString(),
-      emp.salaryCurrency,
-      emp.bankDetails || '--'
-    ]);
-
-    autoTable(doc, {
-      startY: 40,
-      head: [['Employé', 'Poste', 'Salaire de base', 'Devise', 'Infos Bancaires']],
-      body: tableData,
-    });
-    
-    doc.save('rapport_salaires.pdf');
-  };
+  const totalMasse = payslips.reduce((acc, curr) => acc + curr.netSalary, 0);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 max-w-7xl mx-auto">
       <motion.div 
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         className="flex justify-between items-center"
       >
         <div>
-          <h1 className="text-4xl font-black text-white tracking-tight">Gestion des Salaires</h1>
-          <p className="text-gray-400 font-medium mt-1">Suivi des rémunérations et fiches de paie.</p>
+          <h1 className="text-4xl font-black text-white tracking-tight">Tableau de bord Paie</h1>
+          <p className="text-gray-400 font-medium mt-1">Automatisation et suivi des rémunérations</p>
         </div>
-        <div className="flex gap-4">
-          <button 
-            onClick={exportToPDF}
-            className="glass-card px-6 py-3 rounded-xl font-bold text-sm text-white flex items-center gap-2 hover:border-brand-primary/50 transition-all"
+        <div className="flex items-center gap-4 bg-white/5 p-2 rounded-2xl border border-white/10">
+          <select 
+            value={targetMonth} 
+            onChange={e => setTargetMonth(e.target.value)}
+            className="bg-transparent text-white font-bold outline-none cursor-pointer p-2"
           >
-            <Download className="w-4 h-4" /> Rapport global
-          </button>
+            {Array.from({length: 12}, (_, i) => {
+              const m = String(i + 1).padStart(2, '0');
+              return <option key={m} value={m} className="bg-gray-800">Mois {m}</option>
+            })}
+          </select>
+          <select 
+            value={targetYear} 
+            onChange={e => setTargetYear(e.target.value)}
+            className="bg-transparent text-white font-bold outline-none cursor-pointer p-2 border-l border-white/10"
+          >
+            {[2024, 2025, 2026, 2027].map(y => (
+              <option key={y} value={y} className="bg-gray-800">{y}</option>
+            ))}
+          </select>
           <button 
             disabled={isLoading}
             onClick={handleGeneratePay}
-            className="bg-brand-primary text-white px-8 py-4 rounded-2xl font-black text-sm uppercase tracking-widest shadow-lg shadow-brand-primary/20 flex items-center gap-2"
+            className="bg-brand-primary text-white px-6 py-3 rounded-xl font-black text-sm uppercase tracking-widest shadow-lg shadow-brand-primary/20 flex items-center gap-2 hover:scale-105 active:scale-95 transition-all disabled:opacity-50"
           >
-            {isLoading ? 'Génération...' : 'Générer la paie'}
+            {isLoading ? <span className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" /> : <Play className="w-4 h-4 fill-current" />}
+            Lancer le calcul
           </button>
         </div>
       </motion.div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="glass-card p-8 rounded-[2rem] border border-white/5 bg-gradient-to-br from-emerald-600/10 to-emerald-900/10">
+        <div className="glass-card p-8 rounded-4xl border border-white/5 bg-linear-to-br from-emerald-600/10 to-emerald-900/10">
           <Wallet className="w-8 h-8 text-emerald-500 mb-6" />
-          <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">Masse Salariale Totale / Mois (FCFA)</p>
+          <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">Masse Salariale Générée</p>
           <p className="text-3xl font-black text-white tracking-tighter">{totalMasse.toLocaleString()} FCFA</p>
         </div>
-        <div className="glass-card p-8 rounded-[2rem] border border-white/5">
-          <TrendingUp className="w-8 h-8 text-brand-primary mb-6" />
-          <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">Employés Rémunérés</p>
-          <p className="text-3xl font-black text-white tracking-tighter">{employees.filter(e => (e.baseSalary || 0) > 0).length}</p>
+        <div className="glass-card p-8 rounded-4xl border border-white/5 bg-linear-to-br from-blue-600/10 to-blue-900/10">
+          <FileText className="w-8 h-8 text-blue-500 mb-6" />
+          <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">Fiches de paie</p>
+          <p className="text-3xl font-black text-white tracking-tighter">{payslips.length}</p>
         </div>
-        <div className="glass-card p-8 rounded-[2rem] border border-white/5">
-          <History className="w-8 h-8 text-brand-accent mb-6" />
-          <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">Prochain Virement</p>
-          <p className="text-3xl font-black text-white tracking-tighter">Fin de mois</p>
+        <div className="glass-card p-8 rounded-4xl border border-white/5">
+          <Calendar className="w-8 h-8 text-brand-accent mb-6" />
+          <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">Dernière génération</p>
+          <p className="text-xl font-black text-white tracking-tighter mt-2">
+            {payslips.length > 0 ? new Date(payslips[0].createdAt).toLocaleDateString('fr-FR') : '--'}
+          </p>
         </div>
       </div>
 
       <div className="glass-card p-10 rounded-[2.5rem] border border-white/5">
-        <h2 className="text-2xl font-black text-white mb-8">Employés & Rémunérations</h2>
+        <div className="flex justify-between items-center mb-8">
+          <h2 className="text-2xl font-black text-white">Historique des Paies</h2>
+          <button className="px-4 py-2 bg-white/5 rounded-xl text-sm font-bold text-gray-300 hover:text-white transition-all flex items-center gap-2">
+            <Download className="w-4 h-4" /> Exporter tout (PDF)
+          </button>
+        </div>
+        
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
               <tr className="border-b border-white/5">
+                <th className="pb-6 text-[10px] font-black text-gray-500 uppercase tracking-[0.2em]">Période</th>
                 <th className="pb-6 text-[10px] font-black text-gray-500 uppercase tracking-[0.2em]">Employé</th>
-                <th className="pb-6 text-[10px] font-black text-gray-500 uppercase tracking-[0.2em]">Poste</th>
-                <th className="pb-6 text-[10px] font-black text-gray-500 uppercase tracking-[0.2em]">Salaire de base</th>
-                <th className="pb-6 text-[10px] font-black text-gray-500 uppercase tracking-[0.2em]">Devise</th>
-                <th className="pb-6 text-[10px] font-black text-gray-500 uppercase tracking-[0.2em]">Infos Bancaires</th>
-                <th className="pb-6 text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] text-right">Actions</th>
+                <th className="pb-6 text-[10px] font-black text-gray-500 uppercase tracking-[0.2em]">Mode</th>
+                <th className="pb-6 text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] text-right">Tps Travaillé</th>
+                <th className="pb-6 text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] text-right">Congés (P/NP)</th>
+                <th className="pb-6 text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] text-right">Net à payer</th>
+                <th className="pb-6 text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] text-center">Statut</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
-              {employees.map(emp => (
-                <tr key={emp.id} className="group hover:bg-white/[0.02] transition-colors">
+              {payslips.map(ps => (
+                <tr key={ps.id} className="group hover:bg-white/2 transition-colors">
                   <td className="py-6">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center font-bold text-brand-primary">
-                        {emp.firstName[0]}{emp.lastName[0]}
-                      </div>
-                      <span className="text-white font-bold">{emp.firstName} {emp.lastName}</span>
+                    <span className="text-white font-bold">{new Date(ps.periodStart).toLocaleDateString('fr-FR', {month: 'short', year: 'numeric'})}</span>
+                  </td>
+                  <td className="py-6">
+                    <div className="flex flex-col">
+                      <span className="text-white font-bold">{ps.employee.firstName} {ps.employee.lastName}</span>
+                      <span className="text-xs text-gray-500">{ps.employee.jobTitle || 'Employé'}</span>
                     </div>
                   </td>
-                  <td className="py-6 text-gray-400 font-medium">{emp.jobTitle || 'Non défini'}</td>
                   <td className="py-6">
-                    {editingId === emp.id ? (
-                      <input 
-                        type="number" 
-                        value={newSalary} 
-                        onChange={e => setNewSalary(Number(e.target.value))}
-                        className="bg-white/5 border border-brand-primary/50 p-2 rounded-lg text-white font-bold w-32 outline-none"
-                      />
-                    ) : (
-                      <span className="text-white font-black">{(emp.baseSalary || 0).toLocaleString()}</span>
-                    )}
+                    <span className="bg-brand-primary/10 text-brand-primary px-2 py-1 rounded text-[10px] font-black">{ps.paymentMethod}</span>
                   </td>
-                  <td className="py-6">
-                    {editingId === emp.id ? (
-                      <select 
-                        value={newCurrency} 
-                        onChange={e => setNewCurrency(e.target.value)}
-                        className="bg-white/5 border border-white/10 p-2 rounded-lg text-white font-bold outline-none"
-                      >
-                        {CURRENCIES.map(c => <option key={c.code} value={c.code} className="bg-brand-900">{c.label}</option>)}
-                      </select>
-                    ) : (
-                      <span className="bg-brand-primary/10 text-brand-primary px-2 py-1 rounded text-[10px] font-black">{emp.salaryCurrency}</span>
-                    )}
-                  </td>
-                  <td className="py-6 text-gray-500 text-xs font-mono">{emp.bankDetails || '--'}</td>
                   <td className="py-6 text-right">
-                    {editingId === emp.id ? (
-                      <div className="flex justify-end gap-2">
-                        <button onClick={() => handleUpdateSalary(emp.id)} className="p-2 bg-emerald-500/20 text-emerald-500 rounded-lg hover:bg-emerald-500/30 transition-all">
-                          <Check className="w-4 h-4" />
-                        </button>
-                        <button onClick={() => setEditingId(null)} className="p-2 bg-rose-500/20 text-rose-500 rounded-lg hover:bg-rose-500/30 transition-all">
-                          <X className="w-4 h-4" />
-                        </button>
-                      </div>
-                    ) : (
-                      <button 
-                        onClick={() => {
-                          setEditingId(emp.id);
-                          setNewSalary(emp.baseSalary || 0);
-                          setNewCurrency(emp.salaryCurrency || 'XOF');
-                        }}
-                        className="p-2 bg-white/5 text-gray-400 rounded-lg hover:text-white transition-all opacity-0 group-hover:opacity-100"
-                      >
-                        <Edit2 className="w-4 h-4" />
-                      </button>
-                    )}
+                    <div className="flex flex-col items-end">
+                      <span className="text-gray-300 font-mono text-sm">{ps.daysWorked} j</span>
+                      <span className="text-[10px] text-gray-500 font-bold">{ps.hoursWorked.toFixed(1)} h</span>
+                    </div>
+                  </td>
+                  <td className="py-6 text-right">
+                    <span className="text-gray-400 font-mono text-sm">{ps.paidLeaveDays} / {ps.unpaidLeaveDays}</span>
+                  </td>
+                  <td className="py-6 text-right">
+                    <div className="flex flex-col items-end">
+                      <span className="text-emerald-400 font-black text-lg">{ps.netSalary.toLocaleString()}</span>
+                      {(ps.bonusAmount > 0 || ps.deductionAmount > 0 || ps.overtimeAmount > 0) && (
+                        <span className="text-[9px] text-gray-500 uppercase tracking-widest mt-1">Primes/HS Incluses</span>
+                      )}
+                    </div>
+                  </td>
+                  <td className="py-6 text-center">
+                    <span className="inline-flex items-center gap-1 bg-blue-500/10 text-blue-400 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                      <CheckCircle className="w-3 h-3" /> {ps.status}
+                    </span>
                   </td>
                 </tr>
               ))}
-              {employees.length === 0 && (
+              {payslips.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="py-20 text-center">
+                  <td colSpan={7} className="py-20 text-center">
                     <div className="flex flex-col items-center gap-4">
                       <Banknote className="w-12 h-12 text-gray-800" />
-                      <p className="text-gray-600 font-bold">Aucun employé trouvé.</p>
+                      <p className="text-gray-600 font-bold">Aucune fiche de paie générée.</p>
                     </div>
                   </td>
                 </tr>

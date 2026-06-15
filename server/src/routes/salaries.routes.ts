@@ -1,15 +1,13 @@
 import { Router } from "express";
 import { authenticate, authorize } from "../middleware/auth.js";
-import { requirePlan } from "../middleware/planGate.js";
-import { getSalaries, generatePayroll } from "../controllers/salaries.controller.js";
+import { getSalaries, generatePayroll, getPayslips } from "../controllers/salaries.controller.js";
 
 const router = Router();
 
 router.use(authenticate);
-router.use(requirePlan("LOUBA"));
-router.use(authorize(["COMPANY_ADMIN", "HR_MANAGER"]));
 
-router.get("/", getSalaries);
-router.post("/generate", generatePayroll);
+router.get("/", authorize(["COMPANY_ADMIN", "HR_MANAGER"]), getSalaries);
+router.post("/generate", authorize(["COMPANY_ADMIN", "HR_MANAGER"]), generatePayroll);
+router.get("/payslips", authorize(["COMPANY_ADMIN", "HR_MANAGER", "EMPLOYEE"]), getPayslips);
 
 export default router;

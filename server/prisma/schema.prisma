@@ -28,6 +28,11 @@ model Company {
   billingCycle       String    @default("MONTHLY") // MONTHLY | YEARLY
   paymentMode        String    @default("ONLINE") // ONLINE | OFFLINE
   extraEmployees     Int       @default(0)
+
+  // Configuration Paie & Heures Supp
+  overtimeRate125    Float     @default(1.25)
+  overtimeRate150    Float     @default(1.50)
+  overtimeRate200    Float     @default(2.00)
   isLocked           Boolean   @default(false)
   lockedAt           DateTime?
   createdAt          DateTime  @default(now())
@@ -40,6 +45,9 @@ model Company {
   departments         Department[]
   payments            Payment[]
   tasks               Task[]
+  workSchedules       WorkSchedule[]
+  payrollItems        PayrollItem[]
+  payslips            Payslip[]
   customRoles         CustomRole[]
   disciplinaryCases   DisciplinaryCase[]
   clientRegistrations ClientRegistration[]
@@ -102,6 +110,9 @@ model User {
   status   String    @default("ACTIVE") // INVITED | ACTIVE | INACTIVE
 
   baseSalary     Float? // Salaire de base pour la paie
+  hourlyRate     Float? // Taux horaire
+  dailyRate      Float? // Taux journalier
+  paymentMethod  String  @default("MONTHLY") // MONTHLY, DAILY, HOURLY, HYBRID
   salaryCurrency String  @default("XOF") // Devise (FCFA, etc.)
   bankDetails    String? // Infos bancaires (RIB, etc.)
 
@@ -134,6 +145,11 @@ model User {
   approvedLeaves LeaveRequest[] @relation("ApprovedLeaves")
   documents      Document[]
   attendances    Attendance[]
+
+  workScheduleId String?
+  workSchedule   WorkSchedule? @relation(fields: [workScheduleId], references: [id], onDelete: SetNull)
+  payrollItems   PayrollItem[]
+  payslips       Payslip[]
 
   // Messagerie & Communications
   sentMessages     Message[]      @relation("SentMessages")
@@ -566,4 +582,84 @@ model SystemSetting {
   value     Json
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+// ==========================================
+// --- MODULE DE PAIE ET HORAIRES (NEW)   ---
+// ==========================================
+
+/// Modèle Horaire de Travail
+model WorkSchedule {
+  id               String   @id @default(uuid())
+  name             String   // ex: "Standard 8h-17h"
+  type             String   @default("STANDARD") // STANDARD, SHIFT, NIGHT, FLEXIBLE
+  startTime        String?  // "08:00"
+  endTime          String?  // "17:00"
+  breakMinutes     Int      @default(60)
+  hoursPerDay      Float    @default(8)
+  hoursPerWeek     Float    @default(40)
+  
+  companyId        String
+  company          Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  
+  users            User[]
+
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+/// Modèle pour Primes & Déductions
+model PayrollItem {
+  id          String   @id @default(uuid())
+  name        String   // "Prime de Transport", "Retard"
+  type        String   // BONUS, DEDUCTION
+  amountType  String   // FIXED, PERCENTAGE
+  amount      Float
+  isMonthly   Boolean  @default(false) // Vrai = Récurrent chaque mois
+  
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  
+  employeeId  String?
+  employee    User?    @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+}
+
+/// Modèle Fiche de Paie (Payslip)
+model Payslip {
+  id              String   @id @default(uuid())
+  periodStart     DateTime
+  periodEnd       DateTime
+  
+  // Données de base
+  paymentMethod   String   // MONTHLY, DAILY, HOURLY, HYBRID
+  baseSalary      Float
+  
+  // Temps travaillé
+  daysWorked      Float
+  hoursWorked     Float
+  overtimeHours   Float
+  
+  // Congés
+  paidLeaveDays   Float
+  unpaidLeaveDays Float
+  
+  // Montants calculés
+  overtimeAmount  Float
+  bonusAmount     Float
+  deductionAmount Float
+  netSalary       Float
+  
+  status          String   @default("DRAFT") // DRAFT, VALIDATED, PAID
+  pdfUrl          String?
+  
+  employeeId      String
+  employee        User     @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  
+  companyId       String
+  company         Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }

@@ -203,10 +203,16 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
               {(plan === 'LOUBA' || plan === 'KORO') && (
                 <>
                   {canManageHr && (
-                    <Link to="/salaries" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/salaries' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
-                      <Banknote className="w-5 h-5" />
-                      Salaires
-                    </Link>
+                    <>
+                      <Link to="/salaries" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/salaries' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
+                        <Banknote className="w-5 h-5" />
+                        Salaires
+                      </Link>
+                      <Link to="/work-schedules" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/work-schedules' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
+                        <Clock className="w-5 h-5" />
+                        Horaires de travail
+                      </Link>
+                    </>
                   )}
 
                   {canManageHr && (
