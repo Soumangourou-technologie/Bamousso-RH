@@ -264,7 +264,7 @@ const Employees = () => {
             />
           </div>
           <div>
-            <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">Mot de passe (test)</label>
+            <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">Mot de passe (Min. 6 caractères)</label>
             <input
               value={password}
               onChange={(e) => setPassword(e.target.value)}
