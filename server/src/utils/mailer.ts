@@ -2,7 +2,7 @@ import { Resend } from 'resend';
 import { logger } from './logger.js';
 import { Buffer } from 'node:buffer';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend(process.env.RESEND_API_KEY || 're_dummy_key_to_prevent_crash');
 
 /**
  * Envoie un email de confirmation de souscription au client

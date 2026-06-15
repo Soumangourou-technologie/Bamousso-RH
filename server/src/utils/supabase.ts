@@ -16,10 +16,10 @@ interface MulterFile {
 
 dotenv.config();
 
-const supabaseUrl = process.env.SUPABASE_URL || '';
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY || ''; 
+const supabaseUrl = process.env.SUPABASE_URL || 'https://dummy.supabase.co';
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY || 'dummy_key'; 
 
-if (!supabaseUrl || !supabaseServiceKey) {
+if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_KEY) {
   console.warn('Supabase URL or Service Key is missing. File uploads might fail.');
 }
 
@@ -27,7 +27,7 @@ export const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 export const uploadToSupabase = async (file: MulterFile, bucket: string = 'bamousso'): Promise<string | null> => {
   // Try Supabase upload if credentials exist
-  if (supabaseUrl && supabaseServiceKey) {
+  if (process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_KEY) {
     try {
       let fileBuffer = file.buffer;
       
