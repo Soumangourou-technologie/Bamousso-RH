@@ -913,11 +913,23 @@ function SuperAdminDashboard() {
                             <div className="flex items-center justify-between gap-1">
                               <div className="flex items-center gap-2 min-w-0">
                                 <h4 className="font-bold text-white text-sm truncate">{r.company.name}</h4>
-                                {onlineCompanies?.includes(r.companyId) && <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full shadow shadow-emerald-500/50 shrink-0" />}
                               </div>
                               <span className="text-[9px] text-gray-600 font-bold shrink-0">{r.company.plan}</span>
                             </div>
-                            <p className="text-xs text-gray-500 truncate mt-0.5 font-medium">
+                            <div className="flex items-center gap-1.5 mt-0.5 mb-1">
+                              {onlineCompanies?.includes(r.companyId) ? (
+                                <span className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-wider text-emerald-400">
+                                  <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse shadow shadow-emerald-500/50" />
+                                  En ligne
+                                </span>
+                              ) : (
+                                <span className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-wider text-gray-500">
+                                  <span className="w-1.5 h-1.5 bg-gray-500 rounded-full" />
+                                  Hors ligne
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-xs text-gray-500 truncate font-medium">
                               {latestMsg ? latestMsg.content : "Nouveau salon"}
                             </p>
                           </div>

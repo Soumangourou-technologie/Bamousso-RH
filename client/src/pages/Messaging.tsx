@@ -223,11 +223,21 @@ const Messaging = () => {
                   <div className="flex justify-between items-center mb-1">
                     <div className="flex items-center gap-2 min-w-0">
                       <p className="text-sm font-black text-white truncate">{chat.name}</p>
-                      {(chat.isSupport ? isSupportOnline : onlineUsers?.includes(chat.id)) && (
-                        <span className="w-2 h-2 bg-emerald-500 rounded-full shrink-0 shadow shadow-emerald-500/50" />
-                      )}
                     </div>
                     {chat.time && <p className="text-[10px] text-gray-500 font-bold shrink-0">{chat.time}</p>}
+                  </div>
+                  <div className="flex items-center gap-1.5 mb-1">
+                    {(chat.isSupport ? isSupportOnline : onlineUsers?.includes(chat.id)) ? (
+                      <span className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-wider text-emerald-400">
+                        <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse shadow shadow-emerald-500/50" />
+                        En ligne
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-wider text-gray-500">
+                        <span className="w-1.5 h-1.5 bg-gray-500 rounded-full" />
+                        Hors ligne
+                      </span>
+                    )}
                   </div>
                   <p className="text-xs text-gray-400 truncate font-medium">{chat.lastMsg || (chat.isSupport ? 'Comment pouvons-nous vous aider ?' : 'Démarrer une discussion')}</p>
                 </div>
@@ -250,20 +260,30 @@ const Messaging = () => {
               <div className="flex items-center gap-3 md:gap-4">
                 <button 
                   onClick={() => setSelectedContact(null)}
-                  className="md:hidden p-2 -ml-2 hover:bg-white/10 rounded-full text-gray-400"
+                  className="md:hidden p-2 -ml-2 text-gray-400 hover:text-white"
                 >
-                  <ArrowLeft className="w-6 h-6" />
+                  <ArrowLeft className="w-5 h-5" />
                 </button>
-                <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-black shadow-lg ${selectedContact.isSupport ? 'bg-linear-to-br from-brand-primary to-brand-accent' : 'bg-gray-700'}`}>
-                  {selectedContact.name[0]}
+                <div className="relative">
+                  <div className={`w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center text-white font-black shrink-0 ${selectedContact.isSupport ? 'bg-linear-to-br from-brand-primary to-brand-accent shadow-lg shadow-brand-primary/20' : 'bg-gray-700'}`}>
+                    {selectedContact.name[0]}
+                  </div>
+                  {(selectedContact.isSupport ? isSupportOnline : onlineUsers?.includes(selectedContact.id)) && (
+                    <span className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-[#1a0f0a] rounded-full shadow-lg" />
+                  )}
                 </div>
                 <div>
-                  <p className="text-lg font-black text-white">{selectedContact.name}</p>
+                  <h2 className="text-sm md:text-lg font-black text-white flex items-center gap-2">
+                    {selectedContact.name}
+                  </h2>
                   <div className="flex items-center gap-2">
-                    <div className={`w-2 h-2 rounded-full ${(selectedContact.isSupport ? isSupportOnline : onlineUsers?.includes(selectedContact.id)) ? 'bg-emerald-500 animate-pulse' : 'bg-gray-500'}`} />
-                    <p className={`text-[10px] font-black uppercase tracking-widest ${(selectedContact.isSupport ? isSupportOnline : onlineUsers?.includes(selectedContact.id)) ? 'text-emerald-500' : 'text-gray-500'}`}>
-                      {selectedContact.isSupport ? (isSupportOnline ? 'Support Actif' : 'Support Hors-ligne') : (onlineUsers?.includes(selectedContact.id) ? 'En ligne' : 'Hors ligne')}
-                    </p>
+                    <p className="text-[10px] md:text-xs text-brand-primary uppercase tracking-wider font-bold">{selectedContact.role}</p>
+                    <span className="text-gray-600">•</span>
+                    {(selectedContact.isSupport ? isSupportOnline : onlineUsers?.includes(selectedContact.id)) ? (
+                      <span className="text-[10px] text-emerald-400 font-black uppercase tracking-wider">En ligne</span>
+                    ) : (
+                      <span className="text-[10px] text-gray-500 font-black uppercase tracking-wider">Hors ligne</span>
+                    )}
                   </div>
                 </div>
               </div>
