@@ -17,7 +17,7 @@ const PaymentSuccess = () => {
       const companyId = searchParams.get('companyId') || searchParams.get('comp_id');
       const urlStatus = searchParams.get('status');
       
-      // Si GeniusPay nous dit déjà que c'est bon dans l'URL
+      // Si Moneroo nous dit déjà que c'est bon dans l'URL
       if (urlStatus === 'completed' || urlStatus === 'success') {
         if (isMounted) setStatus('success');
         return;

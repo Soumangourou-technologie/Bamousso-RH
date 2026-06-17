@@ -72,7 +72,7 @@ app.use(helmet({
 app.use(morgan("dev"));
 
 // Analyse du corps des requêtes en format JSON
-// On conserve le corps brut (rawBody) pour la vérification des signatures de Webhooks (GeniusPay)
+// On conserve le corps brut (rawBody) pour la vérification des signatures de Webhooks (Moneroo)
 app.use(express.json({
   verify: (req: any, res, buf) => {
     req.rawBody = buf;
