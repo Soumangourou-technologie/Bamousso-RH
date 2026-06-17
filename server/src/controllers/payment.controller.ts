@@ -46,12 +46,31 @@ export const initiatePayment = async (req: Request, res: Response) => {
     // Log diagnostic (affiche juste le début pour vérification)
     await logger.info(`Diagnostic Clés: KEY=${apiKey.substring(0, 10)}...`, null, "PaymentController");
 
+    // Récupérer l'administrateur de l'entreprise pour renseigner l'objet customer obligatoire pour Moneroo
+    const company = await prisma.company.findUnique({
+      where: { id: companyId },
+      include: {
+        users: {
+          where: { role: 'COMPANY_ADMIN' },
+          take: 1
+        }
+      }
+    });
+    
+    const admin = company?.users[0];
+    const customer = {
+      email: admin?.email || 'admin@bamousso.com',
+      first_name: admin?.firstName || 'Admin',
+      last_name: admin?.lastName || company?.name || 'Bamousso'
+    };
+
     await logger.info("Initiating payment request", { amount: calculatedAmount, companyId, plan }, "PaymentController");
 
     const response = await axios.post('https://api.moneroo.io/v1/payments/initialize', {
       amount: calculatedAmount,
       description: description || "Abonnement Bamousso RH",
       currency: "XOF",
+      customer: customer,
       metadata: {
         companyId: companyId,
         plan: plan,
@@ -59,8 +78,7 @@ export const initiatePayment = async (req: Request, res: Response) => {
         extraEmployees: req.body.extraEmployees || 0,
         isAddOn: req.body.isAddOn || false
       },
-      return_url: `${process.env.FRONTEND_URL}/payment-success?companyId=${companyId}`,
-      methods: ["wave_ci"]
+      return_url: `${process.env.FRONTEND_URL}/payment-success?companyId=${companyId}`
     }, {
       headers: {
         'Authorization': `Bearer ${apiKey}`,
