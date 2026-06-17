@@ -35,42 +35,24 @@ export const initiatePayment = async (req: Request, res: Response) => {
       return res.status(400).json({ success: false, message: "Montant invalide ou formule gratuite (aucune transaction requise)." });
     }
 
-    const apiKey = process.env.MONEROO_SECRET_KEY;
+    const apiKey = process.env.GENIUSPAY_KEY;
+    const apiSecret = process.env.GENIUSPAY_SECRET;
 
-    if (!apiKey) {
-      const errorMsg = "Clé Moneroo manquante dans .env";
-      await logger.error(errorMsg, { apiKey: !!apiKey }, "PaymentController");
+    if (!apiKey || !apiSecret) {
+      const errorMsg = "Clés GeniusPay manquantes dans .env";
+      await logger.error(errorMsg, { apiKey: !!apiKey, apiSecret: !!apiSecret }, "PaymentController");
       return res.status(500).json({ success: false, message: errorMsg });
     }
 
     // Log diagnostic (affiche juste le début pour vérification)
-    await logger.info(`Diagnostic Clés: KEY=${apiKey.substring(0, 10)}...`, null, "PaymentController");
-
-    // Récupérer l'administrateur de l'entreprise pour renseigner l'objet customer obligatoire pour Moneroo
-    const company = await prisma.company.findUnique({
-      where: { id: companyId },
-      include: {
-        users: {
-          where: { role: 'COMPANY_ADMIN' },
-          take: 1
-        }
-      }
-    });
-    
-    const admin = company?.users[0];
-    const customer = {
-      email: admin?.email || 'admin@bamousso.com',
-      first_name: admin?.firstName || 'Admin',
-      last_name: admin?.lastName || company?.name || 'Bamousso'
-    };
+    await logger.info(`Diagnostic Clés: KEY=${apiKey.substring(0, 10)}... SECRET=${apiSecret.substring(0, 10)}...`, null, "PaymentController");
 
     await logger.info("Initiating payment request", { amount: calculatedAmount, companyId, plan }, "PaymentController");
 
-    const response = await axios.post('https://api.moneroo.io/v1/payments/initialize', {
+    const response = await axios.post('https://pay.genius.ci/api/v1/merchant/payments', {
       amount: calculatedAmount,
       description: description || "Abonnement Bamousso RH",
       currency: "XOF",
-      customer: customer,
       metadata: {
         companyId: companyId,
         plan: plan,
@@ -78,10 +60,15 @@ export const initiatePayment = async (req: Request, res: Response) => {
         extraEmployees: req.body.extraEmployees || 0,
         isAddOn: req.body.isAddOn || false
       },
-      return_url: `${process.env.FRONTEND_URL}/payment-success?companyId=${companyId}`
+      success_url: `${process.env.FRONTEND_URL}/payment-success?companyId=${companyId}`,
+      error_url: `${process.env.FRONTEND_URL}/payment-cancelled`,
     }, {
       headers: {
-        'Authorization': `Bearer ${apiKey}`,
+        'X-API-Key': apiKey,
+        'X-API-Secret': apiSecret,
+        'X-PUBLIC-KEY': apiKey,
+        'X-SECRET-KEY': apiSecret,
+        'Authorization': `Bearer ${apiSecret}`,
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       }
@@ -109,11 +96,11 @@ export const initiatePayment = async (req: Request, res: Response) => {
       });
     }
 
-    throw new Error(response.data.message || "Réponse invalide de Moneroo");
+    throw new Error(response.data.message || "Réponse invalide de GeniusPay");
 
   } catch (error: any) {
     const errorDetails = error.response?.data || error.message;
-    await logger.error("Moneroo Initiation Error", errorDetails, "PaymentController");
+    await logger.error("GeniusPay Initiation Error", errorDetails, "PaymentController");
     
     res.status(500).json({ 
       success: false, 
@@ -128,14 +115,15 @@ export const initiatePayment = async (req: Request, res: Response) => {
  */
 export const handleWebhook = async (req: Request, res: Response) => {
   try {
-    await logger.info("Webhook Moneroo reçu", req.body, "PaymentController");
+    await logger.info("Webhook GeniusPay reçu", req.body, "PaymentController");
 
-    const signature = req.headers['x-moneroo-signature'] as string;
-    const webhookSecret = process.env.MONEROO_WEBHOOK_SECRET;
+    const signature = req.headers['x-webhook-signature'] as string;
+    const timestamp = req.headers['x-webhook-timestamp'] as string;
+    const webhookSecret = process.env.GENIUSPAY_WEBHOOK_SECRET;
 
     // Signature verification logic
-    if (!webhookSecret || !signature) {
-      await logger.error("Configuration Webhook manquante ou signature absente", { signature: !!signature, secret: !!webhookSecret }, "PaymentController");
+    if (!webhookSecret || !signature || !timestamp) {
+      await logger.error("Configuration Webhook manquante ou signature absente", { signature: !!signature, timestamp: !!timestamp, secret: !!webhookSecret }, "PaymentController");
       return res.status(401).json({ error: "Unauthorized: Missing signature configuration" });
     }
 
@@ -148,6 +136,7 @@ export const handleWebhook = async (req: Request, res: Response) => {
 
     if (rawBody) {
       const hmac = crypto.createHmac('sha256', webhookSecret);
+      hmac.update(`${timestamp}.`);
       hmac.update(rawBody);
       expectedSignature = hmac.digest('hex');
     } else {
@@ -155,7 +144,7 @@ export const handleWebhook = async (req: Request, res: Response) => {
       const payload = JSON.stringify(req.body);
       expectedSignature = crypto
         .createHmac('sha256', webhookSecret)
-        .update(payload)
+        .update(`${timestamp}.${payload}`)
         .digest('hex');
     }
 
@@ -165,7 +154,7 @@ export const handleWebhook = async (req: Request, res: Response) => {
         received: signature,
         hasRawBody: !!rawBody
       }, "PaymentController");
-      // On ne bloque pas tout de suite, on va vérifier directement l'état de la transaction auprès de Moneroo.
+      // On ne bloque pas tout de suite, on va vérifier directement l'état de la transaction auprès de GeniusPay.
     }
 
     const { event, data } = req.body;
@@ -174,24 +163,26 @@ export const handleWebhook = async (req: Request, res: Response) => {
     if (isSuccess && data) {
       const transactionId = data.transaction_id || data.id || data.reference;
       
-      // EXCEPTION SANDBOX TEMPORAIRE : Si c'est le mode sandbox, l'API Moneroo GET peut renvoyer 404 si non persistée.
+      // EXCEPTION SANDBOX TEMPORAIRE : Si c'est le mode sandbox, l'API GeniusPay GET renvoie 404 par erreur.
       // On valide donc d'office si c'est sandbox.
       const isSandbox = data.environment === 'sandbox' || req.body.environment === 'sandbox';
       
       if (!isSandbox) {
-        // SÉCURITÉ ABSOLUE : Vérification directe du paiement auprès de Moneroo pour la PRODUCTION
+        // SÉCURITÉ ABSOLUE : Vérification directe du paiement auprès de GeniusPay pour la PRODUCTION
         try {
-          const apiKey = process.env.MONEROO_SECRET_KEY;
-          const verifyResponse = await axios.get(`https://api.moneroo.io/v1/payments/${transactionId}`, {
+          const apiKey = process.env.GENIUSPAY_KEY;
+          const apiSecret = process.env.GENIUSPAY_SECRET;
+          const verifyResponse = await axios.get(`https://pay.genius.ci/api/v1/merchant/payments/${transactionId}`, {
             headers: {
-              'Authorization': `Bearer ${apiKey}`
+              'X-API-Key': apiKey,
+              'X-API-Secret': apiSecret
             }
           });
 
           const realData = verifyResponse.data.data;
-          if (realData.status !== 'completed' && realData.status !== 'SUCCESS' && realData.status !== 'success') {
+          if (realData.status !== 'completed' && realData.status !== 'SUCCESS') {
             await logger.error("Tentative de fraude Webhook interceptée", { transactionId }, "PaymentController");
-            return res.status(400).send('Transaction non valide sur Moneroo');
+            return res.status(400).send('Transaction non valide sur GeniusPay');
           }
         } catch (verifyError: any) {
           await logger.error("Erreur de vérification directe Webhook", verifyError.message, "PaymentController");
@@ -336,12 +327,13 @@ export const confirmPayment = async (req: Request, res: Response) => {
       return res.json({ success: true, status: "SUCCESS" });
     }
 
-    // --- VÉRIFICATION DIRECTE AUPRÈS DE MONEROO ---
+    // --- VÉRIFICATION DIRECTE AUPRÈS DE GENIUSPAY ---
     try {
       const currentToken = payment.externalId;
       if (!currentToken) throw new Error("ID transaction externe manquant.");
 
-      const apiKey = process.env.MONEROO_SECRET_KEY;
+      const apiKey = process.env.GENIUSPAY_KEY;
+      const apiSecret = process.env.GENIUSPAY_SECRET;
 
       await logger.info(`Vérification directe demandée pour ${currentToken}`, { companyId: payment.companyId }, "PaymentController");
       
@@ -356,14 +348,15 @@ export const confirmPayment = async (req: Request, res: Response) => {
         await logger.info(`Bypass Sandbox pour confirmPayment: Validation automatique`, { currentToken }, "PaymentController");
         isCompleted = true;
       } else {
-        const response = await axios.get(`https://api.moneroo.io/v1/payments/${currentToken}`, {
+        const response = await axios.get(`https://pay.genius.ci/api/v1/merchant/payments/${currentToken}`, {
           headers: {
-            'Authorization': `Bearer ${apiKey}`
+            'X-API-Key': apiKey,
+            'X-API-Secret': apiSecret
           }
         });
 
         externalData = response.data.data;
-        isCompleted = externalData.status === 'completed' || externalData.status === 'SUCCESS' || externalData.status === 'success';
+        isCompleted = externalData.status === 'completed' || externalData.status === 'SUCCESS';
         plan = externalData.metadata?.plan;
       }
 
@@ -450,7 +443,7 @@ export const confirmPayment = async (req: Request, res: Response) => {
         return res.json({ success: true, status: "SUCCESS" });
       }
     } catch (apiError) {
-      console.error("Erreur vérification directe Moneroo:", apiError);
+      console.error("Erreur vérification directe GeniusPay:", apiError);
     }
     
     return res.json({ 

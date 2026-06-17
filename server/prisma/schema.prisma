@@ -82,7 +82,7 @@ model Payment {
   currency      String  @default("XOF")
   status        String  @default("PENDING") // PENDING | SUCCESS | FAILED
   reference     String  @unique // Référence interne
-  externalId    String? // ID transaction Moneroo
+  externalId    String? // ID transaction GeniusPay
   paymentMethod String? // Orange Money, Wave, etc.
   description   String?
 

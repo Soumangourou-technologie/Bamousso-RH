@@ -33,7 +33,7 @@ async function main() {
       await prisma.notification.create({
         data: {
           title: "Système Opérationnel 🛡️",
-          message: "Toutes les bases de données, les tunnels de paiement Moneroo et les configurations d'envoi d'emails Resend sont 100% validés en production.",
+          message: "Toutes les bases de données, les tunnels de paiement GeniusPay et les configurations d'envoi d'emails Resend sont 100% validés en production.",
           type: "SYSTEM",
           userId: user.id,
           companyId: null,

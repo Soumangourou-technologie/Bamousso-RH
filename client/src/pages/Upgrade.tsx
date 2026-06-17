@@ -333,7 +333,7 @@ const UpgradePlan = () => {
                 </button>
 
                 <p className="text-[10px] text-center text-gray-400 font-medium">
-                  Le paiement est traité via Moneroo. Votre offre et sa durée de 30 jours seront appliquées immédiatement après validation.
+                  Le paiement est traité via GeniusPay. Votre offre et sa durée de 30 jours seront appliquées immédiatement après validation.
                 </p>
               </div>
             </div>

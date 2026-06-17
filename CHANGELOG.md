@@ -9,7 +9,7 @@
 
 ### 2. Persistance des Employés Supplémentaires (Backend)
 - **Fichiers modifiés :** `server/src/controllers/payment.controller.ts`
-- **Description du problème :** Si l'agrégateur de paiement n'envoyait pas (ou omettait) l'objet `metadata` contenant le nombre d'employés supplémentaires (`extraEmployees`) après validation d'un paiement, le backend écrasait la valeur en base de données avec `0`.
+- **Description du problème :** Si GeniusPay n'envoyait pas (ou omettait) l'objet `metadata` contenant le nombre d'employés supplémentaires (`extraEmployees`) après validation d'un paiement, le backend écrasait la valeur en base de données avec `0`.
 - **Solution apportée :** Le contrôleur de paiement vérifie désormais si `metadata.extraEmployees` est défini avant de le mettre à jour. Sinon, il conserve précieusement la valeur initialement enregistrée lors de la création du compte.
 
 ### 3. Cohérence du Statut lors de la Création (Backend)
