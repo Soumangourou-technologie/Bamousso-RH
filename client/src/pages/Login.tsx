@@ -113,7 +113,7 @@ const Login = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-brand-primary hover:bg-brand-primary/90 text-white py-5 rounded-2xl font-black text-lg shadow-xl shadow-brand-primary/20 transition-all active:scale-95 flex items-center justify-center gap-3 premium-glow uppercase tracking-widest text-xs mt-4"
+            className="w-full bg-brand-primary hover:bg-brand-primary/90 text-white py-5 rounded-2xl font-black shadow-xl shadow-brand-primary/20 transition-all active:scale-95 flex items-center justify-center gap-3 premium-glow uppercase tracking-widest text-xs mt-4"
           >
             {loading ? (
               <div className="w-6 h-6 border-4 border-white/20 border-t-white rounded-full animate-spin" />
@@ -123,14 +123,14 @@ const Login = () => {
           </button>
         </form>
 
-        <div className="mt-10 text-center">
+        {/* <div className="mt-10 text-center">
           <p className="text-gray-500 font-bold text-sm">
             Pas encore de compte ?{' '}
             <Link to="/register" className="text-brand-primary hover:text-brand-accent transition-colors">
               Créer un espace entreprise
             </Link>
           </p>
-        </div>
+        </div> */}
       </motion.div>
     </div>
   );

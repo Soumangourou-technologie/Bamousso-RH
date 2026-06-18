@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Building2, CheckCircle, Users, Clock, Calendar, ArrowRight, Loader2, MessageCircle, X } from 'lucide-react';
@@ -7,7 +7,7 @@ import { BillingCycle, PRICING_PLANS } from '@shared/pricing';
 import api from '../utils/api';
 
 const Landing = () => {
-  const navigate = useNavigate();
+
   const [billingCycle, setBillingCycle] = useState<BillingCycle>('MONTHLY');
   const [whatsappContacts, setWhatsappContacts] = useState<string[]>([]);
   const [isWhatsappOpen, setIsWhatsappOpen] = useState(false);
@@ -26,8 +26,9 @@ const Landing = () => {
     void fetchContacts();
   }, []);
 
-  const handleSelectPlan = (planId: string) => {
-    navigate('/register', { state: { selectedPlanId: planId, billingCycle } });
+  const handleSelectPlan = () => {
+    // navigate('/register', { state: { selectedPlanId: planId, billingCycle } });
+    setIsWhatsappOpen(true);
   };
 
   return (
@@ -39,9 +40,9 @@ const Landing = () => {
           <span className="text-2xl font-black tracking-tight text-text-primary">BAMOUSSO</span>
         </div>
         <div className="flex items-center gap-4">
-          <Link to="/register" className="hidden md:inline-block font-semibold text-text-secondary hover:text-brand-primary transition-colors">
+          {/* <Link to="/register" className="hidden md:inline-block font-semibold text-text-secondary hover:text-brand-primary transition-colors">
             S'inscrire
-          </Link>
+          </Link> */}
           <Link to="/login" className="bg-brand-primary hover:bg-brand-800 text-white px-6 py-2.5 rounded-full font-bold shadow-lg shadow-brand-primary/30 transition-all hover:-translate-y-0.5">
             Espace Client
           </Link>
@@ -200,7 +201,7 @@ const Landing = () => {
               ]}
               delay={0.2}
               isLoading={false}
-              onSelect={() => handleSelectPlan('FITINI')}
+              onSelect={() => handleSelectPlan()}
             />
             
             {/* LOUBA (Popular) */}
@@ -221,7 +222,7 @@ const Landing = () => {
               isPopular={true}
               delay={0.4}
               isLoading={false}
-              onSelect={() => handleSelectPlan('LOUBA')}
+              onSelect={() => handleSelectPlan()}
             />
             
             {/* Kôrô */}
@@ -239,7 +240,7 @@ const Landing = () => {
               ]}
               delay={0.6}
               isLoading={false}
-              onSelect={() => handleSelectPlan('KORO')}
+              onSelect={() => handleSelectPlan()}
             />
           </div>
         </div>

@@ -36,3 +36,4 @@ server/prisma/dev.db-journal
 server/uploads/*
 !server/uploads/.gitkeep
 vite.config.ts.timestamp-*
+security-reports/
