@@ -59,10 +59,14 @@ export const usePlan = () => {
    */
   const maxEmployees = (): number | null => {
     if (isSuperAdmin) return null;
-    const base = PLAN_MAX_EMPLOYEES[plan];
-    if (base === null) return null;
+    const normalizedPlan = (plan || '').toString().trim().toUpperCase();
+    if (normalizedPlan === 'KORO') return null; // KORO est illimité
+    
+    const base = PLAN_MAX_EMPLOYEES[normalizedPlan];
+    if (base === null || base === undefined) return null;
+    
     const extra = (company as any)?.extraEmployees || 0;
-    return (base === undefined ? 3 : base) + extra;
+    return base + extra;
   };
 
   /**

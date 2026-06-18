@@ -128,7 +128,7 @@ const DashboardAdmin = () => {
   const badge = PLAN_BADGE[plan] || PLAN_BADGE['FITINI'];
 
   const modules = [
-    { name: 'Annuaire',      desc: 'Gérer les employés',           icon: Users,         path: '/employees',    color: 'bg-blue-500',   feature: 'employees',   stat: `${stats.employees}${maxEmp ? ' / ' + maxEmp : ''} employés` },
+    { name: 'Annuaire',      desc: 'Gérer les employés',           icon: Users,         path: '/employees',    color: 'bg-blue-500',   feature: 'employees',   stat: `${stats.employees}${maxEmp ? ' / ' + maxEmp : ' / Illimité'} employés` },
     { name: 'Départements',  desc: 'Structure de l\'entreprise',   icon: Layers,        path: '/departments',  color: 'bg-indigo-500', feature: 'departments', stat: `${stats.departments} départements` },
     { name: 'Rôles & Permissions', desc: 'Définir les accès',       icon: Shield,        path: '/roles',        color: 'bg-blue-500',   feature: 'roles' },
     { name: 'Pointage',      desc: 'Suivi du temps',               icon: Clock,         path: '/attendance',   color: 'bg-green-500',  feature: 'attendance' },
@@ -198,11 +198,9 @@ const DashboardAdmin = () => {
               {badge.label}
             </span>
             {/* Compteur employés */}
-            {maxEmp && (
-              <span className={`px-4 py-2 rounded-xl text-sm font-bold ${stats.employees >= maxEmp ? 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400' : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'}`}>
-                {stats.employees} / {maxEmp} employés
-              </span>
-            )}
+            <span className={`px-4 py-2 rounded-xl text-sm font-bold ${maxEmp && stats.employees >= maxEmp ? 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400' : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'}`}>
+              {stats.employees} {maxEmp ? `/ ${maxEmp}` : '/ Illimité'} employés
+            </span>
           </div>
         </div>
       </motion.div>
