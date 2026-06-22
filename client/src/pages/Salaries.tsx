@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Banknote, Download, Wallet, CheckCircle, FileText, Calendar, Play } from 'lucide-react';
+import { Banknote, Download, Wallet, CheckCircle, FileText, Calendar, Play, Trash2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import api from '../utils/api';
 import { useAuth } from '../context/AuthContext';
@@ -72,6 +72,29 @@ const Salaries = () => {
       alert(error.response?.data?.message || 'Erreur lors de la génération');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleExportPdf = async (id: string) => {
+    try {
+      const res = await api.get(`/salaries/payslips/${id}/pdf`);
+      if (res.data.pdfUrl) {
+        window.open(res.data.pdfUrl, '_blank');
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Erreur lors de l'exportation PDF");
+    }
+  };
+
+  const handleDeletePayslip = async (id: string) => {
+    if (!window.confirm("Voulez-vous vraiment supprimer cette fiche de paie ?")) return;
+    try {
+      await api.delete(`/salaries/payslips/${id}`);
+      void fetchPayslips();
+    } catch (error) {
+      console.error(error);
+      alert("Erreur lors de la suppression");
     }
   };
 
@@ -158,6 +181,7 @@ const Salaries = () => {
                 <th className="pb-6 text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] text-right">Congés (P/NP)</th>
                 <th className="pb-6 text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] text-right">Net à payer</th>
                 <th className="pb-6 text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] text-center">Statut</th>
+                <th className="pb-6 text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
@@ -196,6 +220,16 @@ const Salaries = () => {
                     <span className="inline-flex items-center gap-1 bg-blue-500/10 text-blue-400 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
                       <CheckCircle className="w-3 h-3" /> {ps.status}
                     </span>
+                  </td>
+                  <td className="py-6 text-right">
+                    <div className="flex justify-end gap-2">
+                      <button onClick={() => handleExportPdf(ps.id)} className="p-2 bg-blue-500/10 text-blue-400 rounded-lg hover:bg-blue-500/20 transition-colors" title="Télécharger PDF">
+                        <Download className="w-4 h-4" />
+                      </button>
+                      <button onClick={() => handleDeletePayslip(ps.id)} className="p-2 bg-red-500/10 text-red-400 rounded-lg hover:bg-red-500/20 transition-colors" title="Supprimer">
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

@@ -61,6 +61,23 @@ export const assignSchedule = async (req: any, res: Response) => {
   }
 };
 
+// Assigner un horaire à un département
+export const assignScheduleToDepartment = async (req: any, res: Response) => {
+  try {
+    const { departmentId, scheduleId } = req.body;
+    const companyId = req.user.companyId;
+
+    const updatedUsers = await prisma.user.updateMany({
+      where: { departmentId, companyId },
+      data: { workScheduleId: scheduleId }
+    });
+
+    res.json({ message: `Horaire assigné avec succès à ${updatedUsers.count} employés du département.` });
+  } catch (error: any) {
+    res.status(500).json({ message: "Erreur lors de l'assignation au département", error: error.message });
+  }
+};
+
 // Supprimer un horaire
 export const deleteWorkSchedule = async (req: any, res: Response) => {
   try {

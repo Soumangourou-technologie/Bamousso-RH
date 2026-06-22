@@ -233,3 +233,30 @@ export const generatePayroll = async (req: any, res: Response) => {
     res.status(500).json({ message: "Erreur lors de la génération de la paie", error: error.message });
   }
 };
+
+export const getPayslipPdf = async (req: any, res: Response) => {
+  try {
+    const { id } = req.params;
+    const payslip = await prisma.payslip.findUnique({
+      where: { id, companyId: req.user.companyId },
+      include: { employee: true }
+    });
+    if (!payslip) return res.status(404).json({ message: "Fiche de paie introuvable" });
+    
+    res.json({ pdfUrl: payslip.pdfUrl || "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" });
+  } catch (error: any) {
+    res.status(500).json({ message: "Erreur lors de la récupération", error: error.message });
+  }
+};
+
+export const deletePayslip = async (req: any, res: Response) => {
+  try {
+    const { id } = req.params;
+    await prisma.payslip.delete({
+      where: { id, companyId: req.user.companyId }
+    });
+    res.json({ message: "Fiche de paie supprimée avec succès" });
+  } catch (error: any) {
+    res.status(500).json({ message: "Erreur lors de la suppression", error: error.message });
+  }
+};

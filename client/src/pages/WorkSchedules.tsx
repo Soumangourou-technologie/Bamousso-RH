@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Clock, Plus, Trash2 } from 'lucide-react';
+import { Clock, Plus, Trash2, Users, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import api from '../utils/api';
 import { useAuth } from '../context/AuthContext';
@@ -32,18 +32,30 @@ const WorkSchedules = () => {
 
   const canManageHr = user?.role === 'COMPANY_ADMIN' || user?.role === 'HR_MANAGER' || user?.role === 'HR_ASSISTANT';
 
-  const fetchSchedules = async () => {
+  const [departments, setDepartments] = useState<any[]>([]);
+  const [employees, setEmployees] = useState<any[]>([]);
+  const [assignModal, setAssignModal] = useState<{isOpen: boolean, scheduleId: string | null}>({isOpen: false, scheduleId: null});
+  const [assignType, setAssignType] = useState('EMPLOYEE');
+  const [selectedAssignId, setSelectedAssignId] = useState('');
+
+  const fetchData = async () => {
     try {
-      const res = await api.get('/work-schedules');
-      setSchedules(res.data);
+      const [schedRes, depsRes, empsRes] = await Promise.all([
+        api.get('/work-schedules'),
+        api.get('/departments'),
+        api.get('/users')
+      ]);
+      setSchedules(schedRes.data);
+      setDepartments(depsRes.data);
+      setEmployees(empsRes.data.filter((u: any) => u.role !== 'COMPANY_ADMIN' && u.role !== 'SUPER_ADMIN'));
     } catch (error) {
-      console.error('Error fetching schedules', error);
+      console.error('Error fetching data', error);
     }
   };
 
   useEffect(() => {
     if (canManageHr) {
-      void fetchSchedules();
+      void fetchData();
     }
   }, [canManageHr]);
 
@@ -59,7 +71,7 @@ const WorkSchedules = () => {
       });
       setIsCreating(false);
       setName('');
-      void fetchSchedules();
+      void fetchData();
     } catch (error) {
       console.error(error);
       alert('Erreur lors de la création');
@@ -70,10 +82,35 @@ const WorkSchedules = () => {
     if (!window.confirm("Supprimer cet horaire ?")) return;
     try {
       await api.delete(`/work-schedules/${id}`);
-      void fetchSchedules();
+      void fetchData();
     } catch (error) {
       console.error(error);
       alert('Erreur de suppression');
+    }
+  };
+
+  const handleAssign = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!assignModal.scheduleId || !selectedAssignId) return;
+    try {
+      if (assignType === 'EMPLOYEE') {
+        await api.post('/work-schedules/assign', {
+          scheduleId: assignModal.scheduleId,
+          employeeId: selectedAssignId
+        });
+      } else {
+        await api.post('/work-schedules/assign-department', {
+          scheduleId: assignModal.scheduleId,
+          departmentId: selectedAssignId
+        });
+      }
+      alert("Assignation réussie !");
+      setAssignModal({isOpen: false, scheduleId: null});
+      setSelectedAssignId('');
+      void fetchData();
+    } catch (error) {
+      console.error(error);
+      alert("Erreur lors de l'assignation");
     }
   };
 
@@ -108,11 +145,11 @@ const WorkSchedules = () => {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
             <div className="md:col-span-2">
               <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Nom de l'horaire</label>
-              <input required value={name} onChange={e => setName(e.target.value)} className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="ex: Équipe de nuit 20h-04h" />
+              <input required value={name} onChange={e => setName(e.target.value)} className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 text-gray-900 dark:text-white" placeholder="ex: Équipe de nuit 20h-04h" />
             </div>
             <div className="md:col-span-2">
               <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Type</label>
-              <select value={type} onChange={e => setType(e.target.value)} className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+              <select value={type} onChange={e => setType(e.target.value)} className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 text-gray-900 dark:text-white">
                 <option value="STANDARD">Standard</option>
                 <option value="SHIFT">Travail posté (Shift)</option>
                 <option value="NIGHT">Travail de nuit</option>
@@ -121,23 +158,23 @@ const WorkSchedules = () => {
             </div>
             <div>
               <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Heure d'arrivée</label>
-              <input type="time" value={startTime} onChange={e => setStartTime(e.target.value)} className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+              <input type="time" value={startTime} onChange={e => setStartTime(e.target.value)} className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 text-gray-900 dark:text-white" />
             </div>
             <div>
               <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Heure de départ</label>
-              <input type="time" value={endTime} onChange={e => setEndTime(e.target.value)} className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+              <input type="time" value={endTime} onChange={e => setEndTime(e.target.value)} className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 text-gray-900 dark:text-white" />
             </div>
             <div>
               <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Pause (min)</label>
-              <input type="number" required value={breakMinutes} onChange={e => setBreakMinutes(Number(e.target.value))} className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+              <input type="number" required value={breakMinutes} onChange={e => setBreakMinutes(Number(e.target.value))} className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 text-gray-900 dark:text-white" />
             </div>
             <div>
               <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Heures/Jour</label>
-              <input type="number" step="0.5" required value={hoursPerDay} onChange={e => setHoursPerDay(Number(e.target.value))} className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+              <input type="number" step="0.5" required value={hoursPerDay} onChange={e => setHoursPerDay(Number(e.target.value))} className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 text-gray-900 dark:text-white" />
             </div>
             <div>
               <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Heures/Semaine</label>
-              <input type="number" step="0.5" required value={hoursPerWeek} onChange={e => setHoursPerWeek(Number(e.target.value))} className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+              <input type="number" step="0.5" required value={hoursPerWeek} onChange={e => setHoursPerWeek(Number(e.target.value))} className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 text-gray-900 dark:text-white" />
             </div>
           </div>
           <button type="submit" className="bg-emerald-600 text-white px-6 py-2 rounded-lg font-bold">Enregistrer</button>
@@ -173,6 +210,9 @@ const WorkSchedules = () => {
                 <span className="text-xs uppercase tracking-wider font-bold">Employés assignés</span>
                 <span className="bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full text-xs font-bold">{schedule._count?.users || 0}</span>
               </div>
+              <button onClick={() => setAssignModal({isOpen: true, scheduleId: schedule.id})} className="w-full mt-4 bg-brand-primary/10 text-brand-primary py-2 rounded-lg font-bold flex items-center justify-center gap-2 hover:bg-brand-primary/20 transition-colors">
+                <Users className="w-4 h-4" /> Assigner
+              </button>
             </div>
           </div>
         ))}
@@ -182,6 +222,64 @@ const WorkSchedules = () => {
           </div>
         )}
       </div>
+
+      {assignModal.isOpen && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white dark:bg-gray-800 rounded-3xl p-8 max-w-md w-full relative"
+          >
+            <button 
+              onClick={() => setAssignModal({isOpen: false, scheduleId: null})}
+              className="absolute top-4 right-4 p-2 bg-gray-100 dark:bg-gray-700 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600"
+            >
+              <X className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+            </button>
+            <h2 className="text-2xl font-black text-gray-900 dark:text-white mb-6">Assigner l'horaire</h2>
+            <form onSubmit={handleAssign} className="space-y-4">
+              <div>
+                <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Assigner à</label>
+                <select 
+                  value={assignType} 
+                  onChange={(e) => {
+                    setAssignType(e.target.value);
+                    setSelectedAssignId('');
+                  }} 
+                  className="w-full p-3 border rounded-xl dark:bg-gray-700 dark:border-gray-600 text-gray-900 dark:text-white"
+                >
+                  <option value="EMPLOYEE">Un employé</option>
+                  <option value="DEPARTMENT">Un département</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">
+                  {assignType === 'EMPLOYEE' ? 'Employé' : 'Département'}
+                </label>
+                <select 
+                  required 
+                  value={selectedAssignId} 
+                  onChange={(e) => setSelectedAssignId(e.target.value)} 
+                  className="w-full p-3 border rounded-xl dark:bg-gray-700 dark:border-gray-600 text-gray-900 dark:text-white"
+                >
+                  <option value="">Sélectionnez...</option>
+                  {assignType === 'EMPLOYEE' 
+                    ? employees.map(emp => (
+                        <option key={emp.id} value={emp.id}>{emp.firstName} {emp.lastName}</option>
+                      ))
+                    : departments.map(dep => (
+                        <option key={dep.id} value={dep.id}>{dep.name}</option>
+                      ))
+                  }
+                </select>
+              </div>
+              <button type="submit" className="w-full bg-brand-primary text-white py-3 rounded-xl font-bold uppercase tracking-wider hover:bg-brand-primary/90 transition-colors">
+                Confirmer l'assignation
+              </button>
+            </form>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 };
