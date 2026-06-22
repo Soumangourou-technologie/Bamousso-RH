@@ -5,7 +5,7 @@ import api from '../utils/api';
 import { useAuth } from '../context/AuthContext';
 import { Navigate } from 'react-router-dom';
 import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 
 interface Payslip {
   id: string;
@@ -106,7 +106,7 @@ const Salaries = () => {
       doc.text(`Moyen de paiement : ${payslip.paymentMethod}`, 14, startY + lineSpace * 3);
       
       // Table Data
-      doc.autoTable({
+      autoTable(doc, {
         startY: startY + lineSpace * 5,
         head: [['Désignation', 'Nombre', 'Montant (FCFA)']],
         body: [
