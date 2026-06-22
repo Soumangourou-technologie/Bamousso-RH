@@ -38,6 +38,9 @@ const WorkSchedules = () => {
   const [assignType, setAssignType] = useState('EMPLOYEE');
   const [selectedAssignId, setSelectedAssignId] = useState('');
 
+  const [createAssignType, setCreateAssignType] = useState('NONE');
+  const [createAssignId, setCreateAssignId] = useState('');
+
   const fetchData = async () => {
     try {
       const [schedRes, depsRes, empsRes] = await Promise.all([
@@ -66,12 +69,30 @@ const WorkSchedules = () => {
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await api.post('/work-schedules', {
+      const res = await api.post('/work-schedules', {
         name, type, startTime, endTime, breakMinutes, hoursPerDay, hoursPerWeek
       });
+      
+      const newScheduleId = res.data.id;
+      
+      if (createAssignType === 'EMPLOYEE' && createAssignId) {
+        await api.post('/work-schedules/assign', {
+          scheduleId: newScheduleId,
+          employeeId: createAssignId
+        });
+      } else if (createAssignType === 'DEPARTMENT' && createAssignId) {
+        await api.post('/work-schedules/assign-department', {
+          scheduleId: newScheduleId,
+          departmentId: createAssignId
+        });
+      }
+
       setIsCreating(false);
       setName('');
-      void fetchData();
+      setCreateAssignType('NONE');
+      setCreateAssignId('');
+      
+      await fetchData();
     } catch (error) {
       console.error(error);
       alert('Erreur lors de la création');
@@ -176,6 +197,46 @@ const WorkSchedules = () => {
               <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Heures/Semaine</label>
               <input type="number" step="0.5" required value={hoursPerWeek} onChange={e => setHoursPerWeek(Number(e.target.value))} className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 text-gray-900 dark:text-white" />
             </div>
+
+            <div className="md:col-span-2 pt-4 border-t border-gray-100 dark:border-gray-700">
+              <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Assigner automatiquement à</label>
+              <select 
+                value={createAssignType} 
+                onChange={(e) => {
+                  setCreateAssignType(e.target.value);
+                  setCreateAssignId('');
+                }} 
+                className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 text-gray-900 dark:text-white"
+              >
+                <option value="NONE">Ne pas assigner pour le moment</option>
+                <option value="EMPLOYEE">Un employé</option>
+                <option value="DEPARTMENT">Un département</option>
+              </select>
+            </div>
+            
+            {createAssignType !== 'NONE' && (
+              <div className="md:col-span-2 pt-4 border-t border-gray-100 dark:border-gray-700">
+                <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">
+                  {createAssignType === 'EMPLOYEE' ? 'Sélectionner l\'employé' : 'Sélectionner le département'}
+                </label>
+                <select 
+                  required 
+                  value={createAssignId} 
+                  onChange={(e) => setCreateAssignId(e.target.value)} 
+                  className="w-full p-2 border rounded dark:bg-gray-700 dark:border-gray-600 text-gray-900 dark:text-white"
+                >
+                  <option value="">Sélectionnez...</option>
+                  {createAssignType === 'EMPLOYEE' 
+                    ? employees.map(emp => (
+                        <option key={emp.id} value={emp.id}>{emp.firstName} {emp.lastName}</option>
+                      ))
+                    : departments.map(dep => (
+                        <option key={dep.id} value={dep.id}>{dep.name}</option>
+                      ))
+                  }
+                </select>
+              </div>
+            )}
           </div>
           <button type="submit" className="bg-emerald-600 text-white px-6 py-2 rounded-lg font-bold">Enregistrer</button>
         </motion.form>
