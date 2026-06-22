@@ -110,12 +110,12 @@ const Salaries = () => {
         startY: startY + lineSpace * 5,
         head: [['Désignation', 'Nombre', 'Montant (FCFA)']],
         body: [
-          ['Salaire de base', '', payslip.baseSalary.toLocaleString()],
-          ['Jours travaillés', payslip.daysWorked, ''],
-          ['Heures travaillées', payslip.hoursWorked.toFixed(1), ''],
-          ['Heures supplémentaires', payslip.overtimeHours, payslip.overtimeAmount.toLocaleString()],
-          ['Primes', '', payslip.bonusAmount.toLocaleString()],
-          ['Déductions', '', `-${payslip.deductionAmount.toLocaleString()}`],
+          ['Salaire de base', '', (payslip.baseSalary || 0).toLocaleString()],
+          ['Jours travaillés', payslip.daysWorked || 0, ''],
+          ['Heures travaillées', (payslip.hoursWorked || 0).toFixed(1), ''],
+          ['Heures supplémentaires', payslip.overtimeHours || 0, (payslip.overtimeAmount || 0).toLocaleString()],
+          ['Primes', '', (payslip.bonusAmount || 0).toLocaleString()],
+          ['Déductions', '', `-${(payslip.deductionAmount || 0).toLocaleString()}`],
         ],
         theme: 'striped',
         headStyles: { fillColor: [249, 115, 22] }
@@ -124,7 +124,7 @@ const Salaries = () => {
       const finalY = (doc as any).lastAutoTable.finalY + 15;
       doc.setFontSize(14);
       doc.setTextColor(16, 185, 129); // Emerald 500
-      doc.text(`Net à payer : ${payslip.netSalary.toLocaleString()} FCFA`, 14, finalY);
+      doc.text(`Net à payer : ${(payslip.netSalary || 0).toLocaleString()} FCFA`, 14, finalY);
       
       // Footer
       doc.setFontSize(10);
