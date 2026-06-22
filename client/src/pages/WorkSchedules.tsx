@@ -46,7 +46,7 @@ const WorkSchedules = () => {
       const [schedRes, depsRes, empsRes] = await Promise.all([
         api.get('/work-schedules'),
         api.get('/departments'),
-        api.get('/users')
+        api.get('/employees')
       ]);
       setSchedules(schedRes.data);
       setDepartments(depsRes.data);
