@@ -512,7 +512,12 @@ const Employees = () => {
                           setSelectedWorkScheduleId(e.workScheduleId || '');
                         }
                       }}>
-                        <span className="font-bold">{e.baseSalary ? e.baseSalary.toLocaleString() + ' FCFA' : 'Non défini'}</span>
+                        <div className="flex items-center gap-1">
+                          <span className="font-bold">{e.baseSalary ? e.baseSalary.toLocaleString() + ' FCFA' : 'Non défini'}</span>
+                          {(user?.role === 'COMPANY_ADMIN' || user?.role === 'HR_MANAGER') && (
+                            <Edit2 className="w-3 h-3 text-brand-primary opacity-50 group-hover/payroll:opacity-100" />
+                          )}
+                        </div>
                         <span className="text-[10px] text-gray-500">{e.paymentMethod || 'MONTHLY'}</span>
                       </div>
                     )}
