@@ -56,6 +56,8 @@ const Employees = () => {
   const [role, setRole] = useState<Role>('EMPLOYEE');
   const [departmentId, setDepartmentId] = useState<string>('');
   const [customRoleId, setCustomRoleId] = useState<string>('');
+  const [baseSalary, setBaseSalary] = useState<number | ''>('');
+  const [hireDate, setHireDate] = useState<string>('');
 
   const [editingPayrollId, setEditingPayrollId] = useState<string | null>(null);
   const [selectedBaseSalary, setSelectedBaseSalary] = useState<number>(0);
@@ -121,6 +123,8 @@ const Employees = () => {
     setRole('EMPLOYEE');
     setDepartmentId('');
     setCustomRoleId('');
+    setBaseSalary('');
+    setHireDate('');
   };
 
   const createEmployee = async () => {
@@ -136,6 +140,8 @@ const Employees = () => {
         status: 'INVITED',
         ...(departmentId ? { departmentId } : {}),
         ...(customRoleId ? { customRoleId } : {}),
+        ...(baseSalary ? { baseSalary: Number(baseSalary) } : {}),
+        ...(hireDate ? { hireDate } : {}),
       });
       resetForm();
       await fetchEmployees();
@@ -303,6 +309,27 @@ const Employees = () => {
             </select>
           </div>
 
+          <div>
+            <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">Date d'embauche (optionnel)</label>
+            <input
+              type="date"
+              value={hireDate}
+              onChange={(e) => setHireDate(e.target.value)}
+              className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded text-black dark:text-white dark:bg-gray-700"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">Salaire de base (FCFA) (optionnel)</label>
+            <input
+              type="number"
+              value={baseSalary}
+              onChange={(e) => setBaseSalary(e.target.value === '' ? '' : Number(e.target.value))}
+              placeholder="ex: 150000"
+              className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded text-black dark:text-white dark:bg-gray-700"
+            />
+          </div>
+
           <div className="md:col-span-2">
             <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">Département (optionnel)</label>
             <select
@@ -409,6 +436,9 @@ const Employees = () => {
                     }`}>
                       {e.status || '-'}
                     </span>
+                    <div className="text-[10px] text-gray-500 mt-1">
+                      Embauché le : {e.hireDate ? new Date(e.hireDate).toLocaleDateString('fr-FR') : '-'}
+                    </div>
                   </td>
                   <td className="p-3 text-gray-700 dark:text-gray-300">
                     {editingDeptId === e.id ? (

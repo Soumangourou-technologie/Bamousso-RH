@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import api from '../utils/api';
 import { useAuth } from '../context/AuthContext';
 import { Navigate } from 'react-router-dom';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 interface Payslip {
   id: string;
@@ -75,15 +77,64 @@ const Salaries = () => {
     }
   };
 
-  const handleExportPdf = async (id: string) => {
+  const handleExportPdf = (id: string) => {
     try {
-      const res = await api.get(`/salaries/payslips/${id}/pdf`);
-      if (res.data.pdfUrl) {
-        window.open(res.data.pdfUrl, '_blank');
-      }
+      const payslip = payslips.find(p => p.id === id);
+      if (!payslip) return;
+
+      const doc = new (jsPDF as any)();
+      
+      // Header
+      doc.setFontSize(22);
+      doc.setTextColor(249, 115, 22); // Orange 500
+      doc.text('BAMOUSSO', 14, 20);
+      
+      doc.setFontSize(16);
+      doc.setTextColor(31, 41, 55); // Gray 800
+      doc.text('Fiche de Paie', 14, 30);
+      
+      // Info
+      doc.setFontSize(12);
+      doc.setTextColor(75, 85, 99); // Gray 600
+      
+      const startY = 45;
+      const lineSpace = 8;
+      
+      doc.text(`Employé : ${payslip.employee.firstName} ${payslip.employee.lastName}`, 14, startY);
+      doc.text(`Poste : ${payslip.employee.jobTitle || 'Non spécifié'}`, 14, startY + lineSpace);
+      doc.text(`Période : ${new Date(payslip.periodStart).toLocaleDateString('fr-FR')} - ${new Date(payslip.periodEnd).toLocaleDateString('fr-FR')}`, 14, startY + lineSpace * 2);
+      doc.text(`Moyen de paiement : ${payslip.paymentMethod}`, 14, startY + lineSpace * 3);
+      
+      // Table Data
+      doc.autoTable({
+        startY: startY + lineSpace * 5,
+        head: [['Désignation', 'Nombre', 'Montant (FCFA)']],
+        body: [
+          ['Salaire de base', '', payslip.baseSalary.toLocaleString()],
+          ['Jours travaillés', payslip.daysWorked, ''],
+          ['Heures travaillées', payslip.hoursWorked.toFixed(1), ''],
+          ['Heures supplémentaires', payslip.overtimeHours, payslip.overtimeAmount.toLocaleString()],
+          ['Primes', '', payslip.bonusAmount.toLocaleString()],
+          ['Déductions', '', `-${payslip.deductionAmount.toLocaleString()}`],
+        ],
+        theme: 'striped',
+        headStyles: { fillColor: [249, 115, 22] }
+      });
+
+      const finalY = (doc as any).lastAutoTable.finalY + 15;
+      doc.setFontSize(14);
+      doc.setTextColor(16, 185, 129); // Emerald 500
+      doc.text(`Net à payer : ${payslip.netSalary.toLocaleString()} FCFA`, 14, finalY);
+      
+      // Footer
+      doc.setFontSize(10);
+      doc.setTextColor(156, 163, 175);
+      doc.text(`Généré le ${new Date().toLocaleDateString('fr-FR')} par BAMOUSSO RH`, 14, 280);
+
+      doc.save(`Fiche_Paie_${payslip.employee.lastName}_${new Date(payslip.periodStart).getMonth()+1}_${new Date(payslip.periodStart).getFullYear()}.pdf`);
     } catch (error) {
       console.error(error);
-      alert("Erreur lors de l'exportation PDF");
+      alert("Erreur lors de la génération du PDF");
     }
   };
 
