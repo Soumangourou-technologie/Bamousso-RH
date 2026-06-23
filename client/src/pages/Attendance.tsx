@@ -6,6 +6,76 @@ import { motion } from 'framer-motion';
 import { supabase } from '../utils/supabase';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
+
+// Fix for default Leaflet icon in React
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+});
+
+// Custom CSS for pulse effect
+const pulseStyles = `
+  .custom-pulse-icon {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .pulse-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    position: absolute;
+    z-index: 2;
+    box-shadow: 0 0 4px rgba(0,0,0,0.3);
+  }
+  .pulse-ring {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    position: absolute;
+    z-index: 1;
+    animation: pulsate 1.5s ease-out infinite;
+    opacity: 0;
+  }
+  @keyframes pulsate {
+    0% { transform: scale(0.1); opacity: 0; }
+    50% { opacity: 0.5; }
+    100% { transform: scale(1.2); opacity: 0; }
+  }
+`;
+
+const getPulseIcon = (status: string) => {
+  let color = '#f97316'; // orange (default)
+  if (status === 'PRESENT') color = '#22c55e'; // green
+  if (status === 'ABSENT') color = '#ef4444'; // red
+  
+  return L.divIcon({
+    className: 'custom-pulse-icon',
+    html: `<div style="background-color: ${color};" class="pulse-ring"></div><div style="background-color: ${color};" class="pulse-dot"></div>`,
+    iconSize: [30, 30],
+    iconAnchor: [15, 15],
+  });
+};
+
+// Component to handle flying to a location
+const MapController = ({ center, zoom }: { center: { lat: number; lng: number } | null; zoom: number }) => {
+  const map = useMap();
+  useEffect(() => {
+    if (center) {
+      map.flyTo([center.lat, center.lng], zoom, {
+        duration: 1.5, // 1.5 seconds animation
+      });
+    }
+  }, [center, map, zoom]);
+  return null;
+};
+
 
 interface Attendance {
   id: string;
@@ -30,6 +100,7 @@ const AttendancePage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [time, setTime] = useState(new Date());
   const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number } | null>(null);
+  const [mapZoom, setMapZoom] = useState(13);
 
   useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 1000);
@@ -146,19 +217,6 @@ const AttendancePage = () => {
   const gpsLogs = logs.filter(log => log.latitude && log.longitude);
   const defaultCenter = mapCenter || { lat: 5.3484, lng: -4.0305 };
 
-  // Construire l'URL OpenStreetMap avec markers
-  const buildMapUrl = () => {
-    if (gpsLogs.length === 0) {
-      return `https://www.openstreetmap.org/export/embed.html?bbox=${defaultCenter.lng - 0.05},${defaultCenter.lat - 0.05},${defaultCenter.lng + 0.05},${defaultCenter.lat + 0.05}&layer=mapnik`;
-    }
-    // On prend le dernier pointage (le plus récent)
-    const latestGps = gpsLogs[0];
-    const lat = latestGps.latitude!;
-    const lng = latestGps.longitude!;
-    // Ajuster le bbox pour un zoom plus proche autour du marqueur (0.005 au lieu de 0.05)
-    return `https://www.openstreetmap.org/export/embed.html?bbox=${lng - 0.005},${lat - 0.005},${lng + 0.005},${lat + 0.005}&layer=mapnik&marker=${lat},${lng}`;
-  };
-
   return (
     <div className="space-y-8">
       <div>
@@ -176,7 +234,7 @@ const AttendancePage = () => {
             animate={{ opacity: 1, y: 0 }}
             className="lg:col-span-1 bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-700 flex flex-col items-center justify-center text-center relative"
           >
-            <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-orange-400 to-orange-600 rounded-t-3xl" />
+            <div className="absolute top-0 left-0 w-full h-1.5 bg-linear-to-r from-orange-400 to-orange-600 rounded-t-3xl" />
 
             <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-2">Pointage du Jour</h2>
             <p className="text-gray-500 mb-8 text-sm">
@@ -199,8 +257,8 @@ const AttendancePage = () => {
                 disabled={isLoading}
                 className={`flex items-center justify-center gap-3 w-48 h-16 rounded-full text-white font-bold text-lg shadow-lg transition-all disabled:opacity-60
                   ${isCheckedIn
-                    ? 'bg-gradient-to-r from-red-500 to-red-600 shadow-red-500/30'
-                    : 'bg-gradient-to-r from-green-500 to-green-600 shadow-green-500/30'
+                    ? 'bg-linear-to-r from-red-500 to-red-600 shadow-red-500/30'
+                    : 'bg-linear-to-r from-green-500 to-green-600 shadow-green-500/30'
                   }`}
               >
                 {isLoading ? (
@@ -229,13 +287,15 @@ const AttendancePage = () => {
               {todayLog?.latitude && todayLog?.longitude && (
                 <div className="flex justify-between items-center text-xs mt-2 pt-2 border-t border-gray-200 dark:border-gray-700">
                   <span className="flex items-center gap-1"><MapPin className="w-3 h-3" /> Position:</span>
-                  <a
-                    href={`https://www.openstreetmap.org/?mlat=${todayLog.latitude}&mlon=${todayLog.longitude}#map=15/${todayLog.latitude}/${todayLog.longitude}`}
-                    target="_blank" rel="noreferrer"
+                  <button
+                    onClick={() => {
+                      setMapCenter({ lat: todayLog.latitude!, lng: todayLog.longitude! });
+                      setMapZoom(16);
+                    }}
                     className="text-orange-500 font-bold hover:underline"
                   >
                     Voir carte
-                  </a>
+                  </button>
                 </div>
               )}
             </div>
@@ -294,13 +354,15 @@ const AttendancePage = () => {
                     <td className="p-4 text-orange-600 font-bold font-mono text-sm">{calculateHours(log.checkIn, log.checkOut)}</td>
                     <td className="p-4">
                       {log.latitude && log.longitude ? (
-                        <a
-                          href={`https://www.openstreetmap.org/?mlat=${log.latitude}&mlon=${log.longitude}#map=15/${log.latitude}/${log.longitude}`}
-                          target="_blank" rel="noreferrer"
+                        <button
+                          onClick={() => {
+                            setMapCenter({ lat: log.latitude!, lng: log.longitude! });
+                            setMapZoom(16);
+                          }}
                           className="text-blue-500 hover:text-blue-700 inline-flex items-center gap-1 text-xs font-bold"
                         >
                           <Navigation className="w-4 h-4" /> Voir
-                        </a>
+                        </button>
                       ) : (
                         <span className="text-gray-300 text-xs">—</span>
                       )}
@@ -354,32 +416,67 @@ const AttendancePage = () => {
           </div>
         </div>
 
-        <div className="h-[450px] w-full rounded-b-3xl overflow-hidden">
-          <iframe
-            title="Carte de géolocalisation des pointages"
-            src={buildMapUrl()}
-            className="w-full h-full border-0"
-            loading="lazy"
-          />
+        <div className="h-112.5 w-full rounded-b-3xl overflow-hidden relative z-0">
+          <style>{pulseStyles}</style>
+          <MapContainer 
+            center={[defaultCenter.lat, defaultCenter.lng]} 
+            zoom={mapZoom} 
+            scrollWheelZoom={true} 
+            className="w-full h-full"
+          >
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+              url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+            />
+            
+            <MapController center={mapCenter} zoom={mapZoom} />
+
+            {gpsLogs.map(log => (
+              <Marker 
+                key={log.id} 
+                position={[log.latitude!, log.longitude!]}
+                icon={getPulseIcon(log.status)}
+              >
+                <Popup className="rounded-xl overflow-hidden">
+                  <div className="p-1">
+                    <h3 className="font-bold text-gray-800 border-b pb-1 mb-2">
+                      {canManage ? (log.employee ? `${log.employee.firstName} ${log.employee.lastName}` : 'Employé inconnu') : 'Mon Pointage'}
+                    </h3>
+                    <div className="text-xs space-y-1 text-gray-600">
+                      <p><strong>Arrivée :</strong> {log.checkIn ? new Date(log.checkIn).toLocaleTimeString('fr-FR') : '-'}</p>
+                      <p><strong>Départ :</strong> {log.checkOut ? new Date(log.checkOut).toLocaleTimeString('fr-FR') : '-'}</p>
+                      <p>
+                        <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold text-white
+                          ${log.status === 'PRESENT' ? 'bg-green-500' : log.status === 'ABSENT' ? 'bg-red-500' : 'bg-yellow-500'}`}>
+                          {log.status}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                </Popup>
+              </Marker>
+            ))}
+          </MapContainer>
         </div>
 
         {/* Légende des markers */}
         {gpsLogs.length > 0 && (
           <div className="p-4 border-t border-gray-100 dark:border-gray-700 flex flex-wrap gap-3">
             {gpsLogs.map(log => (
-              <a
+              <button
                 key={log.id}
-                href={`https://www.openstreetmap.org/?mlat=${log.latitude}&mlon=${log.longitude}#map=16/${log.latitude}/${log.longitude}`}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center gap-2 px-3 py-1.5 bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-400 rounded-xl text-xs font-bold hover:bg-orange-100 transition-colors"
+                onClick={() => {
+                  setMapCenter({ lat: log.latitude!, lng: log.longitude! });
+                  setMapZoom(16);
+                }}
+                className="flex items-center gap-2 px-3 py-1.5 bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-400 rounded-xl text-xs font-bold hover:bg-orange-100 transition-colors cursor-pointer"
               >
                 <MapPin className="w-3 h-3" />
                 {canManage
                   ? `${log.employee?.firstName ?? 'Employé'} — ${log.checkIn ? new Date(log.checkIn).toLocaleTimeString('fr-FR') : 'N/A'}`
                   : `Pointage — ${log.checkIn ? new Date(log.checkIn).toLocaleTimeString('fr-FR') : 'N/A'}`
                 }
-              </a>
+              </button>
             ))}
           </div>
         )}
