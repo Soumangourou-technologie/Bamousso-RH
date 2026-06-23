@@ -186,7 +186,16 @@ import { Response } from "express";
          ...(assignedToId !== undefined && { assignedToId }), 
        }, 
      }); 
- 
+
+     // Notifier l'employé s'il a été assigné à cette tâche
+     if (assignedToId && assignedToId !== existingTask.assignedToId) {
+       await createNotification({
+         title: "Nouvelle tâche assignée",
+         message: `Vous avez été assigné à la tâche : ${updatedTask.title}`,
+         userId: assignedToId
+       });
+     }
+
      res.json(updatedTask); 
    } catch (error: any) { 
      if (error instanceof z.ZodError) { 

@@ -36,7 +36,7 @@ export const getPayslips = async (req: any, res: Response) => {
   try {
     const payslips = await prisma.payslip.findMany({
       where: { companyId: req.user.companyId },
-      include: { employee: { select: { firstName: true, lastName: true, jobTitle: true } } },
+      include: { employee: { select: { firstName: true, lastName: true, jobTitle: true, role: true } } },
       orderBy: { createdAt: 'desc' }
     });
     res.json(payslips);

@@ -27,6 +27,7 @@ interface Payslip {
     firstName: string;
     lastName: string;
     jobTitle: string | null;
+    role: string;
   };
   createdAt: string;
 }
@@ -101,7 +102,16 @@ const Salaries = () => {
       const lineSpace = 8;
       
       doc.text(`Employé : ${payslip.employee.firstName} ${payslip.employee.lastName}`, 14, startY);
-      doc.text(`Poste : ${payslip.employee.jobTitle || 'Non spécifié'}`, 14, startY + lineSpace);
+      const roleMap: Record<string, string> = {
+        'SUPER_ADMIN': 'Super Admin',
+        'COMPANY_ADMIN': 'Administrateur',
+        'HR_MANAGER': 'Directeur RH',
+        'HR_ASSISTANT': 'Assistant RH',
+        'COMMERCIAL': 'Commercial',
+        'EMPLOYEE': 'Employé'
+      };
+      const displayRole = roleMap[payslip.employee.role] || 'Employé';
+      doc.text(`Poste : ${payslip.employee.jobTitle || displayRole}`, 14, startY + lineSpace);
       doc.text(`Période : ${new Date(payslip.periodStart).toLocaleDateString('fr-FR')} - ${new Date(payslip.periodEnd).toLocaleDateString('fr-FR')}`, 14, startY + lineSpace * 2);
       doc.text(`Moyen de paiement : ${payslip.paymentMethod}`, 14, startY + lineSpace * 3);
       
@@ -244,7 +254,7 @@ const Salaries = () => {
                   <td className="py-6">
                     <div className="flex flex-col">
                       <span className="text-white font-bold">{ps.employee.firstName} {ps.employee.lastName}</span>
-                      <span className="text-xs text-gray-500">{ps.employee.jobTitle || 'Employé'}</span>
+                      <span className="text-xs text-gray-500">{ps.employee.jobTitle || (ps.employee.role === 'HR_MANAGER' ? 'Directeur RH' : ps.employee.role === 'HR_ASSISTANT' ? 'Assistant RH' : ps.employee.role === 'COMMERCIAL' ? 'Commercial' : 'Employé')}</span>
                     </div>
                   </td>
                   <td className="py-6">

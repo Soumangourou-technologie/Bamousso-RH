@@ -114,18 +114,23 @@ const WorkSchedules = () => {
     e.preventDefault();
     if (!assignModal.scheduleId || !selectedAssignId) return;
     try {
+      let assignedName = '';
       if (assignType === 'EMPLOYEE') {
+        const emp = employees.find(e => e.id === selectedAssignId);
+        assignedName = emp ? `${emp.firstName} ${emp.lastName}` : "l'employé";
         await api.post('/work-schedules/assign', {
           scheduleId: assignModal.scheduleId,
           employeeId: selectedAssignId
         });
       } else {
+        const dep = departments.find(d => d.id === selectedAssignId);
+        assignedName = dep ? `le département ${dep.name}` : 'le département';
         await api.post('/work-schedules/assign-department', {
           scheduleId: assignModal.scheduleId,
           departmentId: selectedAssignId
         });
       }
-      alert("Assignation réussie !");
+      alert(`Horaire assigné avec succès à ${assignedName} !`);
       setAssignModal({isOpen: false, scheduleId: null});
       setSelectedAssignId('');
       void fetchData();

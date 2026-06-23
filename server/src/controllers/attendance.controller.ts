@@ -44,7 +44,8 @@ export const toggleClock = async (req: Request, res: Response): Promise<any> => 
 
       // Notifier les admins
       const user = (req as any).user;
-      const userName = user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.email;
+      const dbUser = await prisma.user.findUnique({ where: { id: userId }, select: { firstName: true, lastName: true, email: true } });
+      const userName = dbUser && dbUser.firstName && dbUser.lastName ? `${dbUser.firstName} ${dbUser.lastName}` : (dbUser?.email || "Un employé");
       await notifyAdmins(user.companyId, "Nouveau Pointage", `${userName} vient de pointer son arrivée.`);
 
       return res.status(201).json({ message: "Arrivée enregistrée avec succès", attendance });
@@ -61,7 +62,8 @@ export const toggleClock = async (req: Request, res: Response): Promise<any> => 
 
       // Notifier les admins
       const user = (req as any).user;
-      const userName = user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.email;
+      const dbUser = await prisma.user.findUnique({ where: { id: userId }, select: { firstName: true, lastName: true, email: true } });
+      const userName = dbUser && dbUser.firstName && dbUser.lastName ? `${dbUser.firstName} ${dbUser.lastName}` : (dbUser?.email || "Un employé");
       await notifyAdmins(user.companyId, "Départ Pointage", `${userName} vient de pointer son départ.`);
 
       return res.json({ message: "Départ enregistré avec succès", attendance });

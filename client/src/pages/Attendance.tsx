@@ -130,7 +130,12 @@ const AttendancePage = () => {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'Attendance' }, () => fetchLogs())
       .subscribe();
 
-    return () => { void supabase.removeChannel(channel); };
+    const fetchInterval = setInterval(fetchLogs, 10000); // Auto-refresh every 10s
+
+    return () => { 
+      void supabase.removeChannel(channel); 
+      clearInterval(fetchInterval);
+    };
   }, [user?.id]);
 
   const handleToggle = async () => {
