@@ -215,7 +215,10 @@ const DashboardAdmin = () => {
           if (isLocked) {
             return (
               <motion.div key={index} variants={item}>
-                <Link to="/upgrade-plan" state={{ selectedPlanId: minPlan }} className="relative group block bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-sm border-2 border-dashed border-gray-200 dark:border-gray-700 transition-all hover:border-brand-primary/50">
+                <div 
+                  className="relative group block bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-sm border-2 border-dashed border-gray-200 dark:border-gray-700 transition-all hover:border-brand-primary/50 cursor-not-allowed opacity-80"
+                  title="Mise à jour de l'abonnement momentanément indisponible."
+                >
                   <div className="flex items-start justify-between">
                     <div className="flex items-start gap-4">
                       <div className={`w-14 h-14 rounded-2xl ${mod.color} opacity-40 flex items-center justify-center text-white shadow-lg`}>
@@ -234,10 +237,10 @@ const DashboardAdmin = () => {
                       <Zap className="w-3 h-3" /> Formule {minPlan}
                     </span>
                     <span className="text-brand-primary text-[10px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all">
-                      S'abonner →
+                      Indisponible
                     </span>
                   </div>
-                </Link>
+                </div>
               </motion.div>
             );
           }

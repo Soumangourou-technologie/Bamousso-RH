@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Clock, Zap } from 'lucide-react';
+import { Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface SubscriptionCountdownProps {
@@ -9,7 +9,7 @@ interface SubscriptionCountdownProps {
   onButtonClick?: () => void;
 }
 
-const SubscriptionCountdown = ({ endsAt, title = "Accès Privilège Actif", buttonText = "Passer premium", onButtonClick }: SubscriptionCountdownProps) => {
+const SubscriptionCountdown = ({ endsAt, title = "Accès Privilège Actif" }: SubscriptionCountdownProps) => {
   const [timeLeft, setTimeLeft] = useState<{ days: number; hours: number; minutes: number; seconds: number } | null>(null);
 
   useEffect(() => {
@@ -52,33 +52,35 @@ const SubscriptionCountdown = ({ endsAt, title = "Accès Privilège Actif", butt
       </div>
 
       <div className="flex items-center gap-2 bg-white dark:bg-gray-800 p-2 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm">
-        <div className="flex flex-col items-center min-w-[50px]">
+        <div className="flex flex-col items-center min-w-12.5">
           <span className="text-xl font-black text-brand-primary">{timeLeft.days}</span>
           <span className="text-[10px] uppercase font-black text-gray-400">Jours</span>
         </div>
-        <div className="w-[1px] h-8 bg-gray-100 dark:bg-gray-700 mx-1" />
-        <div className="flex flex-col items-center min-w-[50px]">
+        <div className="w-px h-8 bg-gray-100 dark:bg-gray-700 mx-1" />
+        <div className="flex flex-col items-center min-w-12.5">
           <span className="text-xl font-black text-brand-primary">{timeLeft.hours.toString().padStart(2, '0')}</span>
           <span className="text-[10px] uppercase font-black text-gray-400">Heures</span>
         </div>
-        <div className="w-[1px] h-8 bg-gray-100 dark:bg-gray-700 mx-1" />
-        <div className="flex flex-col items-center min-w-[50px]">
+        <div className="w-px h-8 bg-gray-100 dark:bg-gray-700 mx-1" />
+        <div className="flex flex-col items-center min-w-12.5">
           <span className="text-xl font-black text-brand-primary">{timeLeft.minutes.toString().padStart(2, '0')}</span>
           <span className="text-[10px] uppercase font-black text-gray-400">Min</span>
         </div>
-        <div className="w-[1px] h-8 bg-gray-100 dark:bg-gray-700 mx-1" />
-        <div className="flex flex-col items-center min-w-[50px]">
-          <span className="text-xl font-black text-brand-primary text-orange-500">{timeLeft.seconds.toString().padStart(2, '0')}</span>
+        <div className="w-px h-8 bg-gray-100 dark:bg-gray-700 mx-1" />
+        <div className="flex flex-col items-center min-w-12.5">
+          <span className="text-xl font-black text-brand-primary">{timeLeft.seconds.toString().padStart(2, '0')}</span>
           <span className="text-[10px] uppercase font-black text-gray-400">Sec</span>
         </div>
       </div>
 
+      {/* Fonctionnalité de paiement masquée temporairement (Geniuspay)
       <button 
         onClick={onButtonClick}
         className="bg-brand-primary text-white px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
       >
         <Zap className="w-4 h-4 fill-current" /> {buttonText}
       </button>
+      */}
     </motion.div>
   );
 };
