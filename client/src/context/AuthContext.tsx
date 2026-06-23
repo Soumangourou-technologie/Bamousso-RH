@@ -18,7 +18,11 @@ interface User {
     | 'HR_ASSISTANT'
     | 'COMMERCIAL'
     | 'LIVREUR'
-    | 'EMPLOYEE';
+    | 'EMPLOYEE'
+    | 'VENDEUR'
+    | 'ASSISTANT'
+    | 'COMPTABLE'
+    | 'RH';
   firstName: string;
   lastName: string;
   companyId?: string;

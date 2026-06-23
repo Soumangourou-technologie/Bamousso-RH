@@ -8,7 +8,7 @@ const DashboardRedirect = () => {
 
   if (user.role === 'SUPER_ADMIN') return <Navigate to="/dashboard/super-admin" replace />;
   if (user.role === 'COMPANY_ADMIN') return <Navigate to="/dashboard/admin" replace />;
-  if (user.role === 'HR_MANAGER' || user.role === 'HR_ASSISTANT') return <Navigate to="/dashboard/hr" replace />;
+  if (user.role === 'HR_MANAGER' || user.role === 'HR_ASSISTANT' || user.role === 'RH') return <Navigate to="/dashboard/hr" replace />;
   return <Navigate to="/dashboard/employee" replace />;
 };
 

@@ -79,16 +79,16 @@ function App() {
                     <Route path="/roles" element={<Roles />} />
                   </Route>
 
-                  <Route element={<ProtectedRoute allowedRoles={['HR_MANAGER', 'HR_ASSISTANT']} />}>
+                  <Route element={<ProtectedRoute allowedRoles={['HR_MANAGER', 'HR_ASSISTANT', 'RH']} />}>
                     <Route path="/dashboard/hr" element={<DashboardHR />} />
                   </Route>
 
-                  <Route element={<ProtectedRoute allowedRoles={['EMPLOYEE', 'LIVREUR', 'COMMERCIAL']} />}>
+                  <Route element={<ProtectedRoute allowedRoles={['EMPLOYEE', 'LIVREUR', 'COMMERCIAL', 'VENDEUR', 'ASSISTANT', 'COMPTABLE']} />}>
                     <Route path="/dashboard/employee" element={<DashboardEmployee />} />
                   </Route>
 
                   {/* Pages RH */}
-                  <Route element={<ProtectedRoute allowedRoles={['COMPANY_ADMIN', 'HR_MANAGER', 'HR_ASSISTANT']} />}>
+                  <Route element={<ProtectedRoute allowedRoles={['COMPANY_ADMIN', 'HR_MANAGER', 'HR_ASSISTANT', 'RH']} />}>
                     <Route path="/employees" element={<Employees />} />
                     <Route path="/departments" element={<Departments />} />
                     <Route path="/settings" element={<Settings />} />
@@ -115,7 +115,7 @@ function App() {
                   </Route>
 
                   {/* Admin/HR: Vue Clients Commerciaux */}
-                  <Route element={<ProtectedRoute allowedRoles={['COMPANY_ADMIN', 'HR_MANAGER', 'HR_ASSISTANT']} />}>
+                  <Route element={<ProtectedRoute allowedRoles={['COMPANY_ADMIN', 'HR_MANAGER', 'HR_ASSISTANT', 'RH']} />}>
                     <Route path="/client-registrations" element={<ClientRegistrationAdmin />} />
                   </Route>
 
