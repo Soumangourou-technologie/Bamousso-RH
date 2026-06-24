@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import api from '../utils/api';
 import { useAuth } from '../context/AuthContext';
-import { Settings as SettingsIcon, Image as ImageIcon, Save, CreditCard, Users, Plus } from 'lucide-react';
+import { Settings as SettingsIcon, Image as ImageIcon, Save, CreditCard, Users, Plus, Lock } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { usePlan } from '../hooks/usePlan';
@@ -13,6 +13,11 @@ const SettingsPage = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [isPasswordSaving, setIsPasswordSaving] = useState(false);
+  const [passwordMessage, setPasswordMessage] = useState('');
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -48,6 +53,35 @@ const SettingsPage = () => {
       setMessage(msg);
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleUpdatePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) return;
+    if (newPassword !== confirmPassword) {
+      setPasswordMessage("Les mots de passe ne correspondent pas.");
+      return;
+    }
+    if (newPassword.length < 6) {
+      setPasswordMessage("Le mot de passe doit contenir au moins 6 caractères.");
+      return;
+    }
+
+    setIsPasswordSaving(true);
+    setPasswordMessage('');
+
+    try {
+      await api.put(`/employees/${user.id}/password`, { password: newPassword });
+      setPasswordMessage("Mot de passe mis à jour avec succès !");
+      setNewPassword('');
+      setConfirmPassword('');
+    } catch (error: any) {
+      console.error('Error updating password', error);
+      const msg = error.response?.data?.message || 'Erreur lors de la mise à jour du mot de passe.';
+      setPasswordMessage(msg);
+    } finally {
+      setIsPasswordSaving(false);
     }
   };
 
@@ -182,6 +216,57 @@ const SettingsPage = () => {
           </div>
         </motion.div>
       </div>
+
+      {/* Section Sécurité */}
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-700 max-w-2xl"
+      >
+        <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
+          <Lock className="w-5 h-5 text-gray-400" /> Sécurité & Mot de passe
+        </h2>
+        
+        <form onSubmit={handleUpdatePassword} className="space-y-6">
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Nouveau mot de passe</label>
+              <input 
+                type="password" 
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                className="w-full p-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-brand-primary"
+                placeholder="Minimum 6 caractères"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Confirmer le mot de passe</label>
+              <input 
+                type="password" 
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="w-full p-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-brand-primary"
+                placeholder="Répétez le mot de passe"
+              />
+            </div>
+
+            {passwordMessage && (
+              <div className={`p-3 rounded-xl text-xs font-bold uppercase tracking-wider ${passwordMessage.includes('Erreur') || passwordMessage.includes('correspondent') || passwordMessage.includes('caractères') ? 'bg-red-500/10 text-red-500' : 'bg-green-500/10 text-green-500'}`}>
+                {passwordMessage}
+              </div>
+            )}
+
+            <button 
+              type="submit" 
+              disabled={isPasswordSaving || !newPassword || !confirmPassword}
+              className="w-full flex items-center justify-center gap-2 bg-gray-900 dark:bg-gray-700 text-white px-6 py-3.5 rounded-2xl font-black shadow-lg hover:bg-gray-800 dark:hover:bg-gray-600 transition-all disabled:opacity-30"
+            >
+              {isPasswordSaving ? 'Mise à jour...' : <><Save className="w-5 h-5" /> Mettre à jour le mot de passe</>}
+            </button>
+          </div>
+        </form>
+      </motion.div>
     </div>
   );
 };

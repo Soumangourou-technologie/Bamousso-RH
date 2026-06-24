@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 // Force redeploy - 2026-04-30
 import api from '../utils/api';
 import { useAuth } from '../context/AuthContext';
-import { Lock, Unlock, Download, Trash2, Edit2, Check, X } from 'lucide-react';
+import { Lock, Unlock, Download, Trash2, Edit2, Check, X, Key } from 'lucide-react';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 
@@ -70,6 +70,8 @@ const Employees = () => {
   const [editingRoleId, setEditingRoleId] = useState<string | null>(null);
   const [selectedNewDept, setSelectedNewDept] = useState<string>('');
   const [selectedNewRole, setSelectedNewRole] = useState<string>('');
+  const [editingPasswordId, setEditingPasswordId] = useState<string | null>(null);
+  const [newEmployeePassword, setNewEmployeePassword] = useState<string>('');
   const { user } = useAuth();
 
   const fetchEmployees = async () => {
@@ -593,6 +595,51 @@ const Employees = () => {
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
+                      )}
+
+                      {editingPasswordId === e.id ? (
+                        <div className="flex items-center gap-1 bg-gray-100 dark:bg-gray-700 p-1 rounded">
+                          <input 
+                            type="password"
+                            placeholder="Nouveau mot de passe"
+                            value={newEmployeePassword}
+                            onChange={(ev) => setNewEmployeePassword(ev.target.value)}
+                            className="w-32 text-xs p-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-black dark:text-white"
+                          />
+                          <button 
+                            onClick={async () => {
+                              if (newEmployeePassword.length < 6) {
+                                alert("Le mot de passe doit contenir au moins 6 caractères");
+                                return;
+                              }
+                              try {
+                                await api.put(`/employees/${e.id}/password`, { password: newEmployeePassword });
+                                setEditingPasswordId(null);
+                                alert("Mot de passe mis à jour !");
+                              } catch (err) { alert("Erreur lors de la modification du mot de passe"); }
+                            }}
+                            className="p-1 text-green-500 hover:bg-green-500/10 rounded"
+                            title="Sauvegarder le mot de passe"
+                          >
+                            <Check className="w-3 h-3" />
+                          </button>
+                          <button onClick={() => setEditingPasswordId(null)} className="p-1 text-red-500 hover:bg-red-500/10 rounded" title="Annuler">
+                            <X className="w-3 h-3" />
+                          </button>
+                        </div>
+                      ) : (
+                        (user?.role === 'COMPANY_ADMIN' || user?.role === 'HR_MANAGER') && (
+                          <button
+                            onClick={() => {
+                              setEditingPasswordId(e.id);
+                              setNewEmployeePassword('');
+                            }}
+                            title="Changer le mot de passe"
+                            className="p-2 bg-blue-500/10 text-blue-600 rounded hover:bg-blue-500/20 transition"
+                          >
+                            <Key className="w-4 h-4" />
+                          </button>
+                        )
                       )}
                     </div>
                   </td>
