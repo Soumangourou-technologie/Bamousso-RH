@@ -4,6 +4,7 @@ import prisma from "../utils/prisma.js";
 import { z } from "zod"; 
 import type { AuthRequest } from "../middleware/auth.js"; 
 import crypto from "crypto";
+import { sendEmployeeWelcomeEmail } from "../utils/mailer.js";
 
 // ======================= 
 // SCHEMAS 
@@ -112,6 +113,18 @@ export const createUser = async (req: AuthRequest, res: Response) => {
         bankDetails: data.bankDetails || null,
       }, 
     }); 
+
+    if (targetCompanyId) {
+      const company = await prisma.company.findUnique({
+        where: { id: targetCompanyId }
+      });
+      if (company) {
+        const creator = await prisma.user.findUnique({ where: { id: currentUser.id } });
+        const employerName = creator ? `${creator.firstName} ${creator.lastName}` : "votre employeur";
+        // Envoi de l'email à l'employé avec son mot de passe
+        await sendEmployeeWelcomeEmail(user.email, user.firstName, user.lastName, company.name, rawPassword, employerName).catch(console.error);
+      }
+    }
 
     res.status(201).json({ id: user.id, email: user.email }); 
   } catch (error: any) { 
