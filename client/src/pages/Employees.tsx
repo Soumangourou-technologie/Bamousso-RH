@@ -70,6 +70,7 @@ const Employees = () => {
   const [editingRoleId, setEditingRoleId] = useState<string | null>(null);
   const [selectedNewDept, setSelectedNewDept] = useState<string>('');
   const [selectedNewRole, setSelectedNewRole] = useState<string>('');
+  const [selectedPrimaryRole, setSelectedPrimaryRole] = useState<Role | string>('EMPLOYEE');
   const [editingPasswordId, setEditingPasswordId] = useState<string | null>(null);
   const [newEmployeePassword, setNewEmployeePassword] = useState<string>('');
   const { user } = useAuth();
@@ -392,30 +393,52 @@ const Employees = () => {
                   <td className="p-3 text-gray-700 dark:text-gray-300">{e.email}</td>
                   <td className="p-3 text-gray-700 dark:text-gray-300">
                     {editingRoleId === e.id ? (
-                      <div className="flex items-center gap-1">
+                      <div className="flex flex-col gap-1">
+                        <select 
+                          value={selectedPrimaryRole}
+                          onChange={(e) => setSelectedPrimaryRole(e.target.value)}
+                          className="text-xs p-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-black dark:text-white"
+                        >
+                          {user?.role === 'SUPER_ADMIN' && <option value="COMPANY_ADMIN">Admin entreprise</option>}
+                          <option value="HR_MANAGER">Manager RH</option>
+                          <option value="COMMERCIAL">Commercial</option>
+                          <option value="LIVREUR">Livreur</option>
+                          <option value="EMPLOYEE">Employé simple</option>
+                          <option value="VENDEUR">Vendeur</option>
+                          <option value="ASSISTANT">Assistant</option>
+                          <option value="COMPTABLE">Comptable</option>
+                          <option value="RH">RH</option>
+                        </select>
                         <select 
                           value={selectedNewRole}
                           onChange={(e) => setSelectedNewRole(e.target.value)}
                           className="text-xs p-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-black dark:text-white"
                         >
-                          <option value="">— Aucun —</option>
+                          <option value="">— Aucun (Rôle spéc.) —</option>
                           {customRoles.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
                         </select>
-                        <button 
-                          onClick={async () => {
-                            try {
-                              await api.put(`/employees/${e.id}`, { customRoleId: selectedNewRole || null });
-                              setEditingRoleId(null);
-                              void fetchEmployees();
-                            } catch (err) { alert("Erreur"); }
-                          }}
-                          className="p-1 text-green-500 hover:bg-green-500/10 rounded"
-                        >
-                          <Check className="w-3 h-3" />
-                        </button>
-                        <button onClick={() => setEditingRoleId(null)} className="p-1 text-red-500 hover:bg-red-500/10 rounded">
-                          <X className="w-3 h-3" />
-                        </button>
+                        <div className="flex gap-1 justify-end">
+                          <button 
+                            onClick={async () => {
+                              try {
+                                await api.put(`/employees/${e.id}`, { 
+                                  role: selectedPrimaryRole,
+                                  customRoleId: selectedNewRole || null 
+                                });
+                                setEditingRoleId(null);
+                                void fetchEmployees();
+                              } catch (err: any) { 
+                                alert(err.response?.data?.message || "Erreur lors de la modification"); 
+                              }
+                            }}
+                            className="p-1 text-green-500 hover:bg-green-500/10 rounded"
+                          >
+                            <Check className="w-3 h-3" />
+                          </button>
+                          <button onClick={() => setEditingRoleId(null)} className="p-1 text-red-500 hover:bg-red-500/10 rounded">
+                            <X className="w-3 h-3" />
+                          </button>
+                        </div>
                       </div>
                     ) : (
                       <div className="flex items-center justify-between group/role">
@@ -424,6 +447,7 @@ const Employees = () => {
                           <button 
                             onClick={() => {
                               setEditingRoleId(e.id);
+                              setSelectedPrimaryRole(e.role);
                               setSelectedNewRole(e.customRoleId || '');
                             }}
                             className="p-1 text-gray-400 hover:text-brand-primary opacity-0 group-hover/role:opacity-100 transition-opacity"
