@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-const apiKey = "pk_sandbox_qwWaEyJ8UqvZxfbCThe0MF18DtJBudSS";
-const apiSecret = "sk_sandbox_225bdc5eb52f3bc0320446003a70483d70dfd8126aba039e4471b2098caff8a8";
+const apiKey = process.env.GENIUSPAY_API_KEY || "";
+const apiSecret = process.env.GENIUSPAY_API_SECRET || "";
 
 async function testAuth() {
   console.log("Testing GeniusPay Auth with standard headers...");

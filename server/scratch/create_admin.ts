@@ -4,8 +4,13 @@ import bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
 async function main() {
-  const email = 'stephanekevinassamoi@gmail.com';
-  const password = 'password123';
+  const email = process.env.SEED_ADMIN_EMAIL;
+  const password = process.env.SEED_ADMIN_PASSWORD;
+  
+  if (!email || !password) {
+    console.error('Missing SEED_ADMIN_EMAIL or SEED_ADMIN_PASSWORD in environment');
+    return;
+  }
   const hashedPassword = await bcrypt.hash(password, 10);
 
   console.log(`Creating Super Admin: ${email}...`);

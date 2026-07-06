@@ -131,7 +131,12 @@ const Messaging = () => {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setSelectedFile(e.target.files[0]);
+      const file = e.target.files[0];
+      if (file.size > 5 * 1024 * 1024) { // 5MB limit
+        alert("Fichier trop volumineux. La taille maximale est de 5Mo.");
+        return;
+      }
+      setSelectedFile(file);
     }
   };
 

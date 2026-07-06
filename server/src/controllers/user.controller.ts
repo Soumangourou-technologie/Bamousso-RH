@@ -287,8 +287,8 @@ export const updateUser = async (req: AuthRequest, res: Response) => {
       where: { id: id as string }, 
       data: updateData, 
     }); 
-
-    res.json(updatedUser); 
+    const { password: _, ...userWithoutPassword } = updatedUser;
+    res.json(userWithoutPassword); 
   } catch (error: any) { 
     if (error instanceof z.ZodError) { 
       return res.status(400).json({ message: "Données invalides", errors: error.issues }); 

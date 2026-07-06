@@ -13,10 +13,15 @@ export const generateSubscriptionPDF = (data: {
     const doc = new PDFDocument({ margin: 50 });
     const buffers: Buffer[] = [];
 
-    doc.on('data', buffers.push.bind(buffers));
-    doc.on('end', () => {
+    const onData = buffers.push.bind(buffers);
+    const onEnd = () => {
+      doc.off('data', onData);
+      doc.off('end', onEnd);
       resolve(Buffer.concat(buffers));
-    });
+    };
+
+    doc.on('data', onData);
+    doc.on('end', onEnd);
 
     // Header
     doc.fillColor('#ff5722').fontSize(25).text('BAMOUSSO RH', { align: 'center' });

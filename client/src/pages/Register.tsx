@@ -213,7 +213,7 @@ const Register = () => {
                 <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Mot de passe</label>
                 <div className="relative">
                   <input
-                    {...register('password', { required: "Le mot de passe est requis", minLength: { value: 6, message: "6 caractères minimum" } })}
+                    {...register('password', { required: "Le mot de passe est requis", minLength: { value: 8, message: "8 caractères minimum" }, pattern: { value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, message: "Doit contenir une majuscule, une minuscule et un chiffre" } })}
                     type={showPassword ? "text" : "password"}
                     className="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none transition-all text-gray-900 dark:text-white pr-12"
                   />

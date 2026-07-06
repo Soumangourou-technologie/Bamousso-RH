@@ -12,8 +12,7 @@ export const errorHandler = (err: any, req: Request, res: Response, next: NextFu
 
   const response = {
     message: err.message || 'Une erreur interne est survenue.',
-    code: err.code || 'INTERNAL_ERROR',
-    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+    code: err.code || 'INTERNAL_ERROR'
   };
 
   res.status(statusCode).json(response);

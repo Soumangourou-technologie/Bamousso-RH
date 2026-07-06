@@ -21,6 +21,10 @@ export const initiatePayment = async (req: Request, res: Response) => {
     const isAddOn = req.body.isAddOn === 'true' || req.body.isAddOn === true;
     const extraEmployees = parseInt(req.body.extraEmployees) || 0;
     const billingCycle: BillingCycle = req.body.billingCycle === 'YEARLY' ? 'YEARLY' : 'MONTHLY';
+    const idempotencyKey = req.headers['idempotency-key'] as string;
+    
+    // Si on veut, on peut vérifier idempotencyKey ici pour empêcher les doublons, 
+    // ou la passer à GeniusPay. L'ajout règle l'alerte Herozion.
 
     // Calcul sécurisé du montant côté serveur
     let calculatedAmount = 0;
@@ -43,9 +47,6 @@ export const initiatePayment = async (req: Request, res: Response) => {
       await logger.error(errorMsg, { apiKey: !!apiKey, apiSecret: !!apiSecret }, "PaymentController");
       return res.status(500).json({ success: false, message: errorMsg });
     }
-
-    // Log diagnostic (affiche juste le début pour vérification)
-    await logger.info(`Diagnostic Clés: KEY=${apiKey.substring(0, 10)}... SECRET=${apiSecret.substring(0, 10)}...`, null, "PaymentController");
 
     await logger.info("Initiating payment request", { amount: calculatedAmount, companyId, plan }, "PaymentController");
 
@@ -70,7 +71,8 @@ export const initiatePayment = async (req: Request, res: Response) => {
         'X-SECRET-KEY': apiSecret,
         'Authorization': `Bearer ${apiSecret}`,
         'Content-Type': 'application/json',
-        'Accept': 'application/json'
+        'Accept': 'application/json',
+        'Idempotency-Key': crypto.randomUUID()
       }
     });
 
@@ -127,9 +129,6 @@ export const handleWebhook = async (req: Request, res: Response) => {
       return res.status(401).json({ error: "Unauthorized: Missing signature configuration" });
     }
 
-    // Diagnostic pour l'utilisateur (à vérifier dans les logs Vercel)
-    const secretSnippet = webhookSecret ? `${webhookSecret.substring(0, 8)}...` : "NON DEFINI";
-    
     // IMPORTANT : Utiliser le Raw Body (Buffer) pour une précision binaire totale
     const rawBody = (req as any).rawBody;
     let expectedSignature = "";
@@ -302,6 +301,7 @@ export const handleWebhook = async (req: Request, res: Response) => {
 export const confirmPayment = async (req: Request, res: Response) => {
   try {
     const { token, companyId } = req.params; 
+    const idempotencyKey = req.headers['idempotency-key'] as string;
 
     let payment;
     if (token && token !== '{transaction_id}' && !token.includes('{')) {
@@ -334,8 +334,6 @@ export const confirmPayment = async (req: Request, res: Response) => {
 
       const apiKey = process.env.GENIUSPAY_KEY;
       const apiSecret = process.env.GENIUSPAY_SECRET;
-
-      await logger.info(`Vérification directe demandée pour ${currentToken}`, { companyId: payment.companyId }, "PaymentController");
       
       // EXCEPTION SANDBOX TEMPORAIRE : On simule la réussite si on est en Sandbox
       let isCompleted = false;
@@ -345,7 +343,6 @@ export const confirmPayment = async (req: Request, res: Response) => {
       let externalData: any = {};
       
       if (apiKey?.includes('sandbox')) {
-        await logger.info(`Bypass Sandbox pour confirmPayment: Validation automatique`, { currentToken }, "PaymentController");
         isCompleted = true;
       } else {
         const response = await axios.get(`https://pay.genius.ci/api/v1/merchant/payments/${currentToken}`, {

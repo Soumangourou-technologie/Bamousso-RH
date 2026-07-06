@@ -1,21 +1,28 @@
-=========================================================
-RAPPORT HEBDOMADAIRE D'ACTIVITÉ - BAMOUSSO RH
-Date : Semaine du 08 au 14 Juin 2026
-=========================================================
+Objet : Rapport hebdomadaire des mises à jour - Projet Bamousso-RH
 
-1. RENFORCEMENT DE LA SÉCURITÉ DE LA PLATEFORME (Priorité Haute)
-Nous avons procédé à un audit complet de sécurité de l'application Bamousso RH afin de garantir la protection absolue des données de l'entreprise et de nos clients. Plusieurs correctifs majeurs ont été apportés :
+Bonjour à tous,
 
-- Mise aux normes des outils de l'application : Nous avons mis à jour le "moteur" qui fait fonctionner l'interface visuelle de notre logiciel pour corriger une vulnérabilité critique. La plateforme est désormais propulsée par la version la plus récente et sécurisée.
-- Sécurisation des exports Excel : L'outil qui permettait d'exporter les missions en fichier Excel comportait des risques de sécurité. Nous l'avons remplacé par un outil professionnel plus moderne. La fonctionnalité reste identique pour nos utilisateurs, mais sans aucune faille.
-- Protection contre la manipulation de données : Nous avons renforcé la façon dont l'application enregistre les erreurs et les événements internes (les "logs") pour empêcher quiconque de pirater ou de fausser ces historiques.
-- Protection de nos clés secrètes : Nous avons verrouillé et masqué certains fichiers contenant des mots de passe internes d'infrastructure afin d'empêcher toute fuite d'information sur nos serveurs.
+Veuillez trouver ci-dessous le récapitulatif des développements, corrections et améliorations apportés au système Bamousso-RH au cours de cette semaine :
 
-2. CORRECTION DU SYSTÈME DE MESSAGERIE INTERNE
-Nous avons résolu un problème majeur concernant la communication avec nos clients (notamment les clients souscrivant à l'option "hors ligne") :
+### Nouvelles Fonctionnalités
+- Envoi automatique d'emails de bienvenue et d'accès :
+  Nous avons mis en place une fonctionnalité critique lors de la création d'un nouveau compte employé. Désormais, le système envoie automatiquement un email contenant les informations de connexion (accès) directement au nouvel employé dès la création de son profil. (Mise à jour côté serveur et intégration du service d'envoi de mail).
+- Gestion des rôles depuis l'interface utilisateur :
+  Il est maintenant possible pour les administrateurs de modifier le rôle principal d'un employé directement via l'interface graphique (UI) de la plateforme, ce qui rend la gestion des permissions plus fluide et plus accessible sans intervention technique.
 
-- Le Problème : Les messages envoyés par ces clients étaient bien stockés dans notre système, mais le Super-Administrateur ne pouvait pas les voir dans son tableau de bord.
-- La Solution : Nous avons corrigé le répertoire de contacts du tableau de bord. Désormais, tout client qui envoie un message apparaît automatiquement dans la messagerie du Super-Administrateur avec le nom de son entreprise. Ce dernier peut maintenant lire les messages reçus et y répondre directement et facilement.
+### Corrections de Bugs (Fixes)
+- Correction lors de la mise à jour des profils employés :
+  Un correctif a été appliqué au niveau de la validation des données (updateUserSchema). Auparavant, le système bloquait parfois la modification d'un employé si certaines informations optionnelles n'étaient pas renseignées. Les relations optionnelles acceptent désormais correctement les valeurs nulles, rendant la mise à jour des profils parfaitement stable.
 
-CONCLUSION
-Le logiciel Bamousso RH est aujourd'hui nettement plus sécurisé, plus performant, et prêt à accueillir nos clients dans les meilleures conditions de support et de confidentialité. La production a été mise à jour avec succès et fonctionne parfaitement.
+### Sécurité & Maintenance (CI/CD)
+- Renforcement de la sécurité des processus de déploiement (CI/CD) :
+  Nous avons sécurisé nos workflows de développement sur GitHub Actions en figeant ("pinning") les versions spécifiques des actions utilisées. Cela prévient les risques liés à des mises à jour non contrôlées de dépendances tierces et garantit la stabilité et la sécurité de notre pipeline d'intégration continue.
+
+L'environnement de travail est stable (branche principale à jour) et aucune anomalie critique n'est actuellement en attente.
+
+Je reste à votre entière disposition pour toute précision supplémentaire concernant ces mises à jour.
+
+Cordialement,
+
+[Ton Nom/Signature]
+Équipe Technique - Bamousso-RH

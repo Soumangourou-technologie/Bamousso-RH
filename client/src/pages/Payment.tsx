@@ -36,7 +36,18 @@ const Payment = () => {
       });
 
       if (response.data.success && response.data.url) {
-        window.location.href = response.data.url;
+        try {
+          const targetUrl = new URL(response.data.url);
+          if (targetUrl.protocol === 'https:' || targetUrl.protocol === 'http:') {
+            window.location.href = targetUrl.toString();
+          } else {
+            alert("URL de paiement invalide.");
+            setStatus('IDLE');
+          }
+        } catch {
+          alert("URL de paiement invalide.");
+          setStatus('IDLE');
+        }
       } else {
         alert("Erreur: " + (response.data.message || "Impossible d'initier le paiement."));
         setStatus('IDLE');

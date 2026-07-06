@@ -183,10 +183,9 @@ export const registerCompany = catchAsync(async (req: Request, res: Response) =>
       }
     }
 
-    // On renvoie un message plus détaillé même en prod pour aider au diagnostic temporairement
+    // On ne renvoie plus d'informations sensibles (stack trace) même en dev
     return res.status(500).json({ 
-      message: `Erreur lors de la création du compte: ${error.message || 'Erreur inconnue'}`,
-      details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      message: "Erreur lors de la création du compte",
     });
   }
 });

@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-const apiKey = 'pk_sandbox_9U6UucLrncT03TkRupPla0NNR2PgXaq6';
-const apiSecret = 'sk_sandbox_9bd9aed97ce1dbbb3cd0e976bd7a92fd5ed707a07de4cd2bd886fe8dbaa76fde';
+const apiKey = process.env.GENIUSPAY_API_KEY || '';
+const apiSecret = process.env.GENIUSPAY_API_SECRET || '';
 
 async function main() {
   const urls = [

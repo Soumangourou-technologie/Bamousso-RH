@@ -1,0 +1,84 @@
+high insecure_dependencies: client/package.json:7 - Dépendance vulnérable : vite (GHSA-fx2h-pf6j-xcff)
+high insecure_dependencies: client/package.json:7 - Dépendance vulnérable : vite (GHSA-v6wh-96g9-6wx3)
+high memory_leak: client/src/context/AuthContext.tsx:85 - EventEmitter.on() Sans .off() (1 appel(s))
+medium security_misconfiguration: client/src/pages/Documents.tsx:100 - window.open('_blank') Sans noopener (Risque de Tab-Napping)
+medium insecure_file_upload: client/src/pages/Messaging.tsx:138 - Limite de Taille de Téléversement Manquante
+medium insecure_file_upload: client/src/pages/Messaging.tsx:168 - Limite de Taille de Téléversement Manquante
+high security_misconfiguration: client/src/pages/Payment.tsx:39 - Redirection ouverte côté client
+medium broken_authentication: client/src/pages/Register.tsx:216 - Validation de Mot de Passe Manquante
+critical broken_authentication: server/prisma/seed.ts:15 - Secret/Mot de Passe en Dur
+high sensitive_data_exposure: server/prisma/seed.ts:15 - Secret en Dur : Hardcoded Password [MEDIUM confiance]
+critical broken_authentication: server/scratch/create_admin.ts:8 - Secret/Mot de Passe en Dur
+high sensitive_data_exposure: server/scratch/create_admin.ts:8 - Secret en Dur : Hardcoded Password [MEDIUM confiance]
+high security_misconfiguration: server/scratch/test_geniuspay.ts:22 - Données Sensibles dans les Logs
+high security_misconfiguration: server/scratch/test_geniuspay.ts:25 - Données Sensibles dans les Logs
+high input_validation: server/src/controllers/announcement.controller.ts:7 - Schéma de validation absent
+high input_validation: server/src/controllers/attendance.controller.ts:9 - Schéma de validation absent
+critical excessive_data_exposure: server/src/controllers/auth.controller.ts:194 - Données Sensibles dans la Réponse
+critical excessive_data_exposure: server/src/controllers/auth.controller.ts:221 - Données Sensibles dans la Réponse
+high input_validation: server/src/controllers/clientRegistration.controller.ts:35 - Schéma de validation absent
+high input_validation: server/src/controllers/clientRegistration.controller.ts:227 - Schéma de validation absent
+high input_validation: server/src/controllers/company.controller.ts:7 - Schéma de validation absent
+high input_validation: server/src/controllers/company.controller.ts:31 - Schéma de validation absent
+high input_validation: server/src/controllers/company.controller.ts:45 - Schéma de validation absent
+high input_validation: server/src/controllers/company.controller.ts:46 - Schéma de validation absent
+high input_validation: server/src/controllers/company.controller.ts:59 - Schéma de validation absent
+high input_validation: server/src/controllers/company.controller.ts:69 - Schéma de validation absent
+high input_validation: server/src/controllers/company.controller.ts:82 - Schéma de validation absent
+high input_validation: server/src/controllers/company.controller.ts:95 - Schéma de validation absent
+high input_validation: server/src/controllers/company.controller.ts:96 - Schéma de validation absent
+high input_validation: server/src/controllers/company.controller.ts:109 - Schéma de validation absent
+high input_validation: server/src/controllers/company.controller.ts:110 - Schéma de validation absent
+high input_validation: server/src/controllers/conflicts.controller.ts:25 - Schéma de validation absent
+high input_validation: server/src/controllers/cron.controller.ts:13 - Schéma de validation absent
+high input_validation: server/src/controllers/cron.controller.ts:92 - Schéma de validation absent
+high input_validation: server/src/controllers/document.controller.ts:8 - Schéma de validation absent
+high input_validation: server/src/controllers/missions.controller.ts:20 - Schéma de validation absent
+high input_validation: server/src/controllers/missions.controller.ts:68 - Schéma de validation absent
+high input_validation: server/src/controllers/missions.controller.ts:106 - Schéma de validation absent
+high input_validation: server/src/controllers/missions.controller.ts:113 - Schéma de validation absent
+high input_validation: server/src/controllers/payment.controller.ts:15 - Schéma de validation absent
+high input_validation: server/src/controllers/payment.controller.ts:21 - Schéma de validation absent
+high input_validation: server/src/controllers/payment.controller.ts:22 - Schéma de validation absent
+medium input_validation: server/src/controllers/payment.controller.ts:22 - Aucune contrainte forte sur l’entrée
+high input_validation: server/src/controllers/payment.controller.ts:23 - Schéma de validation absent
+high input_validation: server/src/controllers/payment.controller.ts:60 - Schéma de validation absent
+high input_validation: server/src/controllers/payment.controller.ts:61 - Schéma de validation absent
+high input_validation: server/src/controllers/payment.controller.ts:118 - Schéma de validation absent
+high input_validation: server/src/controllers/payment.controller.ts:144 - Schéma de validation absent
+high input_validation: server/src/controllers/payment.controller.ts:160 - Schéma de validation absent
+high input_validation: server/src/controllers/payment.controller.ts:168 - Schéma de validation absent
+high input_validation: server/src/controllers/payment.controller.ts:304 - Schéma de validation absent
+medium excessive_data_exposure: server/src/controllers/payment.controller.ts:43 - Données Sensibles dans les Logs
+medium excessive_data_exposure: server/src/controllers/payment.controller.ts:48 - Données Sensibles dans les Logs
+medium excessive_data_exposure: server/src/controllers/payment.controller.ts:126 - Données Sensibles dans les Logs
+medium excessive_data_exposure: server/src/controllers/payment.controller.ts:338 - Données Sensibles dans les Logs
+medium excessive_data_exposure: server/src/controllers/payment.controller.ts:348 - Données Sensibles dans les Logs
+high security_misconfiguration: server/src/controllers/payment.controller.ts:43 - Données Sensibles dans les Logs
+high security_misconfiguration: server/src/controllers/payment.controller.ts:48 - Données Sensibles dans les Logs
+high security_misconfiguration: server/src/controllers/payment.controller.ts:126 - Données Sensibles dans les Logs
+high security_misconfiguration: server/src/controllers/payment.controller.ts:338 - Données Sensibles dans les Logs
+high security_misconfiguration: server/src/controllers/payment.controller.ts:348 - Données Sensibles dans les Logs
+medium replay_attack: server/src/controllers/payment.controller.ts:13 - Clé d'Idempotence Manquante
+medium replay_attack: server/src/controllers/payment.controller.ts:302 - Clé d'Idempotence Manquante
+high input_validation: server/src/controllers/payrollItem.controller.ts:6 - Schéma de validation absent
+high input_validation: server/src/controllers/payrollItem.controller.ts:46 - Schéma de validation absent
+high input_validation: server/src/controllers/salaries.controller.ts:51 - Schéma de validation absent
+high input_validation: server/src/controllers/salaries.controller.ts:239 - Schéma de validation absent
+high input_validation: server/src/controllers/salaries.controller.ts:254 - Schéma de validation absent
+critical excessive_data_exposure: server/src/controllers/superadmin.controller.ts:170 - Données Sensibles dans la Réponse
+critical broken_function_level_authorization: server/src/controllers/user.controller.ts:268 - Escalade de Privilèges Potentielle
+critical broken_function_level_authorization: server/src/controllers/user.controller.ts:272 - Escalade de Privilèges Potentielle
+critical excessive_data_exposure: server/src/controllers/user.controller.ts:305 - Données Sensibles dans la Réponse
+high input_validation: server/src/controllers/workSchedule.controller.ts:7 - Schéma de validation absent
+high input_validation: server/src/controllers/workSchedule.controller.ts:50 - Schéma de validation absent
+high input_validation: server/src/controllers/workSchedule.controller.ts:67 - Schéma de validation absent
+high input_validation: server/src/controllers/workSchedule.controller.ts:84 - Schéma de validation absent
+medium excessive_data_exposure: server/src/middleware/error.ts:16 - Informations de Debug dans la Réponse
+medium excessive_data_exposure: server/src/middleware/errorHandler.ts:23 - Informations de Debug dans la Réponse
+medium excessive_data_exposure: server/src/middleware/errorHandler.ts:24 - Informations de Debug dans la Réponse
+high memory_leak: server/src/utils/pdfGenerator.ts:16 - EventEmitter.on() Sans .off() (2 appel(s))
+critical broken_authentication: server/test-geniuspay.ts:3 - Secret/Mot de Passe en Dur
+critical broken_authentication: server/test-geniuspay.ts:4 - Secret/Mot de Passe en Dur
+high sensitive_data_exposure: server/test-geniuspay.ts:3 - Secret en Dur : Hardcoded Apikey [MEDIUM confiance]
+high sensitive_data_exposure: server/test-geniuspay.ts:4 - Secret en Dur : Hardcoded Apisecret [MEDIUM confiance]

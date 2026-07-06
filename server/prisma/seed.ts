@@ -11,10 +11,15 @@ dotenv.config();
 const prisma = new PrismaClient();
 
 async function main() {
-  const email = 'llateamd@gmail.com';
-  const password = 'password123';
+  const email = process.env.SEED_ADMIN_EMAIL;
+  const password = process.env.SEED_ADMIN_PASSWORD;
   const firstName = 'Super';
   const lastName = 'Admin';
+
+  if (!email || !password) {
+    console.error('❌ SEED_ADMIN_EMAIL ou SEED_ADMIN_PASSWORD manquant dans .env');
+    return;
+  }
 
   const existing = await prisma.user.findUnique({ where: { email } });
 

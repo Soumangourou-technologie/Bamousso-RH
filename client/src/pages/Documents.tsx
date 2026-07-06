@@ -97,7 +97,7 @@ const DocumentsPage = () => {
 
   const handleDownload = (url: string) => {
     const fullUrl = getFileUrl(url);
-    window.open(fullUrl, '_blank');
+    window.open(fullUrl, '_blank', 'noopener,noreferrer');
   };
 
   return (
@@ -114,7 +114,7 @@ const DocumentsPage = () => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setIsUploading(!isUploading)}
-            className="flex items-center gap-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white px-5 py-2.5 rounded-xl font-medium shadow-lg shadow-orange-500/20 hover:shadow-orange-500/40 transition-shadow"
+            className="flex items-center gap-2 bg-linear-to-r from-orange-500 to-orange-600 text-white px-5 py-2.5 rounded-xl font-medium shadow-lg shadow-orange-500/20 hover:shadow-orange-500/40 transition-shadow"
           >
             <Upload className="w-5 h-5" /> Ajouter un document
           </motion.button>
@@ -198,7 +198,7 @@ const DocumentsPage = () => {
               </span>
               
               {canManage && doc.employee && (
-                <span className="text-sm text-gray-500 truncate max-w-[120px]">
+                <span className="text-sm text-gray-500 truncate max-w-30">
                   👤 {doc.employee.firstName} {doc.employee.lastName[0]}.
                 </span>
               )}

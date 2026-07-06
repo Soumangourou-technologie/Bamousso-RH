@@ -19,9 +19,7 @@ const errorHandler = (err: AppError, req: Request, res: Response, next: NextFunc
     return res.status(err.statusCode).json({
       status: 'error',
       statusCode: err.statusCode,
-      message: err.message,
-      stack: err.stack,
-      error: err
+      message: err.message
     });
   }
 
