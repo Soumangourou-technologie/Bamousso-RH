@@ -26,7 +26,7 @@ const Login = () => {
         const role = response.data.user?.role;
         if (role === 'SUPER_ADMIN') navigate('/dashboard/super-admin');
         else if (role === 'COMPANY_ADMIN') navigate('/dashboard/admin');
-        else if (role === 'HR_MANAGER' || role === 'HR_ASSISTANT') navigate('/dashboard/hr');
+        else if (role === 'HR_MANAGER' || role === 'HR_ASSISTANT' || role === 'RH') navigate('/dashboard/hr');
         else navigate('/dashboard/employee');
       }
     } catch (err: any) {

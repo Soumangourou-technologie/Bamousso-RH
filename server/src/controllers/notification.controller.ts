@@ -7,7 +7,7 @@ const broadcastSchema = z.object({
   title: z.string().min(1),
   message: z.string().min(1),
   targetRoles: z
-    .array(z.enum(["COMPANY_ADMIN", "HR_MANAGER", "HR_ASSISTANT", "EMPLOYEE", "ALL"]))
+    .array(z.enum(["COMPANY_ADMIN", "HR_MANAGER", "HR_ASSISTANT", "RH", "EMPLOYEE", "ALL"]))
     .optional(),
   targetCompanyIds: z.array(z.string()).optional(),
   targetUserIds: z.array(z.string()).optional(),

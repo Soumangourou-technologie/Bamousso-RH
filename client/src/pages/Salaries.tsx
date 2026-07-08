@@ -40,7 +40,7 @@ const Salaries = () => {
   const [targetMonth, setTargetMonth] = useState(String(new Date().getMonth() + 1).padStart(2, '0'));
   const [targetYear, setTargetYear] = useState(String(new Date().getFullYear()));
 
-  const canManageHr = user?.role === 'COMPANY_ADMIN' || user?.role === 'HR_MANAGER' || user?.role === 'HR_ASSISTANT';
+  const canManageHr = user?.role === 'COMPANY_ADMIN' || user?.role === 'HR_MANAGER' || user?.role === 'HR_ASSISTANT' || user?.role === 'RH';
 
   const fetchPayslips = async () => {
     try {

@@ -101,7 +101,7 @@ interface Attendance {
 
 const AttendancePage = () => {
   const { user } = useAuth();
-  const canManage = user?.role === 'COMPANY_ADMIN' || user?.role === 'HR_MANAGER' || user?.role === 'HR_ASSISTANT';
+  const canManage = user?.role === 'COMPANY_ADMIN' || user?.role === 'HR_MANAGER' || user?.role === 'HR_ASSISTANT' || user?.role === 'RH';
   const shouldShowClockIn = user?.role !== 'COMPANY_ADMIN' && user?.role !== 'SUPER_ADMIN';
   
   const [logs, setLogs] = useState<Attendance[]>([]);

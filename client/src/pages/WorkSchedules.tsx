@@ -30,7 +30,7 @@ const WorkSchedules = () => {
   const [hoursPerDay, setHoursPerDay] = useState(8);
   const [hoursPerWeek, setHoursPerWeek] = useState(40);
 
-  const canManageHr = user?.role === 'COMPANY_ADMIN' || user?.role === 'HR_MANAGER' || user?.role === 'HR_ASSISTANT';
+  const canManageHr = user?.role === 'COMPANY_ADMIN' || user?.role === 'HR_MANAGER' || user?.role === 'HR_ASSISTANT' || user?.role === 'RH';
 
   const [departments, setDepartments] = useState<any[]>([]);
   const [employees, setEmployees] = useState<any[]>([]);

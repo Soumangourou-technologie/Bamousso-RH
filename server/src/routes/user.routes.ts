@@ -10,12 +10,12 @@ router.use(authenticate);
 
 router.put("/me/location", updateLocation);
 
-router.post("/", authorize(["SUPER_ADMIN", "COMPANY_ADMIN", "HR_MANAGER", "HR_ASSISTANT"]), checkEmployeeLimit, createUser);
-router.put("/:id", authorize(["SUPER_ADMIN", "COMPANY_ADMIN", "HR_MANAGER", "HR_ASSISTANT"]), updateUser);
+router.post("/", authorize(["SUPER_ADMIN", "COMPANY_ADMIN", "HR_MANAGER", "HR_ASSISTANT", "RH"]), checkEmployeeLimit, createUser);
+router.put("/:id", authorize(["SUPER_ADMIN", "COMPANY_ADMIN", "HR_MANAGER", "HR_ASSISTANT", "RH"]), updateUser);
 router.put("/:id/password", authorize(["SUPER_ADMIN", "COMPANY_ADMIN", "HR_MANAGER"]), updateUserPassword);
 router.post("/:id/suspend", authorize(["SUPER_ADMIN", "COMPANY_ADMIN", "HR_MANAGER"]), suspendUser);
 router.post("/:id/activate", authorize(["SUPER_ADMIN", "COMPANY_ADMIN", "HR_MANAGER"]), activateUser);
 router.delete("/:id", authorize(["SUPER_ADMIN", "COMPANY_ADMIN", "HR_MANAGER"]), deleteUser);
-router.get("/", authorize(["SUPER_ADMIN", "COMPANY_ADMIN", "HR_MANAGER", "HR_ASSISTANT"]), getUsers);
+router.get("/", authorize(["SUPER_ADMIN", "COMPANY_ADMIN", "HR_MANAGER", "HR_ASSISTANT", "RH"]), getUsers);
 
 export default router;

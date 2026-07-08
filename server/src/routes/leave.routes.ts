@@ -11,6 +11,6 @@ router.get("/", getLeaves);
 router.post("/", requestLeave);
 
 // Seuls les admins et RH peuvent valider/refuser
-router.put("/:id/status", authorize(["COMPANY_ADMIN", "HR_MANAGER", "HR_ASSISTANT"]), reviewLeave);
+router.put("/:id/status", authorize(["COMPANY_ADMIN", "HR_MANAGER", "HR_ASSISTANT", "RH"]), reviewLeave);
 
 export default router;

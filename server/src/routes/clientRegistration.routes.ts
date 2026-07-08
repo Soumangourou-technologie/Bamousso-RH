@@ -17,7 +17,7 @@ router.use(authenticate);
 router.get("/my", authorize(["COMMERCIAL"]), getMyRegistrations);
 
 // Admin/HR : tous les enregistrements groupés par commercial
-router.get("/", authorize(["COMPANY_ADMIN", "HR_MANAGER", "HR_ASSISTANT"]), getAllRegistrations);
+router.get("/", authorize(["COMPANY_ADMIN", "HR_MANAGER", "HR_ASSISTANT", "RH"]), getAllRegistrations);
 
 // Détail d'un enregistrement (commercial owner ou admin)
 router.get("/:id", getRegistrationById);

@@ -17,6 +17,6 @@ router.patch("/:id/read", markAsRead);
 router.delete("/:id", deleteNotification);
 
 // Broadcast : admin entreprise / RH + SUPER_ADMIN (support)
-router.post("/broadcast", authorize(["SUPER_ADMIN", "COMPANY_ADMIN", "HR_MANAGER", "HR_ASSISTANT"]), broadcastNotification);
+router.post("/broadcast", authorize(["SUPER_ADMIN", "COMPANY_ADMIN", "HR_MANAGER", "HR_ASSISTANT", "RH"]), broadcastNotification);
 
 export default router;
