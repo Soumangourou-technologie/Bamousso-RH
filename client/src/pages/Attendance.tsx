@@ -126,7 +126,12 @@ const AttendancePage = () => {
       let emps = [];
       if (canManage) {
          const empRes = await api.get('/employees');
-         emps = empRes.data;
+         emps = empRes.data.filter((emp: any) => {
+           if (emp.role === 'COMPANY_ADMIN' || emp.role === 'SUPER_ADMIN') {
+             return emp.id === user?.id; // Patron ne voit que sa propre position parmi les patrons
+           }
+           return true;
+         });
       } else {
          const meRes = await api.get('/auth/me');
          emps = [meRes.data.user || meRes.data];
