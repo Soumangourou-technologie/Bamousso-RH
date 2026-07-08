@@ -4,12 +4,12 @@ import { Menu } from 'lucide-react';
 import Sidebar from '../components/Sidebar';
 import MobileNavbar from '../components/MobileNavbar';
 import NotificationCenter from '../components/NotificationCenter';
-import { useDeliveryTracker } from '../hooks/useDeliveryTracker';
+import { useLocationTracker } from '../hooks/useLocationTracker';
 
 const MainLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   
-  useDeliveryTracker();
+  useLocationTracker();
 
   return (
     <div className="flex min-h-screen bg-senufo transition-colors duration-200">

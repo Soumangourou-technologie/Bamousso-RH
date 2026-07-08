@@ -74,12 +74,12 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
       ? '/dashboard/super-admin'
       : user.role === 'COMPANY_ADMIN'
         ? '/dashboard/admin'
-        : user.role === 'HR_MANAGER' || user.role === 'HR_ASSISTANT'
+        : user.role === 'HR_MANAGER' || user.role === 'HR_ASSISTANT' || user.role === 'RH'
           ? '/dashboard/hr'
           : '/dashboard/employee';
 
   const canManageHr =
-    user.role === 'COMPANY_ADMIN' || user.role === 'HR_MANAGER' || user.role === 'HR_ASSISTANT';
+    user.role === 'COMPANY_ADMIN' || user.role === 'HR_MANAGER' || user.role === 'HR_ASSISTANT' || user.role === 'RH';
 
   const isCommercial = user.role === 'COMMERCIAL';
 
