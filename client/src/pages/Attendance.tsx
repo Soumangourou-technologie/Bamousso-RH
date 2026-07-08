@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import api from '../utils/api';
 import { useAuth } from '../context/AuthContext';
-import { Clock, Play, Square, AlertCircle, MapPin, Navigation, Download } from 'lucide-react';
+import { Clock, Play, Square, AlertCircle, MapPin, Navigation, Download, X } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { supabase } from '../utils/supabase';
 import jsPDF from 'jspdf';
@@ -101,6 +101,7 @@ const AttendancePage = () => {
   const [time, setTime] = useState(new Date());
   const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number } | null>(null);
   const [mapZoom, setMapZoom] = useState(13);
+  const [selectedEmployeeName, setSelectedEmployeeName] = useState<string | null>(null);
 
   useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 1000);
@@ -422,6 +423,20 @@ const AttendancePage = () => {
         </div>
 
         <div className="h-112.5 w-full rounded-b-3xl overflow-hidden relative z-0">
+          {selectedEmployeeName && (
+            <div className="absolute top-4 left-1/2 -translate-x-1/2 z-1000 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm px-6 py-2.5 rounded-full shadow-xl border border-gray-200 dark:border-gray-700 flex items-center gap-3">
+              <div className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse" />
+              <span className="font-bold text-gray-900 dark:text-white text-sm">
+                {selectedEmployeeName}
+              </span>
+              <button 
+                onClick={(e) => { e.stopPropagation(); setSelectedEmployeeName(null); }}
+                className="ml-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          )}
           <style>{pulseStyles}</style>
           <MapContainer 
             center={[defaultCenter.lat, defaultCenter.lng]} 
@@ -430,8 +445,8 @@ const AttendancePage = () => {
             className="w-full h-full"
           >
             <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-              url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+              attribution='&copy; <a href="https://www.mapbox.com/about/maps/">Mapbox</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+              url={`https://api.mapbox.com/styles/v1/mapbox/streets-v12/tiles/256/{z}/{x}/{y}@2x?access_token=${import.meta.env.VITE_MAPBOX_TOKEN}`}
             />
             
             <MapController center={mapCenter} zoom={mapZoom} />
@@ -441,6 +456,11 @@ const AttendancePage = () => {
                 key={log.id} 
                 position={[log.latitude!, log.longitude!]}
                 icon={getPulseIcon(log.status)}
+                eventHandlers={{
+                  click: () => {
+                    setSelectedEmployeeName(canManage ? (log.employee ? `${log.employee.firstName} ${log.employee.lastName}` : 'Employé inconnu') : 'Mon Pointage');
+                  }
+                }}
               >
                 <Popup className="rounded-xl overflow-hidden">
                   <div className="p-1">

@@ -196,3 +196,42 @@ export const sendEmployeeWelcomeEmail = async (email: string, firstName: string,
     await logger.error("Erreur envoi email bienvenue employé", error, "Mailer");
   }
 };
+
+/**
+ * Envoie un email pour notifier qu'une fiche de paie est disponible
+ */
+export const sendPayslipEmail = async (email: string, firstName: string, lastName: string, month: number, year: number, netSalary: number, companyName: string) => {
+  try {
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    
+    // Convert month to French name
+    const months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+    const monthName = months[month - 1];
+    
+    await resend.emails.send({
+      from: 'Bamousso RH <paie@bamousso.com>',
+      to: email,
+      subject: `📄 Votre fiche de paie de ${monthName} ${year} est disponible`,
+      html: `
+        <div style="font-family: sans-serif; padding: 30px; color: #333; max-width: 600px; margin: 0 auto; border: 1px solid #f0f0f0; border-radius: 16px;">
+          <h1 style="color: #f7a600; text-align: center;">BAMOUSSO RH</h1>
+          <h2>Bonjour ${firstName} ${lastName},</h2>
+          <p>Votre employeur (<strong>${companyName}</strong>) vient de générer votre fiche de paie pour la période de <strong>${monthName} ${year}</strong>.</p>
+          <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin: 20px 0;">
+            <p style="margin: 5px 0;"><strong>Période :</strong> ${monthName} ${year}</p>
+            <p style="margin: 5px 0;"><strong>Salaire net :</strong> ${netSalary.toLocaleString()} FCFA</p>
+          </div>
+          <p>Vous pouvez consulter et télécharger votre fiche de paie détaillée directement depuis votre espace personnel sécurisé.</p>
+          
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${frontendUrl}/login" style="background-color: #f7a600; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold;">Accéder à mon espace</a>
+          </div>
+          <p>L'équipe Bamousso RH</p>
+        </div>
+      `,
+    });
+    await logger.info(`Email de paie envoyé à ${email}`, { month, year }, "Mailer");
+  } catch (error) {
+    await logger.error("Erreur envoi email paie", error, "Mailer");
+  }
+};

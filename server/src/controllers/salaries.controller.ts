@@ -1,6 +1,7 @@
 import { Response } from "express";
 import prisma from "../utils/prisma.js";
 import { startOfMonth, endOfMonth, parseISO, differenceInMinutes, getDaysInMonth } from "date-fns";
+import { sendPayslipEmail } from "../utils/mailer.js";
 
 export const getSalaries = async (req: any, res: Response) => {
   try {
@@ -226,6 +227,11 @@ export const generatePayroll = async (req: any, res: Response) => {
           companyId: user.companyId
         }
       });
+
+      // Envoi de l'email
+      if (emp.email) {
+        sendPayslipEmail(emp.email, emp.firstName, emp.lastName, month, year, netSalary, company.name).catch(console.error);
+      }
     }
 
     res.status(201).json({ message: `${generatedPayslips.length} fiches de paie calculées et générées avec succès.`, data: generatedPayslips });
