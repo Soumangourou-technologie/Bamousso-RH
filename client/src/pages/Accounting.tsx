@@ -6,7 +6,7 @@ import { Navigate } from 'react-router-dom';
 import api from '../utils/api';
 import ExpenseList from '../components/accounting/ExpenseList';
 import TransactionList from '../components/accounting/TransactionList';
-import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 
 const Accounting = () => {
@@ -45,32 +45,57 @@ const Accounting = () => {
         api.get('/accounting/expenses')
       ]);
 
-      const wb = XLSX.utils.book_new();
+      const wb = new ExcelJS.Workbook();
+      wb.creator = 'Bamousso-RH';
+      wb.lastModifiedBy = 'Bamousso-RH';
+      wb.created = new Date();
 
-      const txData = txRes.data.map((tx: any) => ({
-        Date: new Date(tx.date).toLocaleDateString(),
-        Motif: tx.title,
-        Type: tx.type === 'INCOME' ? 'Entrée' : 'Sortie',
-        Catégorie: tx.category,
-        Référence: tx.reference || '',
-        Montant: tx.amount
-      }));
-      const wsTx = XLSX.utils.json_to_sheet(txData);
-      XLSX.utils.book_append_sheet(wb, wsTx, "Trésorerie");
+      // Sheet 1: Trésorerie
+      const wsTx = wb.addWorksheet('Trésorerie');
+      wsTx.columns = [
+        { header: 'Date', key: 'date', width: 15 },
+        { header: 'Motif', key: 'title', width: 30 },
+        { header: 'Type', key: 'type', width: 15 },
+        { header: 'Catégorie', key: 'category', width: 20 },
+        { header: 'Référence', key: 'reference', width: 20 },
+        { header: 'Montant (FCFA)', key: 'amount', width: 20 }
+      ];
 
-      const expData = expRes.data.map((exp: any) => ({
-        Date: new Date(exp.createdAt).toLocaleDateString(),
-        Employé: `${exp.employee.firstName} ${exp.employee.lastName}`,
-        Motif: exp.title,
-        Catégorie: exp.category,
-        Statut: exp.status,
-        Montant: exp.amount
-      }));
-      const wsExp = XLSX.utils.json_to_sheet(expData);
-      XLSX.utils.book_append_sheet(wb, wsExp, "Notes de Frais");
+      txRes.data.forEach((tx: any) => {
+        wsTx.addRow({
+          date: new Date(tx.date).toLocaleDateString(),
+          title: tx.title,
+          type: tx.type === 'INCOME' ? 'Entrée' : 'Sortie',
+          category: tx.category,
+          reference: tx.reference || '',
+          amount: tx.amount
+        });
+      });
 
-      const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-      const data = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      // Sheet 2: Notes de Frais
+      const wsExp = wb.addWorksheet('Notes de Frais');
+      wsExp.columns = [
+        { header: 'Date', key: 'date', width: 15 },
+        { header: 'Employé', key: 'employee', width: 30 },
+        { header: 'Motif', key: 'title', width: 30 },
+        { header: 'Catégorie', key: 'category', width: 20 },
+        { header: 'Statut', key: 'status', width: 15 },
+        { header: 'Montant (FCFA)', key: 'amount', width: 20 }
+      ];
+
+      expRes.data.forEach((exp: any) => {
+        wsExp.addRow({
+          date: new Date(exp.createdAt).toLocaleDateString(),
+          employee: `${exp.employee.firstName} ${exp.employee.lastName}`,
+          title: exp.title,
+          category: exp.category,
+          status: exp.status,
+          amount: exp.amount
+        });
+      });
+
+      const buffer = await wb.xlsx.writeBuffer();
+      const data = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
       saveAs(data, `Export_Compta_${new Date().getMonth()+1}_${new Date().getFullYear()}.xlsx`);
     } catch (error) {
       alert("Erreur lors de l'exportation");
