@@ -52,6 +52,8 @@ model Company {
   disciplinaryCases   DisciplinaryCase[]
   clientRegistrations ClientRegistration[]
   missions            Mission[]
+  transactions        CompanyTransaction[]
+  expenseReports      ExpenseReport[]
 
   // Relations avec le Support Client
   supportTickets  SupportTicket[]
@@ -178,6 +180,9 @@ model User {
 
   assignedMissions Mission[] @relation("AssignedMissions")
   createdMissions  Mission[] @relation("CreatedMissions")
+
+  expenseReports         ExpenseReport[]
+  approvedExpenseReports ExpenseReport[] @relation("ApprovedExpenses")
 
   // Relations avec le Support Client
   createdSupportTickets SupportTicket[]        @relation("TicketCreator")
@@ -662,4 +667,50 @@ model Payslip {
 
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+}
+
+// ==========================================
+// --- MODULE COMPTABILITE (ACCOUNTING)   ---
+// ==========================================
+
+/// Modèle Transaction (Trésorerie interne de l'entreprise)
+model CompanyTransaction {
+  id          String   @id @default(uuid())
+  title       String
+  amount      Float
+  type        String   // INCOME, EXPENSE
+  category    String   // ex: Vente, Loyer, Matériel, Salaire, Autre
+  date        DateTime @default(now())
+  reference   String?  // N° de facture ou reçu externe
+  description String?
+
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+/// Modèle Note de Frais (Expense Report)
+model ExpenseReport {
+  id          String   @id @default(uuid())
+  title       String
+  amount      Float
+  date        DateTime @default(now())
+  status      String   @default("PENDING") // PENDING, APPROVED, REJECTED, PAID
+  category    String   @default("AUTRE")   // ex: DEPLACEMENT, REPAS, MATERIEL, AUTRE
+  receiptUrl  String?  // Photo du reçu
+  description String?
+
+  employeeId  String
+  employee    User     @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  approvedById String?
+  approvedBy   User?   @relation("ApprovedExpenses", fields: [approvedById], references: [id], onDelete: SetNull)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
