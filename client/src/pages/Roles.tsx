@@ -9,12 +9,22 @@ interface CustomRole {
   permissions: string[];
 }
 
-// Liste prédéfinie de permissions pour simplifier
 const allPermissions = [
-  { id: 'view_accounting', label: 'Voir la comptabilité' },
-  { id: 'manage_crm', label: 'Gérer le CRM (clients, rdv)' },
-  { id: 'manage_employees', label: 'Gérer les employés' },
-  { id: 'manage_salaries', label: 'Gérer les salaires' },
+  { id: 'view_accounting', label: 'Voir la comptabilité (Trésorerie)' },
+  { id: 'manage_accounting', label: 'Gérer la comptabilité (Ajout/Modif)' },
+  { id: 'view_employees', label: 'Voir l\'annuaire des employés' },
+  { id: 'manage_employees', label: 'Gérer les employés (Création/Modif)' },
+  { id: 'view_salaries', label: 'Voir les salaires de base' },
+  { id: 'manage_salaries', label: 'Gérer les salaires et méthodes de paie' },
+  { id: 'view_payroll', label: 'Voir les fiches de paie' },
+  { id: 'manage_payroll', label: 'Générer/Modifier les fiches de paie' },
+  { id: 'view_leaves', label: 'Voir les congés' },
+  { id: 'manage_leaves', label: 'Approuver/Rejeter les congés' },
+  { id: 'manage_documents', label: 'Gérer les documents administratifs' },
+  { id: 'view_crm', label: 'Voir les clients (CRM)' },
+  { id: 'manage_crm', label: 'Gérer le CRM (Ajout/Modif clients)' },
+  { id: 'manage_tasks', label: 'Gérer les tâches et missions' },
+  { id: 'manage_expenses', label: 'Valider les notes de frais' }
 ];
 
 const RolesPage = () => {
@@ -98,7 +108,7 @@ const RolesPage = () => {
             <Shield className="w-10 h-10 text-brand-primary" />
             Rôles & Permissions
           </h1>
-          <p className="text-gray-400 font-medium mt-1">Gérez les accès et les droits de vos employés.</p>
+          <p className="text-gray-400 font-medium mt-1">Gérez les accès sur-mesure et les droits spécifiques de vos employés.</p>
         </div>
         <button
           onClick={() => handleOpenModal()}
@@ -106,6 +116,25 @@ const RolesPage = () => {
         >
           <Plus className="w-5 h-5" /> Créer un rôle
         </button>
+      </motion.div>
+
+      <motion.div 
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-brand-primary/10 border border-brand-primary/30 p-6 rounded-4xl flex items-start gap-4"
+      >
+        <div className="p-3 bg-brand-primary/20 rounded-2xl shrink-0 mt-1">
+          <Shield className="w-6 h-6 text-brand-primary" />
+        </div>
+        <div>
+          <h2 className="text-lg font-black text-white mb-2">À quoi sert un Rôle Spécifique ?</h2>
+          <p className="text-gray-300 text-sm leading-relaxed">
+            Par défaut, Bamousso RH propose des rôles standards (Livreur, Manager RH, Employé, etc.) qui donnent accès à de grands blocs de fonctionnalités. <br/>
+            Un <strong>Rôle Spécifique</strong> permet de contourner ces réglages de base en créant un profil d'accès "à la carte". <br/>
+            <span className="text-white font-bold block mt-2">Exemple d'utilisation :</span>
+            Vous pouvez avoir un "Employé simple" dans le système (sans accès RH), mais lui créer un Rôle Spécifique "Aide-Comptable" en cochant <em>"Voir la comptabilité"</em> et <em>"Voir les fiches de paie"</em>. Il aura alors accès à ces modules sans avoir les pleins pouvoirs d'un Manager RH.
+          </p>
+        </div>
       </motion.div>
 
       {isLoading ? (

@@ -326,6 +326,30 @@ export const getCurrentUser = catchAsync(async (req: any, res: Response) => {
   if (!user) {
     return res.status(404).json({ success: false, message: "Utilisateur introuvable" });
   }
+
+  // Refresh the JWT token with the latest user roles and permissions from DB
+  const jwtSecret = process.env.JWT_SECRET;
+  if (jwtSecret) {
+    const token = jwt.sign(
+      { 
+        id: user.id, 
+        role: user.role, 
+        companyId: user.companyId, 
+        permissions: user.customRole?.permissions || [] 
+      },
+      jwtSecret,
+      { expiresIn: "1d" }
+    );
+    
+    const cookieOptions = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict' as const,
+      maxAge: 24 * 60 * 60 * 1000 // 1 jour
+    };
+    res.cookie('token', token, cookieOptions);
+  }
+
   res.json({
     success: true,
     user: {

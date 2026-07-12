@@ -4,6 +4,7 @@ import { Menu, RefreshCw } from 'lucide-react';
 import Sidebar from '../components/Sidebar';
 import MobileNavbar from '../components/MobileNavbar';
 import NotificationCenter from '../components/NotificationCenter';
+import HelpModule from '../components/HelpModule';
 import { useNotifications } from '../context/NotificationContext';
 import { useLocationTracker } from '../hooks/useLocationTracker';
 
@@ -50,6 +51,7 @@ const MainLayout = () => {
             >
               <RefreshCw className="w-5 h-5" />
             </button>
+            <HelpModule />
             <NotificationCenter />
           </div>
         </header>
