@@ -17,7 +17,7 @@ export interface ExpenseReport {
   createdAt: string;
 }
 
-const ExpenseList = () => {
+const ExpenseList = ({ refreshTrigger }: { refreshTrigger?: number }) => {
   const { user } = useAuth();
   const [expenses, setExpenses] = useState<ExpenseReport[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -41,10 +41,11 @@ const ExpenseList = () => {
 
   useEffect(() => {
     void fetchExpenses();
-  }, []);
+  }, [refreshTrigger]);
 
   const handleStatusChange = async (id: string, status: string) => {
-    if (!window.confirm(`Confirmer le changement de statut vers ${status} ?`)) return;
+    if (!window.confirm(`Confirmer le changement de statut vers ${status} ?\n(Cliquer sur Annuler pour revoir la décision)`)) return;
+    if (!window.confirm(`⚠️ ATTENTION : Une fois validée, cette action est irréversible pour le comptable.\n\nÊtes-vous absolument sûr de valider définitivement le statut ${status} ?`)) return;
     try {
       await api.patch(`/accounting/expenses/${id}/status`, { status });
       void fetchExpenses();
@@ -55,6 +56,12 @@ const ExpenseList = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!window.confirm("Êtes-vous sûr de vouloir soumettre cette note de frais ?\n(Cliquez sur Annuler pour retourner au formulaire et la modifier)")) {
+      return;
+    }
+    if (!window.confirm("⚠️ ATTENTION : Une fois soumise, cette note de frais ne pourra plus être modifiée par l'employé.\n\nÊtes-vous absolument sûr de valider définitivement ?")) {
+      return;
+    }
     try {
       await api.post('/accounting/expenses', formData);
       setIsFormOpen(false);

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Wallet, TrendingUp, TrendingDown, Download } from 'lucide-react';
+import { Wallet, TrendingUp, TrendingDown, Download, RefreshCw } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { Navigate } from 'react-router-dom';
 import api from '../utils/api';
@@ -13,6 +13,7 @@ const Accounting = () => {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<'TRESO' | 'EXPENSES'>('TRESO');
   const [stats, setStats] = useState({ monthIncome: 0, monthExpense: 0, pendingExpenseReports: 0 });
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   const canViewAccounting = ['COMPANY_ADMIN', 'HR_MANAGER', 'COMPTABLE', 'SUPER_ADMIN'].includes(user?.role || '');
 
@@ -36,6 +37,11 @@ const Accounting = () => {
   }
 
   const solde = stats.monthIncome - stats.monthExpense;
+
+  const handleRefresh = () => {
+    setRefreshTrigger(prev => prev + 1);
+    void fetchStats();
+  };
 
   const handleExport = async () => {
     try {
@@ -113,10 +119,15 @@ const Accounting = () => {
           <h1 className="text-4xl font-black text-white tracking-tight">Comptabilité</h1>
           <p className="text-gray-400 font-medium mt-1">Suivi de trésorerie et notes de frais</p>
         </div>
-        <button onClick={handleExport} className="bg-white/10 text-white px-6 py-3 rounded-xl font-black text-sm uppercase tracking-widest border border-white/20 hover:bg-white/20 flex items-center gap-2 transition-all">
-          <Download className="w-4 h-4" />
-          Export Excel
-        </button>
+        <div className="flex items-center gap-3">
+          <button onClick={handleRefresh} className="bg-white/10 text-white p-3 rounded-xl border border-white/20 hover:bg-white/20 transition-all" title="Rafraîchir les données">
+            <RefreshCw className="w-5 h-5" />
+          </button>
+          <button onClick={handleExport} className="bg-white/10 text-white px-6 py-3 rounded-xl font-black text-sm uppercase tracking-widest border border-white/20 hover:bg-white/20 flex items-center gap-2 transition-all">
+            <Download className="w-4 h-4" />
+            Export Excel
+          </button>
+        </div>
       </motion.div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -165,7 +176,7 @@ const Accounting = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.2 }}
       >
-        {activeTab === 'TRESO' ? <TransactionList /> : <ExpenseList />}
+        {activeTab === 'TRESO' ? <TransactionList refreshTrigger={refreshTrigger} /> : <ExpenseList refreshTrigger={refreshTrigger} />}
       </motion.div>
 
     </div>

@@ -12,7 +12,7 @@ export interface CompanyTransaction {
   reference?: string;
 }
 
-const TransactionList = () => {
+const TransactionList = ({ refreshTrigger }: { refreshTrigger?: number }) => {
   const [transactions, setTransactions] = useState<CompanyTransaction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -32,10 +32,16 @@ const TransactionList = () => {
 
   useEffect(() => {
     void fetchTransactions();
-  }, []);
+  }, [refreshTrigger]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!window.confirm("Êtes-vous sûr de vouloir enregistrer cette opération ?\n(Cliquez sur Annuler pour retourner au formulaire et la modifier)")) {
+      return;
+    }
+    if (!window.confirm("⚠️ ATTENTION : Une fois validée, cette opération ne pourra plus être modifiée ni supprimée par le comptable.\n\nÊtes-vous absolument sûr de valider définitivement ?")) {
+      return;
+    }
     try {
       await api.post('/accounting/transactions', formData);
       setIsFormOpen(false);
