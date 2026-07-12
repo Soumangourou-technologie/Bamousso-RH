@@ -1,6 +1,6 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
-import { protect } from '../middlewares/auth.middleware.js';
+import { authenticate } from '../middleware/auth.js';
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -19,7 +19,7 @@ const checkAccountingAccess = (req: any, res: any, next: any) => {
 // ==========================================
 
 // Obtenir toutes les transactions de l'entreprise
-router.get('/transactions', protect, checkAccountingAccess, async (req: any, res: any) => {
+router.get('/transactions', authenticate, checkAccountingAccess, async (req: any, res: any) => {
   try {
     const transactions = await prisma.companyTransaction.findMany({
       where: { companyId: req.user.companyId },
@@ -32,7 +32,7 @@ router.get('/transactions', protect, checkAccountingAccess, async (req: any, res
 });
 
 // Ajouter une transaction
-router.post('/transactions', protect, checkAccountingAccess, async (req: any, res: any) => {
+router.post('/transactions', authenticate, checkAccountingAccess, async (req: any, res: any) => {
   try {
     const { title, amount, type, category, reference, description, date } = req.body;
     
@@ -63,7 +63,7 @@ router.post('/transactions', protect, checkAccountingAccess, async (req: any, re
 // ==========================================
 
 // Obtenir toutes les notes de frais (Admin/Comptable voit tout)
-router.get('/expenses', protect, async (req: any, res: any) => {
+router.get('/expenses', authenticate, async (req: any, res: any) => {
   try {
     // Si l'utilisateur est un simple employé, il ne voit que ses notes
     const isAccounting = ['COMPANY_ADMIN', 'HR_MANAGER', 'COMPTABLE', 'SUPER_ADMIN'].includes(req.user.role);
@@ -86,7 +86,7 @@ router.get('/expenses', protect, async (req: any, res: any) => {
 });
 
 // Soumettre une nouvelle note de frais (N'importe quel employé)
-router.post('/expenses', protect, async (req: any, res: any) => {
+router.post('/expenses', authenticate, async (req: any, res: any) => {
   try {
     const { title, amount, category, description, date, receiptUrl } = req.body;
     
@@ -113,7 +113,7 @@ router.post('/expenses', protect, async (req: any, res: any) => {
 });
 
 // Mettre à jour le statut d'une note de frais (Comptable/Admin uniquement)
-router.patch('/expenses/:id/status', protect, checkAccountingAccess, async (req: any, res: any) => {
+router.patch('/expenses/:id/status', authenticate, checkAccountingAccess, async (req: any, res: any) => {
   try {
     const { id } = req.params;
     const { status } = req.body; // APPROVED, REJECTED, PAID
@@ -155,7 +155,7 @@ router.patch('/expenses/:id/status', protect, checkAccountingAccess, async (req:
 // ==========================================
 // --- STATISTIQUES (TABLEAU DE BORD)     ---
 // ==========================================
-router.get('/stats', protect, checkAccountingAccess, async (req: any, res: any) => {
+router.get('/stats', authenticate, checkAccountingAccess, async (req: any, res: any) => {
   try {
     const startOfMonth = new Date();
     startOfMonth.setDate(1);
