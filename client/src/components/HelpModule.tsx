@@ -10,8 +10,20 @@ const helpContent: Record<string, { title: string; content: React.ReactNode }> =
       <div className="space-y-4">
         <p>Le tableau de bord vous donne une vue d'ensemble de l'activité de votre entreprise.</p>
         <ul className="list-disc pl-5 space-y-2">
-          <li><strong>Statistiques rapides :</strong> Suivez l'évolution de vos effectifs et vos KPIs.</li>
-          <li><strong>Raccourcis :</strong> Accédez rapidement aux actions fréquentes.</li>
+          <li><strong>Statistiques rapides :</strong> Suivez l'évolution de vos effectifs et vos KPIs (Chiffre d'affaires, dépenses, etc.).</li>
+          <li><strong>Raccourcis :</strong> Accédez rapidement aux actions fréquentes en fonction de votre rôle.</li>
+        </ul>
+      </div>
+    )
+  },
+  '/dashboard/super-admin': {
+    title: 'Tableau de bord Super Admin',
+    content: (
+      <div className="space-y-4">
+        <p>Gérez l'ensemble de la plateforme SaaS BAMOUSSO RH.</p>
+        <ul className="list-disc pl-5 space-y-2">
+          <li><strong>Entreprises :</strong> Voyez le nombre total d'entreprises inscrites et leurs abonnements.</li>
+          <li><strong>Revenus :</strong> Suivez le MRR (Revenu Mensuel Récurrent).</li>
         </ul>
       </div>
     )
@@ -74,7 +86,187 @@ const helpContent: Record<string, { title: string; content: React.ReactNode }> =
         <p>Gérez les absences et les congés.</p>
         <ul className="list-disc pl-5 space-y-2">
           <li><strong>Demander :</strong> Cliquez sur "Nouvelle demande" pour soumettre vos congés.</li>
-          <li><strong>Valider :</strong> Si vous êtes Manager RH, vous verrez les demandes en attente de validation dans l'onglet approprié.</li>
+          <li><strong>Valider :</strong> Si vous êtes Manager RH, vous verrez les demandes en attente de validation.</li>
+        </ul>
+      </div>
+    )
+  },
+  '/departments': {
+    title: 'Départements',
+    content: (
+      <div className="space-y-4">
+        <p>Structurez votre entreprise en créant des départements et des équipes.</p>
+        <ul className="list-disc pl-5 space-y-2">
+          <li><strong>Créer un département :</strong> Définissez un nom et assignez un manager.</li>
+          <li><strong>Organisation :</strong> Regroupez vos employés par spécialité (ex: Marketing, Tech, Ventes).</li>
+        </ul>
+      </div>
+    )
+  },
+  '/attendance': {
+    title: 'Pointage',
+    content: (
+      <div className="space-y-4">
+        <p>Suivez les présences et les heures d'arrivée/départ de vos employés.</p>
+        <ul className="list-disc pl-5 space-y-2">
+          <li><strong>Code QR :</strong> Les employés peuvent scanner leur code pour pointer.</li>
+          <li><strong>Historique :</strong> Consultez les retards et les heures supplémentaires.</li>
+        </ul>
+      </div>
+    )
+  },
+  '/tasks': {
+    title: 'Tâches',
+    content: (
+      <div className="space-y-4">
+        <p>Gérez les projets et assignez des tâches à votre équipe.</p>
+        <ul className="list-disc pl-5 space-y-2">
+          <li><strong>Nouvelle tâche :</strong> Définissez un titre, une description, une échéance et assignez-la.</li>
+          <li><strong>Statuts :</strong> Suivez l'avancement (À faire, En cours, Terminé).</li>
+        </ul>
+      </div>
+    )
+  },
+  '/messaging': {
+    title: 'Messagerie',
+    content: (
+      <div className="space-y-4">
+        <p>Communiquez en temps réel avec les autres membres de l'entreprise.</p>
+        <ul className="list-disc pl-5 space-y-2">
+          <li><strong>Discussions privées :</strong> Envoyez des messages directs à vos collègues.</li>
+          <li><strong>Groupes :</strong> Créez des canaux de discussion par département ou projet.</li>
+        </ul>
+      </div>
+    )
+  },
+  '/explanations': {
+    title: 'Demandes d\'Explications',
+    content: (
+      <div className="space-y-4">
+        <p>Gérez la discipline et les rappels à l'ordre.</p>
+        <ul className="list-disc pl-5 space-y-2">
+          <li><strong>Adresser une demande :</strong> Envoyez formellement une demande d'explication suite à un incident ou retard.</li>
+          <li><strong>Réponses :</strong> L'employé peut répondre directement dans le système.</li>
+        </ul>
+      </div>
+    )
+  },
+  '/suggestions': {
+    title: 'Boîte à Suggestions',
+    content: (
+      <div className="space-y-4">
+        <p>Récoltez les idées et avis anonymes (ou non) de vos collaborateurs.</p>
+        <ul className="list-disc pl-5 space-y-2">
+          <li><strong>Soumettre :</strong> Les employés peuvent proposer des idées d'amélioration.</li>
+          <li><strong>Analyse :</strong> Les managers RH peuvent lire et prendre en compte les suggestions pour améliorer le bien-être.</li>
+        </ul>
+      </div>
+    )
+  },
+  '/work-schedules': {
+    title: 'Horaires de travail',
+    content: (
+      <div className="space-y-4">
+        <p>Définissez les plages horaires officielles de l'entreprise.</p>
+        <ul className="list-disc pl-5 space-y-2">
+          <li><strong>Création :</strong> Définissez les heures d'ouverture et de fermeture.</li>
+          <li><strong>Assignation :</strong> Attribuez des horaires spécifiques selon les employés ou départements.</li>
+        </ul>
+      </div>
+    )
+  },
+  '/analytics': {
+    title: 'Analytique',
+    content: (
+      <div className="space-y-4">
+        <p>Analysez les performances et la santé de votre entreprise.</p>
+        <ul className="list-disc pl-5 space-y-2">
+          <li><strong>Graphiques :</strong> Visualisez l'évolution de la masse salariale, du turnover, etc.</li>
+          <li><strong>Rapports :</strong> Exportez des rapports détaillés pour la direction.</li>
+        </ul>
+      </div>
+    )
+  },
+  '/documents': {
+    title: 'Documents',
+    content: (
+      <div className="space-y-4">
+        <p>Centralisez tous vos documents administratifs.</p>
+        <ul className="list-disc pl-5 space-y-2">
+          <li><strong>Dossiers :</strong> Stockez les contrats, les politiques internes, et formulaires.</li>
+          <li><strong>Partage :</strong> Rendez certains documents accessibles à tous ou seulement à certains rôles.</li>
+        </ul>
+      </div>
+    )
+  },
+  '/announcements': {
+    title: 'Annonces',
+    content: (
+      <div className="space-y-4">
+        <p>Diffusez des informations importantes à toute l'entreprise.</p>
+        <ul className="list-disc pl-5 space-y-2">
+          <li><strong>Publier :</strong> Créez une annonce (ex: Fermeture exceptionnelle, Nouveauté RH).</li>
+          <li><strong>Visibilité :</strong> Chaque employé verra l'annonce dès sa prochaine connexion.</li>
+        </ul>
+      </div>
+    )
+  },
+  '/missions/livraison': {
+    title: 'Livraisons',
+    content: (
+      <div className="space-y-4">
+        <p>Suivez les missions de livraison de vos coursiers/livreurs.</p>
+        <ul className="list-disc pl-5 space-y-2">
+          <li><strong>Assignation :</strong> Donnez des courses avec adresses et colis.</li>
+          <li><strong>Statut :</strong> Suivez si la livraison est en cours ou terminée.</li>
+        </ul>
+      </div>
+    )
+  },
+  '/missions/prospection': {
+    title: 'Prospections',
+    content: (
+      <div className="space-y-4">
+        <p>Suivez les missions sur le terrain de vos commerciaux.</p>
+        <ul className="list-disc pl-5 space-y-2">
+          <li><strong>Objectifs :</strong> Assignez des zones à prospecter.</li>
+          <li><strong>Rapports :</strong> Les commerciaux peuvent noter leurs retours terrain.</li>
+        </ul>
+      </div>
+    )
+  },
+  '/client-registration': {
+    title: 'Enregistrement Client',
+    content: (
+      <div className="space-y-4">
+        <p>Ajoutez de nouveaux clients ou prospects à votre base (CRM).</p>
+        <ul className="list-disc pl-5 space-y-2">
+          <li><strong>Formulaire :</strong> Renseignez les informations du client (Nom, Contact, Entreprise).</li>
+          <li><strong>Suivi :</strong> Préparez le terrain pour de futures ventes.</li>
+        </ul>
+      </div>
+    )
+  },
+  '/client-registrations': {
+    title: 'Clients Commerciaux',
+    content: (
+      <div className="space-y-4">
+        <p>Consultez la base de données des clients enregistrés par l'équipe commerciale.</p>
+        <ul className="list-disc pl-5 space-y-2">
+          <li><strong>Annuaire :</strong> Retrouvez tous les contacts clients.</li>
+          <li><strong>Export :</strong> Téléchargez la liste pour vos campagnes.</li>
+        </ul>
+      </div>
+    )
+  },
+  '/settings': {
+    title: 'Paramètres',
+    content: (
+      <div className="space-y-4">
+        <p>Configurez les préférences de votre entreprise sur Bamousso RH.</p>
+        <ul className="list-disc pl-5 space-y-2">
+          <li><strong>Profil :</strong> Modifiez le nom, le logo et les informations de l'entreprise.</li>
+          <li><strong>Abonnement :</strong> Gérez votre facturation et votre forfait (Fitini, Louba, Koro).</li>
         </ul>
       </div>
     )
@@ -91,8 +283,9 @@ const HelpModule = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
 
-  // Find matching route or use default
-  const currentHelp = helpContent[location.pathname] || helpContent['default'];
+  // Find matching route or use default by checking if pathname starts with the key (useful for nested routes like /dashboard/admin)
+  const currentHelpKey = Object.keys(helpContent).find(key => location.pathname === key || (key !== '/' && location.pathname.startsWith(key))) || 'default';
+  const currentHelp = helpContent[currentHelpKey];
 
   return (
     <>

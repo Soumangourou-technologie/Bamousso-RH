@@ -46,6 +46,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
       case 'COMMERCIAL': return 'Commercial';
       case 'LIVREUR': return 'Livreur';
       case 'EMPLOYEE': return 'Employé';
+      case 'COMPTABLE': return 'Comptable';
       default: return role;
     }
   };
@@ -82,6 +83,13 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     user.role === 'COMPANY_ADMIN' || user.role === 'HR_MANAGER' || user.role === 'HR_ASSISTANT' || user.role === 'RH';
 
   const isCommercial = user.role === 'COMMERCIAL';
+  const canViewAccounting = 
+    user.role === 'SUPER_ADMIN' || 
+    user.role === 'COMPANY_ADMIN' || 
+    user.role === 'HR_MANAGER' || 
+    user.role === 'COMPTABLE' || 
+    user.permissions?.includes('view_accounting') ||
+    user.permissions?.includes('manage_accounting');
 
   const isSuperAdmin = user.role === 'SUPER_ADMIN';
   const plan = company?.plan || 'FITINI';
@@ -219,6 +227,13 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                     <Link to="/analytics" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/analytics' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
                       <BarChart3 className="w-5 h-5" />
                       Analytique
+                    </Link>
+                  )}
+
+                  {!isSuperAdmin && canViewAccounting && (
+                    <Link to="/accounting" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/accounting' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
+                      <Wallet className="w-5 h-5" />
+                      Comptabilité
                     </Link>
                   )}
                 </>
