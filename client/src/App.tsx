@@ -40,6 +40,7 @@ import Support from './pages/Support';
 import Upgrade from './pages/Upgrade';
 import Missions from './pages/Missions';
 import WorkSchedules from './pages/WorkSchedules';
+import Accounting from './pages/Accounting';
 
 import { NotificationProvider } from './context/NotificationContext';
 
@@ -106,6 +107,7 @@ function App() {
                   <Route path="/suggestions" element={<Suggestions />} />
                   <Route path="/explanations" element={<Explanations />} />
                   <Route path="/salaries" element={<Salaries />} />
+                  <Route path="/accounting" element={<Accounting />} />
                   <Route path="/conflicts" element={<Conflicts />} />
                   <Route path="/missions/:type" element={<Missions />} />
 

@@ -139,6 +139,7 @@ const DashboardAdmin = () => {
     { name: 'Messagerie',    desc: 'Chat d\'équipe',               icon: MessageSquare, path: '/messaging',    color: 'bg-teal-500',   feature: 'messaging',   locked: !canUse('messaging'), minPlan: 'LOUBA' },
     { name: 'Conflits',      desc: 'Espace sécurisé',              icon: Lock,          path: '/conflicts',    color: 'bg-rose-500',   feature: 'conflicts',   locked: !canUse('conflicts'), minPlan: 'LOUBA' },
     { name: 'Salaires',      desc: 'Gestion des paies',            icon: Wallet,        path: '/salaries',     color: 'bg-emerald-500', feature: 'salaries',    locked: !canUse('salaries'),  minPlan: 'LOUBA' },
+    { name: 'Comptabilité',  desc: 'Suivi & Rapports',             icon: Wallet,        path: '/accounting',   color: 'bg-blue-500',   feature: 'accounting',  locked: !canUse('salaries'),  minPlan: 'LOUBA' },
     { name: 'Analytique RH', desc: 'Graphiques & Indicateurs',    icon: TrendingUp,    path: '/analytics',    color: 'bg-pink-500',   feature: 'analytics',   locked: !canUse('analytics'),  minPlan: 'LOUBA' },
   ];
 
