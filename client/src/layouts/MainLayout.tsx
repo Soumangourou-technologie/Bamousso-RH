@@ -1,15 +1,25 @@
 import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
-import { Menu } from 'lucide-react';
+import { Menu, RefreshCw } from 'lucide-react';
 import Sidebar from '../components/Sidebar';
 import MobileNavbar from '../components/MobileNavbar';
 import NotificationCenter from '../components/NotificationCenter';
+import { useNotifications } from '../context/NotificationContext';
 import { useLocationTracker } from '../hooks/useLocationTracker';
 
 const MainLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const { fetchNotifications } = useNotifications();
   
   useLocationTracker();
+
+  const handleGlobalRefresh = async () => {
+    setIsRefreshing(true);
+    await fetchNotifications();
+    window.dispatchEvent(new Event('app:refresh'));
+    setTimeout(() => setIsRefreshing(false), 500); // Visual feedback duration
+  };
 
   return (
     <div className="flex min-h-screen bg-senufo transition-colors duration-200">
@@ -33,6 +43,13 @@ const MainLayout = () => {
           </div>
 
           <div className="flex items-center gap-4">
+            <button 
+              onClick={handleGlobalRefresh}
+              className={`p-2.5 rounded-2xl hover:bg-white/10 transition-all duration-300 text-gray-400 hover:text-white ${isRefreshing ? 'animate-spin text-brand-primary' : ''}`}
+              title="Rafraîchir les données"
+            >
+              <RefreshCw className="w-5 h-5" />
+            </button>
             <NotificationCenter />
           </div>
         </header>

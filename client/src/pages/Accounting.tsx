@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Wallet, TrendingUp, TrendingDown, Download, RefreshCw } from 'lucide-react';
+import { Wallet, TrendingUp, TrendingDown, Download } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { Navigate } from 'react-router-dom';
 import api from '../utils/api';
@@ -30,18 +30,21 @@ const Accounting = () => {
     if (canViewAccounting) {
       void fetchStats();
     }
-  }, [canViewAccounting, activeTab]); // Refresh stats when changing tab
+  }, [canViewAccounting, activeTab, refreshTrigger]); // Refresh stats when changing tab or trigger
+
+  useEffect(() => {
+    const handleGlobalRefresh = () => {
+      setRefreshTrigger(prev => prev + 1);
+    };
+    window.addEventListener('app:refresh', handleGlobalRefresh);
+    return () => window.removeEventListener('app:refresh', handleGlobalRefresh);
+  }, []);
 
   if (!canViewAccounting) {
     return <Navigate to="/dashboard" replace />;
   }
 
   const solde = stats.monthIncome - stats.monthExpense;
-
-  const handleRefresh = () => {
-    setRefreshTrigger(prev => prev + 1);
-    void fetchStats();
-  };
 
   const handleExport = async () => {
     try {
@@ -120,9 +123,6 @@ const Accounting = () => {
           <p className="text-gray-400 font-medium mt-1">Suivi de trésorerie et notes de frais</p>
         </div>
         <div className="flex items-center gap-3">
-          <button onClick={handleRefresh} className="bg-white/10 text-white p-3 rounded-xl border border-white/20 hover:bg-white/20 transition-all" title="Rafraîchir les données">
-            <RefreshCw className="w-5 h-5" />
-          </button>
           <button onClick={handleExport} className="bg-white/10 text-white px-6 py-3 rounded-xl font-black text-sm uppercase tracking-widest border border-white/20 hover:bg-white/20 flex items-center gap-2 transition-all">
             <Download className="w-4 h-4" />
             Export Excel
