@@ -107,10 +107,11 @@ const helpContent: Record<string, { title: string; content: React.ReactNode }> =
     title: 'Pointage',
     content: (
       <div className="space-y-4">
-        <p>Suivez les présences et les heures d'arrivée/départ de vos employés.</p>
+        <p>Suivez les présences et les heures d'arrivée/départ de vos employés avec géolocalisation.</p>
         <ul className="list-disc pl-5 space-y-2">
-          <li><strong>Code QR :</strong> Les employés peuvent scanner leur code pour pointer.</li>
-          <li><strong>Historique :</strong> Consultez les retards et les heures supplémentaires.</li>
+          <li><strong>Bouton de pointage :</strong> L'employé clique simplement sur "Commencer" en arrivant, et "Terminer" en partant.</li>
+          <li><strong>Géolocalisation :</strong> Le système capture automatiquement la position GPS au moment du pointage (affichable sur la carte).</li>
+          <li><strong>Historique :</strong> Exportez la feuille de présence complète au format PDF.</li>
         </ul>
       </div>
     )
