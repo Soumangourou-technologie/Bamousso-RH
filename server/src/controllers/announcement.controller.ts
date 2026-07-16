@@ -67,3 +67,35 @@ export const getAnnouncements = async (req: Request, res: Response): Promise<any
     res.status(500).json({ message: "Erreur serveur.", error: error.message });
   }
 };
+
+export const createComment = async (req: Request, res: Response): Promise<any> => {
+  try {
+    const { postId } = req.params;
+    const { content } = req.body;
+    const authorId = (req as any).user.id;
+
+    if (!content) {
+      return res.status(400).json({ message: "Le contenu du commentaire est requis." });
+    }
+
+    const comment = await prisma.forumComment.create({
+      data: {
+        content,
+        postId: postId as string,
+        authorId
+      },
+      include: {
+        author: {
+          select: {
+            firstName: true,
+            lastName: true
+          }
+        }
+      }
+    });
+
+    res.status(201).json(comment);
+  } catch (error: any) {
+    res.status(500).json({ message: "Erreur serveur.", error: error.message });
+  }
+};

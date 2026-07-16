@@ -26,7 +26,7 @@ export const uploadDocument = async (req: Request, res: Response): Promise<any> 
     }
 
     // Upload vers Supabase Storage
-    const fileUrl = await uploadToSupabase(file, 'documents');
+    const fileUrl = await uploadToSupabase(file, 'bamousso');
 
     if (!fileUrl) {
       return res.status(500).json({ message: "Erreur lors de l'upload du fichier vers Supabase." });

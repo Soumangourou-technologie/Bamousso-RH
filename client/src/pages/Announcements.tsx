@@ -25,6 +25,8 @@ const AnnouncementsPage = () => {
   const [isCreating, setIsCreating] = useState(false);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [activePostId, setActivePostId] = useState<string | null>(null);
+  const [commentContent, setCommentContent] = useState('');
 
   const fetchPosts = async () => {
     try {
@@ -54,11 +56,23 @@ const AnnouncementsPage = () => {
     }
   };
 
+  const handleCommentSubmit = async (e: React.FormEvent, postId: string) => {
+    e.preventDefault();
+    if (!commentContent.trim()) return;
+    try {
+      await api.post(`/announcements/${postId}/comments`, { content: commentContent });
+      setCommentContent('');
+      void fetchPosts();
+    } catch (error) {
+      console.error('Error adding comment', error);
+    }
+  };
+
   const canAnnounce = user?.role === 'COMPANY_ADMIN' || user?.role === 'HR_MANAGER';
 
   return (
     <div className="space-y-8 max-w-5xl mx-auto">
-      <div className="flex justify-between items-center bg-gradient-to-r from-orange-500 to-orange-600 rounded-3xl p-8 text-white shadow-xl shadow-orange-500/20">
+      <div className="flex justify-between items-center bg-linear-to-r from-orange-500 to-orange-600 rounded-3xl p-8 text-white shadow-xl shadow-orange-500/20">
         <div>
           <h1 className="text-3xl font-extrabold flex items-center gap-3">
             <Megaphone className="w-8 h-8" /> Actualités
@@ -114,7 +128,7 @@ const AnnouncementsPage = () => {
             
             <div className="flex items-start justify-between mb-6">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 flex items-center justify-center text-gray-700 dark:text-gray-300 font-bold text-lg">
+                <div className="w-12 h-12 rounded-full bg-linear-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 flex items-center justify-center text-gray-700 dark:text-gray-300 font-bold text-lg">
                   {post.author.firstName[0]}{post.author.lastName[0]}
                 </div>
                 <div>
@@ -133,13 +147,66 @@ const AnnouncementsPage = () => {
             </div>
 
             <div className="flex items-center gap-6 pt-6 border-t border-gray-100 dark:border-gray-700 text-gray-500 font-medium">
-              <button className="flex items-center gap-2 hover:text-orange-500 transition">
+              <button 
+                onClick={() => setActivePostId(activePostId === post.id ? null : post.id)}
+                className={`flex items-center gap-2 transition ${activePostId === post.id ? 'text-orange-500' : 'hover:text-orange-500'}`}
+              >
                 <MessageSquare className="w-5 h-5" /> {post.comments.length} Commentaires
               </button>
               <div className="flex items-center gap-2 text-sm">
                 <Clock className="w-4 h-4" /> Publié à {new Date(post.createdAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
               </div>
             </div>
+
+            {/* Comments Section */}
+            {activePostId === post.id && (
+              <motion.div 
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                className="mt-6 pt-6 border-t border-gray-100 dark:border-gray-700"
+              >
+                <div className="space-y-4 mb-6">
+                  {post.comments.map((comment: any) => (
+                    <div key={comment.id} className="bg-gray-50 dark:bg-gray-900/50 rounded-2xl p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-8 h-8 rounded-full bg-orange-100 text-orange-700 flex items-center justify-center font-bold text-sm">
+                          {comment.author.firstName[0]}{comment.author.lastName[0]}
+                        </div>
+                        <span className="font-bold text-sm text-gray-900 dark:text-white">
+                          {comment.author.firstName} {comment.author.lastName}
+                        </span>
+                        <span className="text-xs text-gray-500">
+                          {new Date(comment.createdAt).toLocaleDateString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                        </span>
+                      </div>
+                      <p className="text-gray-700 dark:text-gray-300 ml-10 text-sm">
+                        {comment.content}
+                      </p>
+                    </div>
+                  ))}
+                  {post.comments.length === 0 && (
+                    <p className="text-sm text-gray-500 italic">Aucun commentaire pour le moment. Soyez le premier !</p>
+                  )}
+                </div>
+
+                <form onSubmit={(e) => handleCommentSubmit(e, post.id)} className="flex gap-3">
+                  <input
+                    type="text"
+                    value={commentContent}
+                    onChange={(e) => setCommentContent(e.target.value)}
+                    placeholder="Écrire un commentaire..."
+                    className="flex-1 px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 dark:bg-gray-900 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition text-sm"
+                  />
+                  <button
+                    type="submit"
+                    disabled={!commentContent.trim()}
+                    className="bg-orange-500 hover:bg-orange-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-6 py-3 rounded-xl font-bold transition text-sm shadow-md"
+                  >
+                    Envoyer
+                  </button>
+                </form>
+              </motion.div>
+            )}
           </motion.div>
         ))}
 
