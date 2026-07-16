@@ -1,0 +1,42 @@
+Bamousso RH : Plateforme SaaS de Gestion des Ressources Humaines
+
+Bamousso RH est une solution complète, sécurisée et performante (développée avec des technologies modernes : React, Node.js, TypeScript, PostgreSQL) conçue pour simplifier et digitaliser la gestion des ressources humaines des entreprises.
+
+🚀 FONDATIONS TECHNIQUES ET SÉCURITÉ
+* Architecture SaaS : Multi-entités avec une séparation stricte des données clients.
+* Sécurité de niveau bancaire : Hébergement cloud sécurisé, protection contre les injections SQL, mots de passe hachés (Bcrypt), et authentification par jetons (JWT).
+* Haute disponibilité : Déploiement optimisé sur Vercel avec des temps de réponse ultra-rapides.
+
+🚀 FONCTIONNALITÉS PRINCIPALES
+
+1. Administration et Gestion de l'Entreprise
+* Gestion de la Structure : Paramétrage complet de l'entreprise, création et gestion illimitée des départements.
+* Contrôle d'Accès & Sécurité : Gestion fine des rôles (SuperAdmin, Admin RH, Manager, Employé) et des permissions.
+* Tableau de Bord SuperAdmin : Espace dédié pour la gestion globale des entreprises clientes (SaaS) et le support technique.
+
+2. Gestion Administrative du Personnel
+* Dossiers Employés Centralisés : Profils complets pour chaque collaborateur avec suivi de carrière et informations de contact.
+* Gestion Documentaire Sécurisée : Espace de stockage cloud pour centraliser les documents RH (contrats, pièces d'identité, attestations).
+
+3. Gestion du Temps et des Activités
+* Suivi des Présences (Pointage) : Enregistrement et suivi précis des heures d'arrivée, de pause et de départ.
+* Plannings & Horaires : Configuration et affectation souple des emplois du temps selon les profils.
+* Gestion des Congés & Absences : Dépôt de demandes en ligne par les employés et circuit de validation simplifié pour les managers.
+
+4. Paie et Rémunération
+* Gestion des Salaires : Paramétrage des salaires fixes et suivi des évolutions de rémunération.
+* Éléments Variables de Paie : Prise en compte automatisée des primes, bonus, heures supplémentaires, indemnités et retenues/déductions.
+* Suivi Comptable et Financier : Suivi des paiements émis et intégration des données RH dans la comptabilité de l'entreprise.
+
+5. Performance et Opérationnel
+* Gestion des Tâches : Création, assignation et suivi d'avancement des tâches pour optimiser la productivité.
+* Gestion des Missions : Planification, validation et suivi des déplacements professionnels et missions sur le terrain.
+
+6. Communication Interne & Climat Social
+* Annonces d'Entreprise : Diffusion de notes d'informations globales ou ciblées par département.
+* Messagerie et Notifications : Communication fluide entre collaborateurs et alertes en temps réel sur les événements importants.
+* Boîte à Suggestions : Espace permettant de recueillir les idées des employés pour améliorer la vie en entreprise.
+* Gestion Disciplinaire et Conflits : Suivi des dossiers de conflits internes, médiations et gestion numérique des demandes d'explications.
+
+7. Pilotage Décisionnel (Analytics)
+* Statistiques RH & Reporting : Tableaux de bord dynamiques générant des indicateurs clés (masse salariale, taux d'absentéisme, évolution des effectifs) pour aider la direction à prendre les bonnes décisions.

@@ -42,6 +42,13 @@ export const toggleClock = async (req: Request, res: Response): Promise<any> => 
         }
       });
 
+      if (latitude !== null && longitude !== null) {
+        await prisma.user.update({
+          where: { id: userId },
+          data: { currentLat: latitude, currentLng: longitude, lastLocationUpdate: new Date() }
+        });
+      }
+
       // Notifier les admins
       const user = (req as any).user;
       const dbUser = await prisma.user.findUnique({ where: { id: userId }, select: { firstName: true, lastName: true, email: true } });
@@ -59,6 +66,13 @@ export const toggleClock = async (req: Request, res: Response): Promise<any> => 
           longitude
         }
       });
+
+      if (latitude !== null && longitude !== null) {
+        await prisma.user.update({
+          where: { id: userId },
+          data: { currentLat: latitude, currentLng: longitude, lastLocationUpdate: new Date() }
+        });
+      }
 
       // Notifier les admins
       const user = (req as any).user;

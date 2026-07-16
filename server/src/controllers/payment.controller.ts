@@ -44,11 +44,11 @@ export const initiatePayment = async (req: Request, res: Response) => {
 
     if (!apiKey || !apiSecret) {
       const errorMsg = "Clés GeniusPay manquantes dans .env";
-      await logger.error(errorMsg, { apiKey: !!apiKey, apiSecret: !!apiSecret }, "PaymentController");
+      await logger.error(errorMsg, undefined, "PaymentController");
       return res.status(500).json({ success: false, message: errorMsg });
     }
 
-    await logger.info("Initiating payment request", { amount: calculatedAmount, companyId, plan }, "PaymentController");
+    await logger.info("Initiating payment request", { amount: calculatedAmount, companyId }, "PaymentController");
 
     const response = await axios.post('https://pay.genius.ci/api/v1/merchant/payments', {
       amount: calculatedAmount,
@@ -72,7 +72,7 @@ export const initiatePayment = async (req: Request, res: Response) => {
         'Authorization': `Bearer ${apiSecret}`,
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'Idempotency-Key': crypto.randomUUID()
+        'Idempotency-Key': idempotencyKey || crypto.randomUUID()
       }
     });
 
@@ -125,7 +125,7 @@ export const handleWebhook = async (req: Request, res: Response) => {
 
     // Signature verification logic
     if (!webhookSecret || !signature || !timestamp) {
-      await logger.error("Configuration Webhook manquante ou signature absente", { signature: !!signature, timestamp: !!timestamp, secret: !!webhookSecret }, "PaymentController");
+      await logger.error("Configuration Webhook manquante ou signature absente", undefined, "PaymentController");
       return res.status(401).json({ error: "Unauthorized: Missing signature configuration" });
     }
 

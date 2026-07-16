@@ -210,10 +210,8 @@ export const forgotPassword = catchAsync(async (req: Request, res: Response) => 
   // Envoi automatique de l'e-mail via Resend
   await sendPasswordResetEmail(user.email, `${user.firstName} ${user.lastName}`, rawToken);
 
-  const isProd = process.env.NODE_ENV === "production";
   return res.json({
-    message: "Si le compte existe, un email de réinitialisation a été envoyé.",
-    ...(isProd ? {} : { devResetToken: rawToken }),
+    message: "Si le compte existe, un email de réinitialisation a été envoyé."
   });
 });
 

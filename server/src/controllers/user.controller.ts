@@ -268,10 +268,13 @@ export const updateUser = async (req: AuthRequest, res: Response) => {
       if (data.role !== undefined) updateData.role = data.role;
       if (data.companyId !== undefined) updateData.companyId = data.companyId;
     } else if (data.role !== undefined || data.companyId !== undefined || data.email !== undefined) {
-        if (data.role && ["HR_MANAGER", "COMMERCIAL", "LIVREUR", "EMPLOYEE", "VENDEUR", "ASSISTANT", "COMPTABLE", "RH"].includes(data.role)) {
-           updateData.role = data.role;
-        } else if (data.role) {
-           return res.status(403).json({ message: "Action non autorisée : vous ne pouvez pas attribuer ce rôle." });
+        if (data.role) {
+           if ((currentUser.role === "COMPANY_ADMIN" || currentUser.role === "HR_MANAGER" || currentUser.role === "RH") && 
+               ["HR_MANAGER", "COMMERCIAL", "LIVREUR", "EMPLOYEE", "VENDEUR", "ASSISTANT", "COMPTABLE", "RH"].includes(data.role)) {
+               updateData.role = data.role;
+           } else {
+               return res.status(403).json({ message: "Action non autorisée : vous n'avez pas les droits de modifier le rôle." });
+           }
         }
         
         if (data.email && data.email !== targetUser.email) {

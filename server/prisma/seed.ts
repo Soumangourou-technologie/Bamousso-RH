@@ -12,11 +12,11 @@ const prisma = new PrismaClient();
 
 async function main() {
   const email = process.env.SEED_ADMIN_EMAIL;
-  const password = process.env.SEED_ADMIN_PASSWORD;
+  const seedPwd = process.env.SEED_ADMIN_PASSWORD;
   const firstName = 'Super';
   const lastName = 'Admin';
 
-  if (!email || !password) {
+  if (!email || !seedPwd) {
     console.error('❌ SEED_ADMIN_EMAIL ou SEED_ADMIN_PASSWORD manquant dans .env');
     return;
   }
@@ -28,7 +28,7 @@ async function main() {
     return;
   }
 
-  const hashedPassword = await bcrypt.hash(password, 10);
+  const hashedPassword = await bcrypt.hash(seedPwd, 10);
 
   const user = await prisma.user.create({
     data: {
