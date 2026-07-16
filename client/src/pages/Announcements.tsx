@@ -27,6 +27,7 @@ const AnnouncementsPage = () => {
   const [content, setContent] = useState('');
   const [activePostId, setActivePostId] = useState<string | null>(null);
   const [commentContent, setCommentContent] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const fetchPosts = async () => {
     try {
@@ -58,13 +59,16 @@ const AnnouncementsPage = () => {
 
   const handleCommentSubmit = async (e: React.FormEvent, postId: string) => {
     e.preventDefault();
-    if (!commentContent.trim()) return;
+    if (!commentContent.trim() || isSubmitting) return;
+    setIsSubmitting(true);
     try {
       await api.post(`/announcements/${postId}/comments`, { content: commentContent });
       setCommentContent('');
       void fetchPosts();
     } catch (error) {
       console.error('Error adding comment', error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -148,8 +152,13 @@ const AnnouncementsPage = () => {
 
             <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 pt-6 border-t border-gray-100 dark:border-gray-700 text-gray-500 font-medium">
               <button 
-                onClick={() => setActivePostId(activePostId === post.id ? null : post.id)}
-                className={`flex items-center gap-2 transition ${activePostId === post.id ? 'text-orange-500' : 'hover:text-orange-500'}`}
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setActivePostId(activePostId === post.id ? null : post.id);
+                }}
+                className={`flex items-center gap-2 transition cursor-pointer relative z-10 ${activePostId === post.id ? 'text-orange-500' : 'hover:text-orange-500'}`}
               >
                 <MessageSquare className="w-5 h-5" /> {post.comments.length} Commentaires
               </button>
@@ -195,14 +204,14 @@ const AnnouncementsPage = () => {
                     value={commentContent}
                     onChange={(e) => setCommentContent(e.target.value)}
                     placeholder="Écrire un commentaire..."
-                    className="flex-1 w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 dark:bg-gray-900 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition text-sm"
+                    className="flex-1 w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-transparent text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition text-sm"
                   />
                   <button
                     type="submit"
-                    disabled={!commentContent.trim()}
+                    disabled={!commentContent.trim() || isSubmitting}
                     className="w-full sm:w-auto bg-orange-500 hover:bg-orange-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-6 py-3 rounded-xl font-bold transition text-sm shadow-md"
                   >
-                    Envoyer
+                    {isSubmitting ? 'Envoi...' : 'Envoyer'}
                   </button>
                 </form>
               </motion.div>
