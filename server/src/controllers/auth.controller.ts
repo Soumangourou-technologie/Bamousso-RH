@@ -295,6 +295,9 @@ export const login = catchAsync(async (req: Request, res: Response, next: NextFu
       companyId: user.companyId,
       status: (user as any).status,
       permissions: user.customRole?.permissions || [],
+      currentLat: user.currentLat,
+      currentLng: user.currentLng,
+      lastLocationUpdate: user.lastLocationUpdate,
     },
     company: user.company ? {
       id: user.company.id,
@@ -358,6 +361,9 @@ export const getCurrentUser = catchAsync(async (req: any, res: Response) => {
       lastName: user.lastName,
       companyId: user.companyId,
       permissions: user.customRole?.permissions || [],
+      currentLat: user.currentLat,
+      currentLng: user.currentLng,
+      lastLocationUpdate: user.lastLocationUpdate,
     },
     company: user.company ? {
       id: user.company.id,
