@@ -1,8 +1,16 @@
 import axios from 'axios';
+import { Capacitor } from '@capacitor/core';
 
 const rawApiUrl = import.meta.env.VITE_API_URL || (import.meta.env.MODE === 'production' ? '' : 'http://localhost:3001');
 // On enlève le /api à la fin s'il existe pour éviter le doublon car on le rajoute après
-export const API_URL = rawApiUrl.endsWith('/api') ? rawApiUrl.slice(0, -4) : rawApiUrl;
+let API_URL_INTERNAL = rawApiUrl.endsWith('/api') ? rawApiUrl.slice(0, -4) : rawApiUrl;
+
+// Forcer l'URL de production sur l'application mobile native
+if (Capacitor.isNativePlatform()) {
+  API_URL_INTERNAL = 'https://www.bamousso.com';
+}
+
+export const API_URL = API_URL_INTERNAL;
 
 const api = axios.create({
   baseURL: `${API_URL}/api`,
