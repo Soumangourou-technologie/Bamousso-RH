@@ -52,9 +52,12 @@ const Salaries = () => {
   };
 
   useEffect(() => {
-    if (canManageHr) {
-      void fetchPayslips();
-    }
+    const refreshData = () => {
+      if (canManageHr) void fetchPayslips();
+    };
+    refreshData();
+    window.addEventListener('app:refresh', refreshData);
+    return () => window.removeEventListener('app:refresh', refreshData);
   }, [canManageHr]);
 
   if (!canManageHr) {

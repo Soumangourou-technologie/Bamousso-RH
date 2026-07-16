@@ -55,9 +55,15 @@ const Tasks = () => {
     }
   };
 
-  useEffect(() => {
+  const refreshAll = () => {
     void fetchTasks();
     void fetchEmployees();
+  };
+
+  useEffect(() => {
+    refreshAll();
+    window.addEventListener('app:refresh', refreshAll);
+    return () => window.removeEventListener('app:refresh', refreshAll);
   }, []);
 
   const handleCreateTask = async (e: React.FormEvent) => {

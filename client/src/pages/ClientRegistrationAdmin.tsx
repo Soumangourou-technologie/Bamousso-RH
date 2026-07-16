@@ -65,7 +65,9 @@ const ClientRegistrationAdmin = () => {
   const [selectedReg, setSelectedReg] = useState<Registration | null>(null);
 
   useEffect(() => {
-    fetchData();
+    void fetchData();
+    window.addEventListener('app:refresh', fetchData);
+    return () => window.removeEventListener('app:refresh', fetchData);
   }, []);
 
   const fetchData = async () => {

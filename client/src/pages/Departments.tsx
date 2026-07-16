@@ -20,6 +20,8 @@ const Departments = () => {
 
   useEffect(() => {
     void fetchDepartments();
+    window.addEventListener('app:refresh', fetchDepartments);
+    return () => window.removeEventListener('app:refresh', fetchDepartments);
   }, []);
 
   const sorted = useMemo(

@@ -47,6 +47,8 @@ const Leaves = () => {
 
   useEffect(() => {
     void fetchLeaves();
+    window.addEventListener('app:refresh', fetchLeaves);
+    return () => window.removeEventListener('app:refresh', fetchLeaves);
   }, []);
 
   const handleRequest = async (e: React.FormEvent) => {

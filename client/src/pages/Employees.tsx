@@ -101,11 +101,17 @@ const Employees = () => {
     } catch (err) { console.error(err); }
   };
 
-  useEffect(() => {
+  const refreshAll = () => {
     void fetchEmployees();
     void fetchDepartments();
     void fetchCustomRoles();
     void fetchWorkSchedules();
+  };
+
+  useEffect(() => {
+    refreshAll();
+    window.addEventListener('app:refresh', refreshAll);
+    return () => window.removeEventListener('app:refresh', refreshAll);
   }, []);
 
   const canPickDepartment = departments.length > 0;

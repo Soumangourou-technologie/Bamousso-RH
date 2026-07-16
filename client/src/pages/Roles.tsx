@@ -35,7 +35,9 @@ const RolesPage = () => {
   const [formData, setFormData] = useState({ name: '', permissions: [] as string[] });
 
   useEffect(() => {
-    fetchRoles();
+    void fetchRoles();
+    window.addEventListener('app:refresh', fetchRoles);
+    return () => window.removeEventListener('app:refresh', fetchRoles);
   }, []);
 
   const fetchRoles = async () => {

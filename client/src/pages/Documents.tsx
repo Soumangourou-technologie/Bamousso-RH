@@ -51,9 +51,15 @@ const DocumentsPage = () => {
 
   const canManage = user?.role === 'COMPANY_ADMIN' || user?.role === 'HR_MANAGER' || user?.role === 'HR_ASSISTANT' || user?.role === 'RH';
 
-  useEffect(() => {
+  const refreshAll = () => {
     void fetchDocuments();
     void fetchEmployees();
+  };
+
+  useEffect(() => {
+    refreshAll();
+    window.addEventListener('app:refresh', refreshAll);
+    return () => window.removeEventListener('app:refresh', refreshAll);
   }, []);
 
   const handleUpload = async (e: React.FormEvent) => {

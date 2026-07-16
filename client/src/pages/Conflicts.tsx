@@ -30,7 +30,9 @@ const ConflictsPage = () => {
   const [newCase, setNewCase] = useState({ title: '', description: '', involvedEmployeeId: '' });
 
   useEffect(() => {
-    fetchData();
+    void fetchData();
+    window.addEventListener('app:refresh', fetchData);
+    return () => window.removeEventListener('app:refresh', fetchData);
   }, []);
 
   const fetchData = async () => {

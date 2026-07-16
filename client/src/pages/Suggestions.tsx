@@ -39,6 +39,7 @@ const Suggestions = () => {
 
   useEffect(() => {
     fetchSuggestions();
+    window.addEventListener('app:refresh', fetchSuggestions);
 
     // Abonnement Temps Réel via Supabase
     const channel = supabase
@@ -59,6 +60,7 @@ const Suggestions = () => {
 
     return () => {
       void supabase.removeChannel(channel);
+      window.removeEventListener('app:refresh', fetchSuggestions);
     };
   }, [user?.companyId]);
 

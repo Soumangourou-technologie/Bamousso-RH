@@ -52,9 +52,15 @@ const Explanations = () => {
     }
   };
 
-  useEffect(() => {
+  const refreshAll = () => {
     void fetchExplanations();
     void fetchEmployees();
+  };
+
+  useEffect(() => {
+    refreshAll();
+    window.addEventListener('app:refresh', refreshAll);
+    return () => window.removeEventListener('app:refresh', refreshAll);
   }, []);
 
   const handleCreate = async (e: React.FormEvent) => {

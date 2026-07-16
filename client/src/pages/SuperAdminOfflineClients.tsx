@@ -70,6 +70,8 @@ const SuperAdminOfflineClients = () => {
 
   useEffect(() => {
     void fetchData();
+    window.addEventListener('app:refresh', fetchData);
+    return () => window.removeEventListener('app:refresh', fetchData);
   }, []);
 
   const handleToggleLock = async (company: Company) => {

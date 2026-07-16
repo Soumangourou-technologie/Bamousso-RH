@@ -37,6 +37,8 @@ const AnnouncementsPage = () => {
 
   useEffect(() => {
     void fetchPosts();
+    window.addEventListener('app:refresh', fetchPosts);
+    return () => window.removeEventListener('app:refresh', fetchPosts);
   }, []);
 
   const handleCreate = async (e: React.FormEvent) => {

@@ -69,6 +69,8 @@ const Messaging = () => {
 
   useEffect(() => {
     void fetchContacts();
+    window.addEventListener('app:refresh', fetchContacts);
+    return () => window.removeEventListener('app:refresh', fetchContacts);
   }, []);
 
   useEffect(() => {

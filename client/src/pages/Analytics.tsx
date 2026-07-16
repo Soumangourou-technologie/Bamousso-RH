@@ -52,10 +52,14 @@ const Analytics = () => {
   useEffect(() => {
     if (!canUse('analytics')) { setLoading(false); return; }
 
-    void fetchAll();
+    const refreshData = () => void fetchAll();
+    refreshData();
+    window.addEventListener('app:refresh', refreshData);
 
     // Real-time subscription pour mettre à jour les graphiques
-    if (!supabase || !user?.companyId) return;
+    if (!supabase || !user?.companyId) {
+      return () => window.removeEventListener('app:refresh', refreshData);
+    }
 
     const channel = supabase
       .channel(`analytics-realtime-${user.companyId}`)
@@ -66,6 +70,7 @@ const Analytics = () => {
 
     return () => {
       void supabase.removeChannel(channel);
+      window.removeEventListener('app:refresh', refreshData);
     };
   }, [canUse, user?.companyId]);
 

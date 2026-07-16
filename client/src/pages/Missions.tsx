@@ -60,8 +60,13 @@ const Missions = () => {
   const canManage = user?.role === 'SUPER_ADMIN' || user?.role === 'COMPANY_ADMIN' || user?.role === 'HR_MANAGER';
 
   useEffect(() => {
-    fetchMissions();
-    if (canManage) fetchEmployees();
+    const refreshData = () => {
+      fetchMissions();
+      if (canManage) fetchEmployees();
+    };
+    refreshData();
+    window.addEventListener('app:refresh', refreshData);
+    return () => window.removeEventListener('app:refresh', refreshData);
   }, [missionType]);
 
   const fetchMissions = async () => {

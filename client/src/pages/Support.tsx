@@ -152,7 +152,9 @@ function FitiniTicketsDashboard() {
   };
 
   useEffect(() => {
-    fetchTickets();
+    void fetchTickets();
+    window.addEventListener('app:refresh', fetchTickets);
+    return () => window.removeEventListener('app:refresh', fetchTickets);
   }, []);
 
   useEffect(() => {

@@ -57,9 +57,12 @@ const WorkSchedules = () => {
   };
 
   useEffect(() => {
-    if (canManageHr) {
-      void fetchData();
-    }
+    const refreshData = () => {
+      if (canManageHr) void fetchData();
+    };
+    refreshData();
+    window.addEventListener('app:refresh', refreshData);
+    return () => window.removeEventListener('app:refresh', refreshData);
   }, [canManageHr]);
 
   if (!canManageHr) {
