@@ -162,10 +162,12 @@ const AttendancePage = () => {
       .subscribe();
 
     const fetchInterval = setInterval(fetchLogs, 10000); // Auto-refresh every 10s
+    window.addEventListener('app:refresh', fetchLogs);
 
     return () => { 
       void supabase.removeChannel(channel); 
       clearInterval(fetchInterval);
+      window.removeEventListener('app:refresh', fetchLogs);
     };
   }, [user?.id]);
 

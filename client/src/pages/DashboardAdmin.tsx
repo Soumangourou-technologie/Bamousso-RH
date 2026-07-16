@@ -119,8 +119,11 @@ const DashboardAdmin = () => {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'Department', filter: `companyId=eq.${user.companyId}` }, () => void fetchStats())
       .subscribe();
 
+    window.addEventListener('app:refresh', fetchStats);
+
     return () => {
       void supabase.removeChannel(channel);
+      window.removeEventListener('app:refresh', fetchStats);
     };
   }, [user?.companyId]);
 
