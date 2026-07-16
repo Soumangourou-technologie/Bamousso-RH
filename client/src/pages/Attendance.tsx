@@ -139,15 +139,21 @@ const AttendancePage = () => {
       setEmployees(emps);
 
       // Auto-center map on first log with GPS data or first employee with GPS
-      const firstWithGps = res.data.find(l => l.latitude && l.longitude);
-      if (firstWithGps?.latitude && firstWithGps?.longitude) {
-        setMapCenter({ lat: firstWithGps.latitude, lng: firstWithGps.longitude });
-      } else {
+      setMapCenter((prevCenter) => {
+        if (prevCenter) return prevCenter;
+        
+        const firstWithGps = res.data.find((l: any) => l.latitude && l.longitude);
+        if (firstWithGps?.latitude && firstWithGps?.longitude) {
+          return { lat: firstWithGps.latitude, lng: firstWithGps.longitude };
+        }
+        
         const firstEmp = emps.find((e: any) => e.currentLat && e.currentLng);
         if (firstEmp?.currentLat && firstEmp?.currentLng) {
-          setMapCenter({ lat: firstEmp.currentLat, lng: firstEmp.currentLng });
+          return { lat: firstEmp.currentLat, lng: firstEmp.currentLng };
         }
-      }
+        
+        return null;
+      });
     } catch (error) {
       console.error('Error fetching attendances', error);
     }
