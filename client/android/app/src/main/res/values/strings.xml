@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">BamoussoRH</string>
+    <string name="title_activity_main">BamoussoRH</string>
+    <string name="package_name">com.soumangourou.bamoussorh</string>
+    <string name="custom_url_scheme">com.soumangourou.bamoussorh</string>
+</resources>

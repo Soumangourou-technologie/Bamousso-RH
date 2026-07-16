@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import api from '../utils/api';
 import { supabase } from '../utils/supabase';
+import { Capacitor } from '@capacitor/core';
+import { Geolocation } from '@capacitor/geolocation';
 
 export const useLocationTracker = () => {
   const { user } = useAuth();
@@ -51,39 +53,78 @@ export const useLocationTracker = () => {
   useEffect(() => {
     if (!isActive) return;
 
-    let watchId: number;
+    let webWatchId: number;
+    let capWatchId: string;
 
-    const startTracking = () => {
-      if (!navigator.geolocation) {
-        console.warn("La géolocalisation n'est pas supportée par ce navigateur.");
-        return;
-      }
+    const startTracking = async () => {
+      const isNative = Capacitor.isNativePlatform();
 
-      watchId = navigator.geolocation.watchPosition(
-        async (position) => {
-          const { latitude, longitude } = position.coords;
-          try {
-            await api.put('/employees/me/location', { lat: latitude, lng: longitude });
-          } catch (error) {
-            console.error("Erreur lors de l'envoi de la position:", error);
+      if (isNative) {
+        try {
+          const permStatus = await Geolocation.checkPermissions();
+          if (permStatus.location !== 'granted') {
+            const request = await Geolocation.requestPermissions();
+            if (request.location !== 'granted') {
+              console.warn("Permission de géolocalisation native refusée.");
+              return;
+            }
           }
-        },
-        (error) => {
-          console.error("Erreur de géolocalisation:", error);
-        },
-        {
-          enableHighAccuracy: true,
-          maximumAge: 10000,
-          timeout: 5000,
+
+          capWatchId = await Geolocation.watchPosition(
+            { enableHighAccuracy: true, timeout: 5000, maximumAge: 10000 },
+            async (position, err) => {
+              if (err) {
+                console.error("Erreur de géolocalisation Capacitor:", err);
+                return;
+              }
+              if (position) {
+                const { latitude, longitude } = position.coords;
+                try {
+                  await api.put('/employees/me/location', { lat: latitude, lng: longitude });
+                } catch (error) {
+                  console.error("Erreur lors de l'envoi de la position (Native):", error);
+                }
+              }
+            }
+          );
+        } catch (error) {
+          console.error("Erreur lors de l'initialisation du tracker natif:", error);
         }
-      );
+      } else {
+        if (!navigator.geolocation) {
+          console.warn("La géolocalisation n'est pas supportée par ce navigateur.");
+          return;
+        }
+
+        webWatchId = navigator.geolocation.watchPosition(
+          async (position) => {
+            const { latitude, longitude } = position.coords;
+            try {
+              await api.put('/employees/me/location', { lat: latitude, lng: longitude });
+            } catch (error) {
+              console.error("Erreur lors de l'envoi de la position (Web):", error);
+            }
+          },
+          (error) => {
+            console.error("Erreur de géolocalisation Web:", error);
+          },
+          {
+            enableHighAccuracy: true,
+            maximumAge: 10000,
+            timeout: 5000,
+          }
+        );
+      }
     };
 
-    startTracking();
+    void startTracking();
 
     return () => {
-      if (watchId !== undefined && navigator.geolocation) {
-        navigator.geolocation.clearWatch(watchId);
+      const isNative = Capacitor.isNativePlatform();
+      if (isNative && capWatchId) {
+        void Geolocation.clearWatch({ id: capWatchId });
+      } else if (!isNative && webWatchId !== undefined && navigator.geolocation) {
+        navigator.geolocation.clearWatch(webWatchId);
       }
     };
   }, [isActive]);
