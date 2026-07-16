@@ -16,7 +16,13 @@ export const getFileUrl = (path?: string) => {
     return path;
 }
 
-// Plus besoin d'intercepteur pour ajouter le token car on utilise HttpOnly cookies
+// Intercepteur pour empêcher la mise en cache agressive des requêtes GET (surtout sur mobile)
+api.interceptors.request.use((config) => {
+  if (config.method?.toLowerCase() === 'get') {
+    config.params = { ...config.params, _t: Date.now() };
+  }
+  return config;
+});
 
 api.interceptors.response.use(
   (response) => response,
