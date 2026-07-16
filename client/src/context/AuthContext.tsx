@@ -141,6 +141,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
     
     fetchLatestInfo();
+    
+    window.addEventListener('app:refresh', fetchLatestInfo);
+    return () => window.removeEventListener('app:refresh', fetchLatestInfo);
   }, []);
 
   /**

@@ -111,6 +111,8 @@ const DashboardSuperAdmin = () => {
 
   useEffect(() => {
     void fetchData();
+    window.addEventListener('app:refresh', fetchData);
+    return () => window.removeEventListener('app:refresh', fetchData);
   }, []);
 
   // Gestion de la navigation par Hash (#companies, #payments)
