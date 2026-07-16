@@ -18,7 +18,7 @@ const SplashMobile: React.FC = () => {
   }
 
   return (
-    <div className="fixed inset-0 bg-[#1a0f0a] flex flex-col items-center justify-center z-[9999]">
+    <div className="fixed inset-0 bg-[#1a0f0a] flex flex-col items-center justify-center z-9999">
       <motion.div
         initial={{ scale: 0.5, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
