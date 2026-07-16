@@ -91,19 +91,19 @@ const Leaves = () => {
       <motion.div 
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex justify-between items-end bg-white dark:bg-gray-800 p-8 rounded-[2rem] shadow-xl border border-white/5 relative overflow-hidden"
+        className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-end bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-[2rem] shadow-xl border border-white/5 relative overflow-hidden gap-6 sm:gap-0"
       >
         <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-blue-500/10 to-transparent rounded-bl-full pointer-events-none" />
-        <div className="relative z-10">
-          <h1 className="text-4xl font-black text-gray-900 dark:text-white tracking-tight flex items-center gap-3">
-            <Calendar className="w-10 h-10 text-blue-500" /> Gestion des Congés
+        <div className="relative z-10 w-full">
+          <h1 className="text-3xl sm:text-4xl font-black text-gray-900 dark:text-white tracking-tight flex items-center gap-3">
+            <Calendar className="w-8 h-8 sm:w-10 sm:h-10 text-blue-500 shrink-0" /> <span className="break-words">Gestion des Congés</span>
           </h1>
-          <p className="text-gray-500 dark:text-gray-400 font-medium mt-2">Suivez et validez les absences de votre équipe.</p>
+          <p className="text-gray-500 dark:text-gray-400 font-medium mt-2 text-sm sm:text-base">Suivez et validez les absences de votre équipe.</p>
         </div>
         {!canManage && (
           <button
             onClick={() => setIsRequesting(true)}
-            className="bg-brand-primary text-white px-8 py-4 rounded-2xl font-black text-sm uppercase tracking-widest shadow-lg shadow-brand-primary/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
+            className="w-full sm:w-auto bg-brand-primary text-white px-8 py-4 rounded-2xl font-black text-sm uppercase tracking-widest shadow-lg shadow-brand-primary/20 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2 relative z-10 shrink-0"
           >
             <Plus className="w-5 h-5" /> Nouvelle demande
           </button>
@@ -182,9 +182,9 @@ const Leaves = () => {
 
       {/* Tableaux des demandes */}
       <div className="glass-card p-10 rounded-[2.5rem] border border-white/5 bg-white dark:bg-gray-800 shadow-xl overflow-hidden">
-        <div className="flex justify-between items-center mb-10">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4 sm:gap-0">
           <h2 className="text-2xl font-black text-gray-900 dark:text-white">Historique des demandes</h2>
-          <div className="flex items-center gap-2 bg-gray-100 dark:bg-gray-900/50 p-2 rounded-xl">
+          <div className="flex items-center gap-2 bg-gray-100 dark:bg-gray-900/50 p-2 rounded-xl shrink-0">
             <Filter className="w-4 h-4 text-gray-500" />
             <span className="text-xs font-bold text-gray-500">Trier par date</span>
           </div>

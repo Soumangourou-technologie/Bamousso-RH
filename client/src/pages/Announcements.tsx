@@ -72,19 +72,19 @@ const AnnouncementsPage = () => {
 
   return (
     <div className="space-y-8 max-w-5xl mx-auto">
-      <div className="flex justify-between items-center bg-linear-to-r from-orange-500 to-orange-600 rounded-3xl p-8 text-white shadow-xl shadow-orange-500/20">
+      <div className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center bg-linear-to-r from-orange-500 to-orange-600 rounded-3xl p-6 sm:p-8 text-white shadow-xl shadow-orange-500/20 gap-6 sm:gap-0">
         <div>
-          <h1 className="text-3xl font-extrabold flex items-center gap-3">
+          <h1 className="text-2xl sm:text-3xl font-extrabold flex items-center gap-3">
             <Megaphone className="w-8 h-8" /> Actualités
           </h1>
-          <p className="text-orange-100 mt-2 text-lg">Restez informé des dernières nouvelles de l'entreprise.</p>
+          <p className="text-orange-100 mt-2 text-base sm:text-lg">Restez informé des dernières nouvelles de l'entreprise.</p>
         </div>
         {canAnnounce && (
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setIsCreating(!isCreating)}
-            className="flex items-center gap-2 bg-white text-orange-600 px-6 py-3 rounded-xl font-bold shadow-lg transition-shadow"
+            className="flex w-full sm:w-auto justify-center items-center gap-2 bg-white text-orange-600 px-6 py-3 rounded-xl font-bold shadow-lg transition-shadow"
           >
             <Plus className="w-5 h-5" /> Publier
           </motion.button>
@@ -146,7 +146,7 @@ const AnnouncementsPage = () => {
               {post.content}
             </div>
 
-            <div className="flex items-center gap-6 pt-6 border-t border-gray-100 dark:border-gray-700 text-gray-500 font-medium">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 pt-6 border-t border-gray-100 dark:border-gray-700 text-gray-500 font-medium">
               <button 
                 onClick={() => setActivePostId(activePostId === post.id ? null : post.id)}
                 className={`flex items-center gap-2 transition ${activePostId === post.id ? 'text-orange-500' : 'hover:text-orange-500'}`}
@@ -189,18 +189,18 @@ const AnnouncementsPage = () => {
                   )}
                 </div>
 
-                <form onSubmit={(e) => handleCommentSubmit(e, post.id)} className="flex gap-3">
+                <form onSubmit={(e) => handleCommentSubmit(e, post.id)} className="flex flex-col sm:flex-row gap-3">
                   <input
                     type="text"
                     value={commentContent}
                     onChange={(e) => setCommentContent(e.target.value)}
                     placeholder="Écrire un commentaire..."
-                    className="flex-1 px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 dark:bg-gray-900 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition text-sm"
+                    className="flex-1 w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 dark:bg-gray-900 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition text-sm"
                   />
                   <button
                     type="submit"
                     disabled={!commentContent.trim()}
-                    className="bg-orange-500 hover:bg-orange-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-6 py-3 rounded-xl font-bold transition text-sm shadow-md"
+                    className="w-full sm:w-auto bg-orange-500 hover:bg-orange-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-6 py-3 rounded-xl font-bold transition text-sm shadow-md"
                   >
                     Envoyer
                   </button>
