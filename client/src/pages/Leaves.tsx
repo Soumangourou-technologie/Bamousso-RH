@@ -91,12 +91,12 @@ const Leaves = () => {
       <motion.div 
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-end bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-[2rem] shadow-xl border border-white/5 relative overflow-hidden gap-6 sm:gap-0"
+        className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-end bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-4xl shadow-xl border border-white/5 relative overflow-hidden gap-6 sm:gap-0"
       >
-        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-blue-500/10 to-transparent rounded-bl-full pointer-events-none" />
+        <div className="absolute top-0 right-0 w-64 h-64 bg-linear-to-bl from-blue-500/10 to-transparent rounded-bl-full pointer-events-none" />
         <div className="relative z-10 w-full">
           <h1 className="text-3xl sm:text-4xl font-black text-gray-900 dark:text-white tracking-tight flex items-center gap-3">
-            <Calendar className="w-8 h-8 sm:w-10 sm:h-10 text-blue-500 shrink-0" /> <span className="break-words">Gestion des Congés</span>
+            <Calendar className="w-8 h-8 sm:w-10 sm:h-10 text-blue-500 shrink-0" /> <span className="wrap-break-word">Gestion des Congés</span>
           </h1>
           <p className="text-gray-500 dark:text-gray-400 font-medium mt-2 text-sm sm:text-base">Suivez et validez les absences de votre équipe.</p>
         </div>
@@ -118,7 +118,7 @@ const Leaves = () => {
             exit={{ opacity: 0, height: 0 }}
             className="overflow-hidden"
           >
-            <div className="bg-white dark:bg-gray-800 p-8 rounded-[2rem] shadow-2xl border border-brand-primary/20 relative">
+            <div className="bg-white dark:bg-gray-800 p-8 rounded-4xl shadow-2xl border border-brand-primary/20 relative">
                <button onClick={() => setIsRequesting(false)} className="absolute top-6 right-6 p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors">
                   <XCircle className="w-6 h-6 text-gray-400" />
                </button>
@@ -210,7 +210,7 @@ const Leaves = () => {
                     animate={{ opacity: 1, x: 0 }} 
                     transition={{ delay: i * 0.05 }}
                     key={leave.id} 
-                    className="group hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors"
+                    className="group hover:bg-gray-50 dark:hover:bg-white/2 transition-colors"
                   >
                     <td className="py-8">
                       <div className="flex items-center gap-4">
