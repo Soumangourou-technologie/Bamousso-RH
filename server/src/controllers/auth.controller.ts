@@ -148,7 +148,7 @@ export const registerCompany = catchAsync(async (req: Request, res: Response) =>
     const cookieOptions = {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict' as const,
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' as const : 'lax' as const,
       maxAge: 24 * 60 * 60 * 1000 // 1 jour
     };
 
@@ -279,7 +279,7 @@ export const login = catchAsync(async (req: Request, res: Response, next: NextFu
   const cookieOptions = {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict' as const,
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' as const : 'lax' as const,
     maxAge: 24 * 60 * 60 * 1000 // 1 jour
   };
 
@@ -345,7 +345,7 @@ export const getCurrentUser = catchAsync(async (req: any, res: Response) => {
     const cookieOptions = {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict' as const,
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' as const : 'lax' as const,
       maxAge: 24 * 60 * 60 * 1000 // 1 jour
     };
     res.cookie('token', token, cookieOptions);
@@ -384,7 +384,7 @@ export const logout = catchAsync(async (req: any, res: Response) => {
   res.clearCookie('token', {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' as const : 'lax' as const,
   });
   
   if (req.user?.id) {

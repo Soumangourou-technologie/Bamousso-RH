@@ -57,8 +57,8 @@ app.set('trust proxy', 1);
 // Configuration de CORS : Autorise les requêtes provenant du frontend uniquement
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
-    ? [process.env.FRONTEND_URL || 'https://bamousso-client.vercel.app'] 
-    : ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:3000'],
+    ? [process.env.FRONTEND_URL || 'https://bamousso-client.vercel.app', 'capacitor://localhost', 'http://localhost'] 
+    : ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:3000', 'capacitor://localhost', 'http://localhost'],
   credentials: true
 }));
 
