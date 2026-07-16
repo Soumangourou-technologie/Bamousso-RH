@@ -118,17 +118,19 @@ const Salaries = () => {
       doc.text(`Période : ${new Date(payslip.periodStart).toLocaleDateString('fr-FR')} - ${new Date(payslip.periodEnd).toLocaleDateString('fr-FR')}`, 14, startY + lineSpace * 2);
       doc.text(`Moyen de paiement : ${payslip.paymentMethod}`, 14, startY + lineSpace * 3);
       
+      const formatAmount = (num: number) => Math.round(num || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+
       // Table Data
       autoTable(doc, {
         startY: startY + lineSpace * 5,
         head: [['Désignation', 'Nombre', 'Montant (FCFA)']],
         body: [
-          ['Salaire de base', '', (payslip.baseSalary || 0).toLocaleString()],
+          ['Salaire de base', '', formatAmount(payslip.baseSalary)],
           ['Jours travaillés', payslip.daysWorked || 0, ''],
           ['Heures travaillées', (payslip.hoursWorked || 0).toFixed(1), ''],
-          ['Heures supplémentaires', payslip.overtimeHours || 0, (payslip.overtimeAmount || 0).toLocaleString()],
-          ['Primes', '', (payslip.bonusAmount || 0).toLocaleString()],
-          ['Déductions', '', `-${(payslip.deductionAmount || 0).toLocaleString()}`],
+          ['Heures supplémentaires', payslip.overtimeHours || 0, formatAmount(payslip.overtimeAmount)],
+          ['Primes', '', formatAmount(payslip.bonusAmount)],
+          ['Déductions', '', `-${formatAmount(payslip.deductionAmount)}`],
         ],
         theme: 'striped',
         headStyles: { fillColor: [249, 115, 22] }
@@ -137,7 +139,7 @@ const Salaries = () => {
       const finalY = (doc as any).lastAutoTable.finalY + 15;
       doc.setFontSize(14);
       doc.setTextColor(16, 185, 129); // Emerald 500
-      doc.text(`Net à payer : ${(payslip.netSalary || 0).toLocaleString()} FCFA`, 14, finalY);
+      doc.text(`Net à payer : ${formatAmount(payslip.netSalary)} FCFA`, 14, finalY);
       
       // Footer
       doc.setFontSize(10);
@@ -162,6 +164,7 @@ const Salaries = () => {
     }
   };
 
+  const formatAmount = (num: number) => Math.round(num || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
   const totalMasse = payslips.reduce((acc, curr) => acc + curr.netSalary, 0);
 
   return (
@@ -210,7 +213,7 @@ const Salaries = () => {
         <div className="glass-card p-8 rounded-4xl border border-white/5 bg-linear-to-br from-emerald-600/10 to-emerald-900/10">
           <Wallet className="w-8 h-8 text-emerald-500 mb-6" />
           <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">Masse Salariale Générée</p>
-          <p className="text-3xl font-black text-white tracking-tighter">{totalMasse.toLocaleString()} FCFA</p>
+          <p className="text-3xl font-black text-white tracking-tighter">{formatAmount(totalMasse)} FCFA</p>
         </div>
         <div className="glass-card p-8 rounded-4xl border border-white/5 bg-linear-to-br from-blue-600/10 to-blue-900/10">
           <FileText className="w-8 h-8 text-blue-500 mb-6" />
@@ -274,7 +277,7 @@ const Salaries = () => {
                   </td>
                   <td className="py-6 text-right">
                     <div className="flex flex-col items-end">
-                      <span className="text-emerald-400 font-black text-lg">{ps.netSalary.toLocaleString()}</span>
+                      <span className="text-emerald-400 font-black text-lg">{formatAmount(ps.netSalary)}</span>
                       {(ps.bonusAmount > 0 || ps.deductionAmount > 0 || ps.overtimeAmount > 0) && (
                         <span className="text-[9px] text-gray-500 uppercase tracking-widest mt-1">Primes/HS Incluses</span>
                       )}

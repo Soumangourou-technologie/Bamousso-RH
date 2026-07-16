@@ -130,11 +130,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           localStorage.setItem('user', JSON.stringify(latestUser));
           if (latestCompany) localStorage.setItem('company', JSON.stringify(latestCompany));
         }
-      } catch (error) {
-        console.log("Session non valide au démarrage (utilisateur non connecté).");
-        // On nettoie le localStorage au cas où
-        localStorage.removeItem('user');
-        localStorage.removeItem('company');
+      } catch (error: any) {
+        // Ne déconnecter l'utilisateur que si l'erreur est un 401 (Non autorisé)
+        if (error.response && error.response.status === 401) {
+          console.log("Session non valide au démarrage (utilisateur non connecté).");
+          localStorage.removeItem('user');
+          localStorage.removeItem('company');
+          setUser(null);
+          setCompany(null);
+        } else {
+          // Erreur réseau ou autre : on essaie de restaurer depuis le localStorage
+          console.log("Erreur de connexion à l'API, restauration depuis le cache local.");
+          const cachedUser = localStorage.getItem('user');
+          const cachedCompany = localStorage.getItem('company');
+          if (cachedUser) setUser(JSON.parse(cachedUser));
+          if (cachedCompany) setCompany(JSON.parse(cachedCompany));
+        }
       } finally {
         setIsLoading(false);
       }
