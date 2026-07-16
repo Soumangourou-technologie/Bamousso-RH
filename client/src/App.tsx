@@ -44,6 +44,15 @@ import Accounting from './pages/Accounting';
 
 import { NotificationProvider } from './context/NotificationContext';
 
+import { Capacitor } from '@capacitor/core';
+
+const RootRoute = () => {
+  if (Capacitor.isNativePlatform()) {
+    return <Navigate to="/login" replace />;
+  }
+  return <Landing />;
+};
+
 function App() {
   return (
     <BrowserRouter>
@@ -51,7 +60,7 @@ function App() {
         <AuthProvider>
           <NotificationProvider>
             <Routes>
-              <Route path="/" element={<Landing />} />
+              <Route path="/" element={<RootRoute />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/payment" element={<Payment />} />
