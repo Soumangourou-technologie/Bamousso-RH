@@ -171,7 +171,7 @@ const Suggestions = () => {
             // VUE ADMIN : Liste des suggestions
             <div className="space-y-6">
               {suggestions.map((suggestion) => (
-                <div key={suggestion.id} className="glass-card p-8 rounded-[2rem] border border-white/5 space-y-4">
+                <div key={suggestion.id} className="glass-card p-8 rounded-4xl border border-white/5 space-y-4">
                   <div className="flex justify-between items-start">
                     <div className="flex items-center gap-3">
                       <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${

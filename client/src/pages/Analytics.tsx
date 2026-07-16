@@ -98,7 +98,7 @@ const Analytics = () => {
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}
         className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-xl border border-gray-100 dark:border-gray-700 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-orange-400/20 to-transparent rounded-bl-full pointer-events-none" />
+        <div className="absolute top-0 right-0 w-64 h-64 bg-linear-to-bl from-orange-400/20 to-transparent rounded-bl-full pointer-events-none" />
         <div className="relative z-10">
           <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white flex items-center gap-3 mb-2">
             <TrendingUp className="w-8 h-8 text-orange-500" /> Analytique RH

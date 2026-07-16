@@ -139,7 +139,7 @@ const Tasks = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {/* Colonne À Faire */}
-        <div className="glass-card p-8 rounded-[2.5rem] border border-white/5 min-h-[500px]">
+        <div className="glass-card p-8 rounded-[2.5rem] border border-white/5 min-h-125">
           <div className="flex items-center gap-3 mb-8">
             <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-500">
               <Clock className="w-5 h-5" />
@@ -164,7 +164,7 @@ const Tasks = () => {
         </div>
 
         {/* Colonne En Cours */}
-        <div className="glass-card p-8 rounded-[2.5rem] border border-white/5 min-h-[500px]">
+        <div className="glass-card p-8 rounded-[2.5rem] border border-white/5 min-h-125">
           <div className="flex items-center gap-3 mb-8">
             <div className="w-10 h-10 rounded-xl bg-brand-primary/10 flex items-center justify-center text-brand-primary">
               <ListTodo className="w-5 h-5" />
@@ -189,7 +189,7 @@ const Tasks = () => {
         </div>
 
         {/* Colonne Terminé */}
-        <div className="glass-card p-8 rounded-[2.5rem] border border-white/5 min-h-[500px]">
+        <div className="glass-card p-8 rounded-[2.5rem] border border-white/5 min-h-125">
           <div className="flex items-center gap-3 mb-8">
             <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500">
               <CheckCircle2 className="w-5 h-5" />
@@ -257,9 +257,9 @@ const Tasks = () => {
       {/* Modal Confirmation Fin de Tâche */}
       <AnimatePresence>
         {isConfirmOpen && (
-          <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-60 flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsConfirmOpen(false)} className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
-            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="relative bg-brand-900 border border-white/10 p-8 rounded-[2rem] max-w-sm w-full text-center shadow-2xl">
+            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="relative bg-brand-900 border border-white/10 p-8 rounded-4xl max-w-sm w-full text-center shadow-2xl">
               <div className="w-20 h-20 bg-amber-500/20 text-amber-500 rounded-full flex items-center justify-center mx-auto mb-6">
                 <AlertTriangle className="w-10 h-10" />
               </div>

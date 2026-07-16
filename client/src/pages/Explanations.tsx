@@ -124,14 +124,14 @@ const Explanations = () => {
       </motion.div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        <div className="glass-card p-8 rounded-[2rem] border border-white/5">
+        <div className="glass-card p-8 rounded-4xl border border-white/5">
           <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">En cours</p>
           <div className="flex items-center gap-3">
             <AlertCircle className="w-5 h-5 text-amber-500" />
             <p className="text-3xl font-black text-white">{pendingCount}</p>
           </div>
         </div>
-        <div className="glass-card p-8 rounded-[2rem] border border-white/5">
+        <div className="glass-card p-8 rounded-4xl border border-white/5">
           <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">Clôturées</p>
           <div className="flex items-center gap-3">
             <CheckCircle2 className="w-5 h-5 text-emerald-500" />
