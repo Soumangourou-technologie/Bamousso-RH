@@ -45,10 +45,11 @@ import Accounting from './pages/Accounting';
 import { NotificationProvider } from './context/NotificationContext';
 
 import { Capacitor } from '@capacitor/core';
+import SplashMobile from './components/SplashMobile';
 
 const RootRoute = () => {
   if (Capacitor.isNativePlatform()) {
-    return <Navigate to="/login" replace />;
+    return <SplashMobile />;
   }
   return <Landing />;
 };
