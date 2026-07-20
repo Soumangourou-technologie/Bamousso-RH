@@ -209,7 +209,7 @@ const AttendancePage = () => {
           alert(errorMsg + " Le pointage sera enregistré sans coordonnées GPS.");
           postClock();
         },
-        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        { enableHighAccuracy: true, timeout: 20000, maximumAge: 10000 }
       );
     } else {
       alert("La géolocalisation n'est pas supportée (nécessite HTTPS). Le pointage sera enregistré sans coordonnées GPS.");
