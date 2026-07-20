@@ -256,18 +256,20 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
             </>
           )}
 
-          {/* Missions: Livraison & Prospection */}
-          {!isSuperAdmin && (canManageHr || isCommercial || user.role === 'LIVREUR') && (
-            <>
-              <Link to="/missions/livraison" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname.startsWith('/missions/livraison') ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
-                <Truck className="w-5 h-5" />
-                Livraisons
-              </Link>
-              <Link to="/missions/prospection" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname.startsWith('/missions/prospection') ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
-                <Target className="w-5 h-5" />
-                Prospections
-              </Link>
-            </>
+          {/* Missions: Livraison (Livreur + Admin/HR) */}
+          {!isSuperAdmin && (canManageHr || user.role === 'LIVREUR') && (
+            <Link to="/missions/livraison" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname.startsWith('/missions/livraison') ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
+              <Truck className="w-5 h-5" />
+              Livraisons
+            </Link>
+          )}
+
+          {/* Missions: Prospection (Commercial + Admin/HR) */}
+          {!isSuperAdmin && (canManageHr || isCommercial) && (
+            <Link to="/missions/prospection" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname.startsWith('/missions/prospection') ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
+              <Target className="w-5 h-5" />
+              Prospections
+            </Link>
           )}
 
           {/* Commercial: Enregistrement Client */}
