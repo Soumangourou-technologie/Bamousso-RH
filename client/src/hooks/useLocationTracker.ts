@@ -71,7 +71,7 @@ export const useLocationTracker = () => {
           }
 
           capWatchId = await Geolocation.watchPosition(
-            { enableHighAccuracy: true, timeout: 5000, maximumAge: 10000 },
+            { enableHighAccuracy: true, timeout: 5000, maximumAge: 2000 },
             async (position, err) => {
               if (err) {
                 console.error("Erreur de géolocalisation Capacitor:", err);
@@ -110,7 +110,7 @@ export const useLocationTracker = () => {
           },
           {
             enableHighAccuracy: true,
-            maximumAge: 10000,
+            maximumAge: 2000,
             timeout: 5000,
           }
         );

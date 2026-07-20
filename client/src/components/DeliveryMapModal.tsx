@@ -17,6 +17,9 @@ L.Icon.Default.mergeOptions({
 
 // Custom CSS for pulse effect
 const pulseStyles = `
+  .leaflet-marker-icon {
+    transition: transform 1.2s linear !important;
+  }
   .custom-pulse-icon {
     position: relative;
     display: flex;
@@ -89,7 +92,7 @@ const DeliveryMapModal = ({ onClose }: DeliveryMapModalProps) => {
 
   useEffect(() => {
     fetchLivreurs();
-    const interval = setInterval(fetchLivreurs, 10000); // Rafraîchir toutes les 10s
+    const interval = setInterval(fetchLivreurs, 3000); // Rafraîchir toutes les 3s au lieu de 10s
     return () => clearInterval(interval);
   }, []);
 
