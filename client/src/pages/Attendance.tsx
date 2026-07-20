@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import api from '../utils/api';
 import { useAuth } from '../context/AuthContext';
-import { Clock, Play, Square, AlertCircle, MapPin, Navigation, Download, X } from 'lucide-react';
+import { Clock, Play, Square, AlertCircle, MapPin, Navigation, Download, X, RefreshCw } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { supabase } from '../utils/supabase';
 import jsPDF from 'jspdf';
@@ -20,6 +20,9 @@ L.Icon.Default.mergeOptions({
 
 // Custom CSS for pulse effect
 const pulseStyles = `
+  .leaflet-marker-icon {
+    transition: transform 1.2s linear !important;
+  }
   .custom-pulse-icon {
     position: relative;
     display: flex;
@@ -167,7 +170,7 @@ const AttendancePage = () => {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'Attendance' }, () => fetchLogs())
       .subscribe();
 
-    const fetchInterval = setInterval(fetchLogs, 10000); // Auto-refresh every 10s
+    const fetchInterval = setInterval(fetchLogs, 3000); // Auto-refresh every 3s
     window.addEventListener('app:refresh', fetchLogs);
 
     return () => { 
@@ -377,12 +380,24 @@ const AttendancePage = () => {
             <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">
               {canManage ? "Pointages de l'équipe" : 'Mon Historique'}
             </h2>
-            <button
-              onClick={exportToPDF}
-              className="px-4 py-2 bg-orange-500 text-white rounded-lg text-sm font-bold shadow hover:bg-orange-600 transition flex items-center gap-2"
-            >
-              <Download className="w-4 h-4" /> Exporter (PDF)
-            </button>
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  fetchLogs();
+                  const event = new Event('app:refresh');
+                  window.dispatchEvent(event);
+                }}
+                className="px-4 py-2 bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300 rounded-lg text-sm font-bold shadow-sm hover:bg-gray-200 dark:hover:bg-gray-600 transition flex items-center gap-2"
+              >
+                <RefreshCw className="w-4 h-4" /> Rafraîchir
+              </button>
+              <button
+                onClick={exportToPDF}
+                className="px-4 py-2 bg-orange-500 text-white rounded-lg text-sm font-bold shadow hover:bg-orange-600 transition flex items-center gap-2"
+              >
+                <Download className="w-4 h-4" /> Exporter (PDF)
+              </button>
+            </div>
           </div>
 
           <div className="overflow-x-auto">

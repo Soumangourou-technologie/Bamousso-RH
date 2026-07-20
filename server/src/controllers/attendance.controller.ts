@@ -93,7 +93,8 @@ export const getAttendances = async (req: Request, res: Response): Promise<any> 
   try {
     const user = (req as any).user;
     
-    if (user.role === "EMPLOYEE") {
+    // Tous les rôles "employés simples" ne voient que leurs propres pointages
+    if (["EMPLOYEE", "LIVREUR", "COMMERCIAL", "VENDEUR", "ASSISTANT", "COMPTABLE"].includes(user.role)) {
       const attendances = await prisma.attendance.findMany({
         where: { employeeId: user.id },
         orderBy: { date: 'desc' }
