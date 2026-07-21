@@ -196,6 +196,7 @@ model Suggestion {
   description String
   isAnonymous Boolean @default(false)
   status      String  @default("OPEN") // OPEN, IN_PROGRESS, RESOLVED
+  targetAudience String @default("ALL") // ALL, COMPANY_ADMIN, HR
 
   reporterId String
   reporter   User   @relation("Reporter", fields: [reporterId], references: [id], onDelete: Cascade)

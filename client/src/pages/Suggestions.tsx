@@ -11,6 +11,7 @@ interface Suggestion {
   description: string;
   isAnonymous: boolean;
   status: 'OPEN' | 'IN_PROGRESS' | 'RESOLVED';
+  targetAudience?: string;
   createdAt: string;
   reporter?: {
     firstName: string;
@@ -24,6 +25,7 @@ const Suggestions = () => {
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [nature, setNature] = useState('Amélioration du cadre de travail');
   const [description, setDescription] = useState('');
+  const [targetAudience, setTargetAudience] = useState('ALL');
   const [isLoading, setIsLoading] = useState(false);
 
   const isAdmin = user?.role === 'COMPANY_ADMIN' || user?.role === 'HR_MANAGER' || user?.role === 'HR_ASSISTANT' || user?.role === 'RH';
@@ -68,10 +70,11 @@ const Suggestions = () => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      await api.post('/suggestions', { nature, description, isAnonymous });
+      await api.post('/suggestions', { nature, description, isAnonymous, targetAudience });
       setNature('Amélioration du cadre de travail');
       setDescription('');
       setIsAnonymous(false);
+      setTargetAudience('ALL');
       void fetchSuggestions();
       alert('Votre suggestion a été envoyée avec succès.');
     } catch (error: any) {
@@ -129,6 +132,19 @@ const Suggestions = () => {
                 </div>
 
                 <div>
+                  <label className="block text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-3">À l'attention de</label>
+                  <select 
+                    value={targetAudience}
+                    onChange={e => setTargetAudience(e.target.value)}
+                    className="w-full bg-white/5 border border-white/10 p-4 rounded-2xl text-white font-bold outline-none focus:ring-2 focus:ring-brand-primary appearance-none"
+                  >
+                    <option value="ALL" className="bg-gray-800 text-white">Direction & Ressources Humaines (Tous)</option>
+                    <option value="COMPANY_ADMIN" className="bg-gray-800 text-white">Direction uniquement (Patron)</option>
+                    <option value="HR" className="bg-gray-800 text-white">Ressources Humaines uniquement</option>
+                  </select>
+                </div>
+
+                <div>
                   <label className="block text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-3">Détails de votre idée</label>
                   <textarea 
                     required
@@ -181,6 +197,16 @@ const Suggestions = () => {
                       }`}>
                         {suggestion.status}
                       </div>
+                      {suggestion.targetAudience === 'COMPANY_ADMIN' && (
+                        <div className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-purple-500/20 text-purple-400">
+                          Direction (Confidentiel)
+                        </div>
+                      )}
+                      {suggestion.targetAudience === 'HR' && (
+                        <div className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-blue-500/20 text-blue-400">
+                          RH (Confidentiel)
+                        </div>
+                      )}
                       <span className="text-xs text-gray-500 font-bold">{new Date(suggestion.createdAt).toLocaleString('fr-FR')}</span>
                     </div>
                     <div className="flex gap-2">

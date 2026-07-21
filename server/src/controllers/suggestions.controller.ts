@@ -7,11 +7,12 @@ const suggestionSchema = z.object({
   nature: z.string().min(1),
   description: z.string().min(1),
   isAnonymous: z.boolean().optional().default(false),
+  targetAudience: z.string().optional().default("ALL"),
 });
 
 export const reportSuggestion = async (req: any, res: Response) => {
   try {
-    const { nature, description, isAnonymous } = suggestionSchema.parse(req.body);
+    const { nature, description, isAnonymous, targetAudience } = suggestionSchema.parse(req.body);
     const user = req.user;
 
     const suggestion = await prisma.suggestion.create({
@@ -19,13 +20,20 @@ export const reportSuggestion = async (req: any, res: Response) => {
         nature,
         description,
         isAnonymous,
+        targetAudience,
         reporterId: user.id,
         companyId: user.companyId,
       },
     });
 
-    // Notifier les admins
-    await notifyAdmins(user.companyId, "Nouvelle suggestion", `Une nouvelle suggestion (${nature}) a été déposée.`, "SUGGESTION", suggestion.id);
+    // Notifier les admins (selon la cible)
+    if (targetAudience === "COMPANY_ADMIN") {
+      await notifyAdmins(user.companyId, "Nouvelle suggestion", `Une suggestion a été déposée pour la direction.`, "SUGGESTION", suggestion.id, "COMPANY_ADMIN");
+    } else if (targetAudience === "HR") {
+      await notifyAdmins(user.companyId, "Nouvelle suggestion", `Une suggestion a été déposée pour les ressources humaines.`, "SUGGESTION", suggestion.id, "HR");
+    } else {
+      await notifyAdmins(user.companyId, "Nouvelle suggestion", `Une nouvelle suggestion (${nature}) a été déposée.`, "SUGGESTION", suggestion.id);
+    }
 
     res.status(201).json(suggestion);
   } catch (error: any) {
@@ -39,9 +47,27 @@ export const getSuggestions = async (req: any, res: Response) => {
     
     let whereClause: any = { companyId: user.companyId };
     
-    // Si employé, il ne voit que ses propres suggestions
+    // Filtres selon le rôle
     if (user.role === "EMPLOYEE") {
       whereClause.reporterId = user.id;
+    } else if (user.role === "COMPANY_ADMIN") {
+      // Le boss voit "ALL" et "COMPANY_ADMIN", mais on va aussi inclure ses propres suggestions (au cas où)
+      whereClause = {
+        companyId: user.companyId,
+        OR: [
+          { targetAudience: { in: ["ALL", "COMPANY_ADMIN"] } },
+          { reporterId: user.id }
+        ]
+      };
+    } else if (user.role === "HR_MANAGER" || user.role === "HR_ASSISTANT" || user.role === "RH") {
+      // Les RH voient "ALL" et "HR", plus les leurs
+      whereClause = {
+        companyId: user.companyId,
+        OR: [
+          { targetAudience: { in: ["ALL", "HR"] } },
+          { reporterId: user.id }
+        ]
+      };
     }
 
     const suggestions = await prisma.suggestion.findMany({

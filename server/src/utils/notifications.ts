@@ -40,12 +40,19 @@ export const createNotification = async (data: {
 /**
  * Notifie tous les administrateurs d'une entreprise
  */
-export const notifyAdmins = async (companyId: string, title: string, message: string, type?: string, resourceId?: string) => {
+export const notifyAdmins = async (companyId: string, title: string, message: string, type?: string, resourceId?: string, targetRole?: "COMPANY_ADMIN" | "HR") => {
   try {
+    let roleFilter: any = { in: ["COMPANY_ADMIN", "HR_MANAGER", "HR_ASSISTANT", "RH", "COMMERCIAL"] };
+    if (targetRole === "COMPANY_ADMIN") {
+      roleFilter = "COMPANY_ADMIN";
+    } else if (targetRole === "HR") {
+      roleFilter = { in: ["HR_MANAGER", "HR_ASSISTANT", "RH"] };
+    }
+
     const admins = await prisma.user.findMany({
       where: {
         companyId,
-        role: { in: ["COMPANY_ADMIN", "HR_MANAGER", "HR_ASSISTANT", "RH", "COMMERCIAL"] }
+        role: roleFilter
       },
       select: { id: true }
     });
