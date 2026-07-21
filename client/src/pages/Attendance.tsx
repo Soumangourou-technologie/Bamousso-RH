@@ -234,30 +234,38 @@ const AttendancePage = () => {
   };
 
   const exportToPDF = () => {
-    const doc = new jsPDF();
-    doc.setFontSize(18);
-    doc.text('Historique des Pointages', 14, 22);
+    try {
+      // Fix potential jsPDF instantiation issue in Vite
+      const JSPDFClass = typeof jsPDF === 'function' ? jsPDF : (jsPDF as any).default;
+      const doc = new JSPDFClass();
+      
+      doc.setFontSize(18);
+      doc.text('Historique des Pointages', 14, 22);
 
-    const tableData = logs.map(log => [
-      new Date(log.date).toLocaleDateString('fr-FR'),
-      canManage ? (log.employee ? `${log.employee.firstName} ${log.employee.lastName}` : '-') : '-',
-      log.checkIn ? new Date(log.checkIn).toLocaleTimeString('fr-FR') : '-',
-      log.checkOut ? new Date(log.checkOut).toLocaleTimeString('fr-FR') : '-',
-      calculateHours(log.checkIn, log.checkOut),
-      log.status
-    ]);
+      const tableData = logs.map(log => [
+        log.date ? new Date(log.date).toLocaleDateString('fr-FR') : '-',
+        canManage ? (log.employee ? `${log.employee.firstName} ${log.employee.lastName}` : '-') : '-',
+        log.checkIn ? new Date(log.checkIn).toLocaleTimeString('fr-FR') : '-',
+        log.checkOut ? new Date(log.checkOut).toLocaleTimeString('fr-FR') : '-',
+        calculateHours(log.checkIn, log.checkOut),
+        log.status || '-'
+      ]);
 
-    const headers = canManage 
-      ? ['Date', 'Employé', 'Arrivée', 'Départ', 'Durée', 'Statut']
-      : ['Date', '-', 'Arrivée', 'Départ', 'Durée', 'Statut'];
+      const headers = canManage 
+        ? ['Date', 'Employé', 'Arrivée', 'Départ', 'Durée', 'Statut']
+        : ['Date', '-', 'Arrivée', 'Départ', 'Durée', 'Statut'];
 
-    autoTable(doc, {
-      startY: 30,
-      head: [headers],
-      body: tableData,
-    });
-    
-    doc.save('rapport_pointages.pdf');
+      autoTable(doc, {
+        startY: 30,
+        head: [headers],
+        body: tableData,
+      });
+      
+      doc.save('rapport_pointages.pdf');
+    } catch (error) {
+      console.error("Erreur lors de l'export PDF:", error);
+      alert("Une erreur est survenue lors de la génération du PDF.");
+    }
   };
 
   // Calcul des marqueurs (employés)

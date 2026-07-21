@@ -87,6 +87,8 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     user.role === 'SUPER_ADMIN' || 
     user.role === 'COMPANY_ADMIN' || 
     user.role === 'HR_MANAGER' || 
+    user.role === 'HR_ASSISTANT' || 
+    user.role === 'RH' || 
     user.role === 'COMPTABLE' || 
     user.permissions?.includes('view_accounting') ||
     user.permissions?.includes('manage_accounting');

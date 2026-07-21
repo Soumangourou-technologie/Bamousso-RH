@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 
 // Middleware de vérification des droits d'accès à la compta
 const checkAccountingAccess = (req: any, res: any, next: any) => {
-  const allowedRoles = ['COMPANY_ADMIN', 'HR_MANAGER', 'COMPTABLE', 'SUPER_ADMIN'];
+  const allowedRoles = ['COMPANY_ADMIN', 'HR_MANAGER', 'HR_ASSISTANT', 'RH', 'COMPTABLE', 'SUPER_ADMIN'];
   if (!allowedRoles.includes(req.user.role)) {
     return res.status(403).json({ message: 'Accès refusé. Rôle non autorisé pour la comptabilité.' });
   }
@@ -66,7 +66,7 @@ router.post('/transactions', authenticate, checkAccountingAccess, async (req: an
 router.get('/expenses', authenticate, async (req: any, res: any) => {
   try {
     // Si l'utilisateur est un simple employé, il ne voit que ses notes
-    const isAccounting = ['COMPANY_ADMIN', 'HR_MANAGER', 'COMPTABLE', 'SUPER_ADMIN'].includes(req.user.role);
+    const isAccounting = ['COMPANY_ADMIN', 'HR_MANAGER', 'HR_ASSISTANT', 'RH', 'COMPTABLE', 'SUPER_ADMIN'].includes(req.user.role);
     
     const expenses = await prisma.expenseReport.findMany({
       where: { 

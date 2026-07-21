@@ -1,10 +1,89 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Users, Layers, Calendar, Clock, FileText, Megaphone, TrendingUp, Briefcase } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import SubscriptionCountdown from '../components/TrialCountdown';
+
+const CompactCountdown = ({ endsAt, billingCycle }: { endsAt: string, billingCycle?: string }) => {
+  const [text, setText] = useState('');
+  const [progress, setProgress] = useState(0);
+  const [startDateStr, setStartDateStr] = useState('');
+  const [endDateStr, setEndDateStr] = useState('');
+
+  useEffect(() => {
+    const end = new Date(endsAt);
+    const start = new Date(endsAt);
+    if (billingCycle === 'YEARLY') {
+      start.setFullYear(start.getFullYear() - 1);
+    } else {
+      start.setMonth(start.getMonth() - 1);
+    }
+
+    setStartDateStr(start.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' }));
+    setEndDateStr(end.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' }));
+
+    const update = () => {
+      const now = new Date();
+      const diff = +end - +now;
+      
+      const totalDuration = +end - +start;
+      const elapsed = +now - +start;
+      let percent = (elapsed / totalDuration) * 100;
+      if (percent < 0) percent = 0;
+      if (percent > 100) percent = 100;
+      setProgress(percent);
+
+      if (diff <= 0) {
+        setText('Expiré');
+        return;
+      }
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      
+      if (days > 0) {
+        setText(`${days} jours restants`);
+      } else {
+        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        setText(`${hours} heures restantes`);
+      }
+    };
+
+    update();
+    const itv = setInterval(update, 60000);
+    return () => clearInterval(itv);
+  }, [endsAt, billingCycle]);
+
+  if (!text) return null;
+
+  return (
+    <div className="flex flex-col gap-1.5 bg-gray-50/50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700 rounded-2xl px-5 py-3 w-72 shadow-sm">
+      <div className="flex justify-between items-center text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
+        <span>Début : {startDateStr}</span>
+        <span>Fin : {endDateStr}</span>
+      </div>
+      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-1 overflow-hidden relative">
+        <div 
+          className={`absolute top-0 left-0 h-full rounded-full transition-all duration-1000 ${progress > 90 ? 'bg-red-500' : progress > 75 ? 'bg-orange-500' : 'bg-brand-primary'}`}
+          style={{ width: `${progress}%` }}
+        />
+      </div>
+      <div className="flex justify-between items-center mt-1">
+        <span className="text-[10px] font-black text-gray-800 dark:text-gray-200 uppercase tracking-widest">{billingCycle === 'YEARLY' ? 'Annuel' : 'Mensuel'}</span>
+        <span className={`text-[11px] font-black tracking-tight ${progress > 90 ? 'text-red-500' : progress > 75 ? 'text-orange-500' : 'text-brand-primary'}`}>
+          {text}
+        </span>
+      </div>
+    </div>
+  );
+};
 
 const DashboardHR = () => {
   const { company, user } = useAuth();
+  const navigate = useNavigate();
+
+  const isTrialExpired = company?.trialEndsAt && new Date() > new Date(company.trialEndsAt);
+  const isTrialActive = company?.trialEndsAt && !isTrialExpired;
+  const isSubscriptionActive = !isTrialActive && !isTrialExpired && company?.subscriptionEndsAt;
 
   const container = {
     hidden: { opacity: 0 },
@@ -32,13 +111,31 @@ const DashboardHR = () => {
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
+      {isTrialActive && company?.trialEndsAt && (
+        <SubscriptionCountdown 
+          endsAt={company.trialEndsAt} 
+          title="Accès Privilège Actif"
+          buttonText="Passer premium"
+          onButtonClick={() => navigate('/upgrade-plan', { state: { selectedPlanId: 'KORO' } })}
+        />
+      )}
+
+      {isSubscriptionActive && company?.subscriptionEndsAt && (
+        <SubscriptionCountdown 
+          endsAt={company.subscriptionEndsAt} 
+          title="Abonnement Actif"
+          buttonText="Mettre à jour / Changer de formule"
+          onButtonClick={() => navigate('/upgrade-plan', { state: { selectedPlanId: company.plan } })}
+        />
+      )}
+
       {/* Header animé */}
       <motion.div 
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-xl border border-gray-100 dark:border-gray-700 relative overflow-hidden"
       >
-        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-blue-400/20 to-transparent rounded-bl-full pointer-events-none"></div>
+        <div className="absolute top-0 right-0 w-64 h-64 bg-linear-to-bl from-blue-400/20 to-transparent rounded-bl-full pointer-events-none"></div>
         <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
             <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white flex items-center gap-3 mb-2">
@@ -48,7 +145,15 @@ const DashboardHR = () => {
               <Briefcase className="w-4 h-4" /> {company?.name || 'Bamousso'} • Pôle Ressources Humaines
             </p>
           </div>
-          <div className="bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-6 py-3 rounded-2xl flex items-center gap-3 font-semibold shadow-inner">
+          
+          {/* Compteur de durée compact */}
+          {(isTrialActive && company?.trialEndsAt) ? (
+            <CompactCountdown endsAt={company.trialEndsAt} billingCycle="MONTHLY" />
+          ) : (isSubscriptionActive && company?.subscriptionEndsAt) ? (
+            <CompactCountdown endsAt={company.subscriptionEndsAt} billingCycle={(company as any).billingCycle} />
+          ) : null}
+
+          <div className="bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-6 py-3 rounded-2xl hidden md:flex items-center gap-3 font-semibold shadow-inner">
             <TrendingUp className="w-5 h-5" />
             Vue d'ensemble RH
           </div>
