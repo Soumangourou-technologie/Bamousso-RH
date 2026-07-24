@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import api from '../utils/api';
 import { 
   Building2, CheckCircle, Ban, 
   X, Search, Filter, ShieldCheck, UserPlus, 
-  Wallet, MoreVertical, FileText, Terminal
+  Wallet, MoreVertical, FileText, Terminal, Megaphone
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import jsPDF from 'jspdf';
@@ -300,23 +300,29 @@ const DashboardSuperAdmin = () => {
               <p className="text-brand-accent font-bold uppercase tracking-[0.3em] text-xs">Gestion globale • Bamousso RH</p>
             </div>
           </div>
-          <div className="flex gap-4">
+          <div className="flex flex-wrap gap-3">
+            <Link
+              to="/dashboard/super-admin/broadcast"
+              className="bg-linear-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white px-6 py-3.5 rounded-2xl font-black flex items-center gap-2.5 shadow-lg shadow-orange-500/20 transition-all active:scale-95 text-sm"
+            >
+              <Megaphone className="w-5 h-5 text-white" /> Diffusion & Emails
+            </Link>
             <button 
               onClick={fetchLogs}
               disabled={logsLoading}
-              className="bg-white/10 hover:bg-white/20 text-white px-8 py-4 rounded-2xl font-black flex items-center gap-3 border border-white/10 transition-all active:scale-95"
+              className="bg-white/10 hover:bg-white/20 text-white px-6 py-3.5 rounded-2xl font-black flex items-center gap-2.5 border border-white/10 transition-all active:scale-95 text-sm"
             >
               <Terminal className={`w-5 h-5 ${logsLoading ? 'animate-spin' : 'text-brand-accent'}`} /> {logsLoading ? 'Chargement...' : 'Logs Système'}
             </button>
             <button 
               onClick={exportToPDF}
-              className="bg-white/10 hover:bg-white/20 text-white px-8 py-4 rounded-2xl font-black flex items-center gap-3 border border-white/10 transition-all active:scale-95"
+              className="bg-white/10 hover:bg-white/20 text-white px-6 py-3.5 rounded-2xl font-black flex items-center gap-2.5 border border-white/10 transition-all active:scale-95 text-sm"
             >
               <FileText className="w-5 h-5 text-brand-accent" /> Exporter PDF
             </button>
             <button 
               onClick={() => setIsAdminModalOpen(true)}
-              className="bg-brand-primary hover:bg-orange-600 text-white px-8 py-4 rounded-2xl font-black flex items-center gap-3 shadow-xl shadow-brand-primary/20 transition-all active:scale-95 premium-glow"
+              className="bg-brand-primary hover:bg-orange-600 text-white px-6 py-3.5 rounded-2xl font-black flex items-center gap-2.5 shadow-xl shadow-brand-primary/20 transition-all active:scale-95 premium-glow text-sm"
             >
               <UserPlus className="w-5 h-5" /> Ajouter un Admin
             </button>
