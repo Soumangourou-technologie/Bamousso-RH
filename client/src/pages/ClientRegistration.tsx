@@ -152,9 +152,15 @@ const ClientRegistration = () => {
     if (!form) return;
     const fd = new FormData(form);
 
+    const isRectoVerso = idDocType === 'CNI' || idDocType === 'PERMIS';
+
     // Add files
-    if (idRectoFile) fd.append('idDocumentRecto', idRectoFile);
-    if (idVersoFile) fd.append('idDocumentVerso', idVersoFile);
+    if (isRectoVerso) {
+      if (idRectoFile) fd.append('idDocumentRecto', idRectoFile);
+      if (idVersoFile) fd.append('idDocumentVerso', idVersoFile);
+    } else {
+      if (idRectoFile) fd.append('idDocument', idRectoFile);
+    }
     docFiles.forEach(f => fd.append('documents', f));
 
     // Add signatures
@@ -192,6 +198,8 @@ const ClientRegistration = () => {
         email,
       },
       idDocType,
+      isRectoVerso,
+      idDocument: idRectoFile ? idRectoFile.name : null,
       idRecto: idRectoFile ? idRectoFile.name : null,
       idVerso: idVersoFile ? idVersoFile.name : null,
       rdvSubject: fd.get('rdvSubject'),
@@ -469,13 +477,18 @@ const ClientRegistration = () => {
             </div>
           </motion.div>
 
-          {/* Section 5: Pièce d'Identité (Recto / Verso) */}
+          {/* Section 5: Pièce d'Identité */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="glass-card rounded-3xl p-6">
             <SectionHeader icon={CreditCard} title="Pièce d'Identité" />
             <p className="text-xs text-gray-500 font-bold mb-3 uppercase tracking-wider">Type de document</p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
               {idDocTypes.map(dt => (
-                <button key={dt.value} type="button" onClick={() => setIdDocType(dt.value)}
+                <button key={dt.value} type="button" onClick={() => {
+                  setIdDocType(dt.value);
+                  if (dt.value !== 'CNI' && dt.value !== 'PERMIS') {
+                    setIdVersoFile(null);
+                  }
+                }}
                   className={`flex items-center gap-2 p-3 rounded-xl border text-sm font-bold transition-all ${idDocType === dt.value ? 'border-orange-500 bg-orange-500/10 text-orange-400' : 'border-white/10 bg-white/5 text-gray-400 hover:border-white/20'}`}>
                   <span>{dt.icon}</span>
                   <span className="truncate">{dt.label}</span>
@@ -483,37 +496,54 @@ const ClientRegistration = () => {
               ))}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* RECTO */}
+            {idDocType === 'CNI' || idDocType === 'PERMIS' ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* RECTO */}
+                <div className="flex flex-col gap-2">
+                  <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Télécharger le Recto (Face)</label>
+                  <div className="relative">
+                    <input type="file" accept="image/*,.pdf" onChange={e => setIdRectoFile(e.target.files?.[0] || null)}
+                      className="hidden" id="idRectoFile" />
+                    <label htmlFor="idRectoFile"
+                      className="flex items-center gap-3 p-4 rounded-2xl border border-dashed border-white/20 bg-white/5 cursor-pointer hover:border-orange-500/50 transition-all">
+                      <Upload className="w-5 h-5 text-orange-400" />
+                      <span className="text-sm text-gray-300 truncate">{idRectoFile ? idRectoFile.name : 'Photo Recto (Face)'}</span>
+                      {idRectoFile && <button type="button" onClick={e => { e.preventDefault(); setIdRectoFile(null); }} className="ml-auto"><X className="w-4 h-4 text-red-400" /></button>}
+                    </label>
+                  </div>
+                </div>
+
+                {/* VERSO */}
+                <div className="flex flex-col gap-2">
+                  <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Télécharger le Verso (Dos)</label>
+                  <div className="relative">
+                    <input type="file" accept="image/*,.pdf" onChange={e => setIdVersoFile(e.target.files?.[0] || null)}
+                      className="hidden" id="idVersoFile" />
+                    <label htmlFor="idVersoFile"
+                      className="flex items-center gap-3 p-4 rounded-2xl border border-dashed border-white/20 bg-white/5 cursor-pointer hover:border-orange-500/50 transition-all">
+                      <Upload className="w-5 h-5 text-orange-400" />
+                      <span className="text-sm text-gray-300 truncate">{idVersoFile ? idVersoFile.name : 'Photo Verso (Dos)'}</span>
+                      {idVersoFile && <button type="button" onClick={e => { e.preventDefault(); setIdVersoFile(null); }} className="ml-auto"><X className="w-4 h-4 text-red-400" /></button>}
+                    </label>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              /* DOCUMENT UNIQUE (Passeport / Autre) */
               <div className="flex flex-col gap-2">
-                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Télécharger le Recto</label>
+                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Télécharger la pièce d'identité</label>
                 <div className="relative">
                   <input type="file" accept="image/*,.pdf" onChange={e => setIdRectoFile(e.target.files?.[0] || null)}
-                    className="hidden" id="idRectoFile" />
-                  <label htmlFor="idRectoFile"
+                    className="hidden" id="idSingleFile" />
+                  <label htmlFor="idSingleFile"
                     className="flex items-center gap-3 p-4 rounded-2xl border border-dashed border-white/20 bg-white/5 cursor-pointer hover:border-orange-500/50 transition-all">
                     <Upload className="w-5 h-5 text-orange-400" />
-                    <span className="text-sm text-gray-300 truncate">{idRectoFile ? idRectoFile.name : 'Photo Recto (Face)'}</span>
+                    <span className="text-sm text-gray-300 truncate">{idRectoFile ? idRectoFile.name : `Scan / Photo (${idDocType === 'PASSEPORT' ? 'Passeport' : 'Document'})`}</span>
                     {idRectoFile && <button type="button" onClick={e => { e.preventDefault(); setIdRectoFile(null); }} className="ml-auto"><X className="w-4 h-4 text-red-400" /></button>}
                   </label>
                 </div>
               </div>
-
-              {/* VERSO */}
-              <div className="flex flex-col gap-2">
-                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Télécharger le Verso (si applicable)</label>
-                <div className="relative">
-                  <input type="file" accept="image/*,.pdf" onChange={e => setIdVersoFile(e.target.files?.[0] || null)}
-                    className="hidden" id="idVersoFile" />
-                  <label htmlFor="idVersoFile"
-                    className="flex items-center gap-3 p-4 rounded-2xl border border-dashed border-white/20 bg-white/5 cursor-pointer hover:border-orange-500/50 transition-all">
-                    <Upload className="w-5 h-5 text-orange-400" />
-                    <span className="text-sm text-gray-300 truncate">{idVersoFile ? idVersoFile.name : 'Photo Verso (Dos)'}</span>
-                    {idVersoFile && <button type="button" onClick={e => { e.preventDefault(); setIdVersoFile(null); }} className="ml-auto"><X className="w-4 h-4 text-red-400" /></button>}
-                  </label>
-                </div>
-              </div>
-            </div>
+            )}
           </motion.div>
 
           {/* Section 6: Documents légaux additionnels (Optionnel) */}
@@ -728,8 +758,14 @@ const ClientRegistration = () => {
 
                 <div className="bg-white/5 rounded-xl p-3 space-y-1">
                   <p className="text-xs font-bold text-orange-400 uppercase">Pièce d'identité ({summaryData.idDocType})</p>
-                  <p className="text-xs text-gray-300">Recto: {summaryData.idRecto || 'Non joint'}</p>
-                  <p className="text-xs text-gray-300">Verso: {summaryData.idVerso || 'Non joint'}</p>
+                  {summaryData.isRectoVerso ? (
+                    <>
+                      <p className="text-xs text-gray-300">Recto: {summaryData.idRecto || 'Non joint'}</p>
+                      <p className="text-xs text-gray-300">Verso: {summaryData.idVerso || 'Non joint'}</p>
+                    </>
+                  ) : (
+                    <p className="text-xs text-gray-300">Document: {summaryData.idDocument || 'Non joint'}</p>
+                  )}
                 </div>
               </div>
 
