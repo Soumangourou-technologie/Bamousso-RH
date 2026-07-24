@@ -6,6 +6,7 @@ import {
   getAllRegistrations,
   getRegistrationById,
   addDocument,
+  deleteClientRegistration,
 } from "../controllers/clientRegistration.controller.js";
 import { upload, validateFileType } from "../middleware/upload.js";
 
@@ -22,12 +23,17 @@ router.get("/", authorize(["COMPANY_ADMIN", "HR_MANAGER", "HR_ASSISTANT", "RH"])
 // Détail d'un enregistrement (commercial owner ou admin)
 router.get("/:id", getRegistrationById);
 
+// Supprimer un enregistrement (Admin/HR uniquement)
+router.delete("/:id", authorize(["COMPANY_ADMIN", "HR_MANAGER", "SUPER_ADMIN"]), deleteClientRegistration);
+
 // Créer un enregistrement (COMMERCIAL uniquement)
-// Accepte : idDocument (pièce d'identité) + documents[] (pièces légales additionnelles)
+// Accepte : idDocumentRecto, idDocumentVerso, idDocument (pièce d'identité) + documents[] (pièces légales additionnelles)
 router.post(
   "/",
   authorize(["COMMERCIAL"]),
   upload.fields([
+    { name: "idDocumentRecto", maxCount: 1 },
+    { name: "idDocumentVerso", maxCount: 1 },
     { name: "idDocument", maxCount: 1 },
     { name: "documents", maxCount: 5 },
   ]),
@@ -44,3 +50,4 @@ router.post(
 );
 
 export default router;
+

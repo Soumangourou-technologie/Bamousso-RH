@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Users, FolderOpen, ArrowLeft, Eye, MapPin, Phone, Mail,
-  Calendar, Building2, FileText, Download, User, Briefcase, Clock, Globe
+  Calendar, Building2, FileText, Download, User, Briefcase, Clock, Globe, Trash2, Loader2
 } from 'lucide-react';
+
 import api from '../utils/api';
 
 interface ClientDoc {
@@ -35,6 +36,8 @@ interface Registration {
   email: string | null;
   idDocumentType: string | null;
   idDocumentUrl: string | null;
+  idDocumentUrlRecto: string | null;
+  idDocumentUrlVerso: string | null;
   rdvSubject: string | null;
   rdvDescription: string | null;
   rdvDate: string | null;
@@ -63,6 +66,7 @@ const ClientRegistrationAdmin = () => {
   const [view, setView] = useState<View>('folders');
   const [selectedGroup, setSelectedGroup] = useState<CommercialGroup | null>(null);
   const [selectedReg, setSelectedReg] = useState<Registration | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     void fetchData();
@@ -80,6 +84,25 @@ const ClientRegistrationAdmin = () => {
       setLoading(false);
     }
   };
+
+  const handleDelete = async (id: string) => {
+    if (!window.confirm('Êtes-vous sûr de vouloir supprimer cet enregistrement client ? Cette action est irréversible.')) {
+      return;
+    }
+    setIsDeleting(true);
+    try {
+      await api.delete(`/client-registrations/${id}`);
+      setSelectedReg(null);
+      setView('list');
+      await fetchData();
+    } catch (err: any) {
+      alert(err?.response?.data?.message || 'Erreur lors de la suppression.');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+
 
   const totalClients = groups.reduce((sum, g) => sum + g.count, 0);
 
@@ -131,7 +154,8 @@ const ClientRegistrationAdmin = () => {
               onClick={() => { setSelectedGroup(g); setView('list'); }}
               className="glass-card rounded-2xl p-6 text-left hover:border-orange-500/30 border border-transparent transition-all duration-300 group">
               <div className="flex items-center gap-4 mb-4">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-500 to-orange-700 flex items-center justify-center text-white font-black text-lg shadow-lg shadow-orange-500/20 group-hover:scale-105 transition-transform">
+                <div className="w-14 h-14 rounded-2xl bg-linear-to-br from-orange-500 to-orange-700 flex items-center justify-center text-white font-black text-lg shadow-lg shadow-orange-500/20 group-hover:scale-105 transition-transform">
+
                   {g.commercial.firstName[0]}{g.commercial.lastName[0]}
                 </div>
                 <div className="min-w-0">
@@ -164,7 +188,8 @@ const ClientRegistrationAdmin = () => {
         </button>
 
         <div className="glass-card rounded-2xl p-5 flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500 to-orange-700 flex items-center justify-center text-white font-black shadow-lg">
+          <div className="w-12 h-12 rounded-xl bg-linear-to-br from-orange-500 to-orange-700 flex items-center justify-center text-white font-black shadow-lg">
+
             {selectedGroup.commercial.firstName[0]}{selectedGroup.commercial.lastName[0]}
           </div>
           <div>
@@ -223,9 +248,10 @@ const ClientRegistrationAdmin = () => {
         </button>
 
         {/* Client Header */}
-        <div className="glass-card rounded-3xl p-6">
-          <div className="flex items-center gap-4 mb-4">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white font-black text-lg shadow-lg">
+        <div className="glass-card rounded-3xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 rounded-2xl bg-linear-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white font-black text-lg shadow-lg">
+
               {r.firstName[0]}{r.lastName[0]}
             </div>
             <div>
@@ -236,7 +262,17 @@ const ClientRegistrationAdmin = () => {
               </p>
             </div>
           </div>
+
+          <button
+            onClick={() => handleDelete(r.id)}
+            disabled={isDeleting}
+            className="flex items-center gap-2 px-4 py-2.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 rounded-xl font-bold text-xs transition-all self-start md:self-auto disabled:opacity-50"
+          >
+            {isDeleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+            Supprimer le client
+          </button>
         </div>
+
 
         {/* Info sections */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -312,16 +348,35 @@ const ClientRegistrationAdmin = () => {
         )}
 
         {/* Pièce d'identité */}
-        {r.idDocumentUrl && (
+        {(r.idDocumentUrlRecto || r.idDocumentUrlVerso || r.idDocumentUrl) && (
           <div className="glass-card rounded-2xl p-5">
-            <h4 className="text-sm font-bold text-orange-400 mb-3 flex items-center gap-2"><FileText className="w-4 h-4" /> Pièce d'identité</h4>
-            <a href={r.idDocumentUrl} target="_blank" rel="noreferrer"
-              className="flex items-center gap-3 bg-white/5 hover:bg-white/10 rounded-xl p-4 transition-all">
-              <Download className="w-5 h-5 text-orange-400" />
-              <span className="text-sm text-gray-300 font-medium">Télécharger la pièce d'identité ({r.idDocumentType})</span>
-            </a>
+            <h4 className="text-sm font-bold text-orange-400 mb-3 flex items-center gap-2"><FileText className="w-4 h-4" /> Pièce d'identité ({r.idDocumentType || 'Document'})</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {r.idDocumentUrlRecto && (
+                <a href={r.idDocumentUrlRecto} target="_blank" rel="noreferrer"
+                  className="flex items-center gap-3 bg-white/5 hover:bg-white/10 rounded-xl p-4 transition-all">
+                  <Download className="w-5 h-5 text-orange-400" />
+                  <span className="text-sm text-gray-300 font-medium">Télécharger le Recto</span>
+                </a>
+              )}
+              {r.idDocumentUrlVerso && (
+                <a href={r.idDocumentUrlVerso} target="_blank" rel="noreferrer"
+                  className="flex items-center gap-3 bg-white/5 hover:bg-white/10 rounded-xl p-4 transition-all">
+                  <Download className="w-5 h-5 text-orange-400" />
+                  <span className="text-sm text-gray-300 font-medium">Télécharger le Verso</span>
+                </a>
+              )}
+              {r.idDocumentUrl && !r.idDocumentUrlRecto && (
+                <a href={r.idDocumentUrl} target="_blank" rel="noreferrer"
+                  className="flex items-center gap-3 bg-white/5 hover:bg-white/10 rounded-xl p-4 transition-all">
+                  <Download className="w-5 h-5 text-orange-400" />
+                  <span className="text-sm text-gray-300 font-medium">Télécharger la pièce d'identité</span>
+                </a>
+              )}
+            </div>
           </div>
         )}
+
 
         {/* Documents */}
         {r.documents.length > 0 && (
@@ -348,9 +403,10 @@ const ClientRegistrationAdmin = () => {
     <div className="max-w-6xl mx-auto space-y-6">
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="glass-card rounded-3xl p-8 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-orange-500/10 to-transparent rounded-bl-full" />
+        <div className="absolute top-0 right-0 w-48 h-48 bg-linear-to-bl from-orange-500/10 to-transparent rounded-bl-full" />
         <div className="relative z-10 flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-500 to-orange-700 flex items-center justify-center shadow-lg">
+          <div className="w-14 h-14 rounded-2xl bg-linear-to-br from-orange-500 to-orange-700 flex items-center justify-center shadow-lg">
+
             <Briefcase className="w-7 h-7 text-white" />
           </div>
           <div>

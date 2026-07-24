@@ -6,8 +6,9 @@ import { notifyAdmins } from "../utils/notifications.js";
 
 /**
  * Crée un nouvel enregistrement client (COMMERCIAL uniquement).
- * Gère l'upload de la pièce d'identité et des signatures.
+ * Gère l'upload de la pièce d'identité (Recto / Verso) et des signatures.
  */
+
 export const createClientRegistration = async (req: Request, res: Response): Promise<any> => {
   try {
     const currentUser = (req as any).user as { id: string; role: string; companyId: string; firstName?: string; lastName?: string };
@@ -38,10 +39,28 @@ export const createClientRegistration = async (req: Request, res: Response): Pro
       return res.status(400).json({ message: "Le nom et le prénom du client sont obligatoires." });
     }
 
-    // Upload pièce d'identité si fournie
+    if (!phoneFix && !phoneMobile && !whatsapp && !email) {
+      return res.status(400).json({ message: "Au moins un moyen de contact (Fixe, Mobile, WhatsApp ou Email) est obligatoire." });
+    }
+
+    // Upload pièce d'identité si fournie (Recto / Verso / Unique)
     let idDocumentUrl: string | null = null;
+    let idDocumentUrlRecto: string | null = null;
+    let idDocumentUrlVerso: string | null = null;
+
+    if (files && files['idDocumentRecto'] && files['idDocumentRecto'][0]) {
+      idDocumentUrlRecto = await uploadToSupabase(files['idDocumentRecto'][0], 'bamousso');
+    }
+    if (files && files['idDocumentVerso'] && files['idDocumentVerso'][0]) {
+      idDocumentUrlVerso = await uploadToSupabase(files['idDocumentVerso'][0], 'bamousso');
+    }
     if (files && files['idDocument'] && files['idDocument'][0]) {
       idDocumentUrl = await uploadToSupabase(files['idDocument'][0], 'bamousso');
+    }
+
+    // Si idDocumentUrl est nul mais qu'on a un Recto, idDocumentUrl prend la valeur du Recto pour la rétrocompatibilité
+    if (!idDocumentUrl && idDocumentUrlRecto) {
+      idDocumentUrl = idDocumentUrlRecto;
     }
 
     // Upload signatures si base64 fournie — on les convertit en Buffer et upload
@@ -112,6 +131,8 @@ export const createClientRegistration = async (req: Request, res: Response): Pro
         email: email || null,
         idDocumentType: idDocumentType || null,
         idDocumentUrl,
+        idDocumentUrlRecto,
+        idDocumentUrlVerso,
         rdvSubject: rdvSubject || null,
         rdvDescription: rdvDescription || null,
         rdvDate: rdvDate ? new Date(rdvDate) : null,
@@ -127,6 +148,7 @@ export const createClientRegistration = async (req: Request, res: Response): Pro
           create: additionalDocs,
         },
       },
+
       include: {
         documents: true,
         commercial: {
@@ -305,3 +327,38 @@ export const addDocument = async (req: Request, res: Response): Promise<any> => 
     res.status(500).json({ message: "Erreur serveur.", error: error.message });
   }
 };
+
+/**
+ * Supprime un enregistrement client (COMPANY_ADMIN et HR_MANAGER uniquement).
+ */
+export const deleteClientRegistration = async (req: Request, res: Response): Promise<any> => {
+  try {
+    const currentUser = (req as any).user as { id: string; role: string; companyId: string };
+    const id = req.params.id as string;
+
+    const registration = await prisma.clientRegistration.findFirst({
+      where: {
+        id,
+        companyId: currentUser.companyId,
+      },
+    });
+
+    if (!registration) {
+      return res.status(404).json({ message: "Enregistrement non trouvé." });
+    }
+
+    if (!['COMPANY_ADMIN', 'HR_MANAGER', 'SUPER_ADMIN'].includes(currentUser.role)) {
+      return res.status(403).json({ message: "Seuls les administrateurs et RH peuvent supprimer un enregistrement." });
+    }
+
+    await prisma.clientRegistration.delete({
+      where: { id },
+    });
+
+    res.json({ success: true, message: "Enregistrement supprimé avec succès." });
+  } catch (error: any) {
+    console.error("Erreur suppression enregistrement client:", error);
+    res.status(500).json({ message: "Erreur serveur.", error: error.message });
+  }
+};
+

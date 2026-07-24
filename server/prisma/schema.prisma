@@ -426,8 +426,10 @@ model ClientRegistration {
   email       String?
 
   // Pièce d'identité
-  idDocumentType String? // CNI | PASSEPORT | PERMIS | AUTRE
-  idDocumentUrl  String? // URL du scan uploadé
+  idDocumentType      String? // CNI | PASSEPORT | PERMIS | AUTRE
+  idDocumentUrl       String? // URL du scan uploadé (rétrocompatibilité)
+  idDocumentUrlRecto  String? // URL du scan recto
+  idDocumentUrlVerso  String? // URL du scan verso
 
   // Rendez-vous
   rdvSubject     String?
