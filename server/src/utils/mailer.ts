@@ -235,3 +235,64 @@ export const sendPayslipEmail = async (email: string, firstName: string, lastNam
     await logger.error("Erreur envoi email paie", error, "Mailer");
   }
 };
+
+/**
+ * Envoie un email de diffusion générale ou ciblée émis par le Super Admin
+ */
+export const sendBroadcastEmail = async (
+  email: string,
+  recipientName: string,
+  subject: string,
+  messageContent: string,
+  attachmentUrl?: string | null,
+  attachmentName?: string | null
+) => {
+  try {
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    
+    // Convert newlines in messageContent to HTML linebreaks
+    const formattedMessage = messageContent.replace(/\n/g, '<br/>');
+
+    const html = `
+      <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; padding: 30px; color: #222; max-width: 650px; margin: 0 auto; border: 1px solid #e5e7eb; border-radius: 20px; background-color: #ffffff;">
+        <div style="text-align: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 2px solid #fff3e0;">
+          <h1 style="color: #f7a600; font-size: 26px; font-weight: 900; margin: 0; letter-spacing: -0.5px;">BAMOUSSO RH</h1>
+          <p style="color: #6b7280; font-size: 13px; margin-top: 4px; font-weight: 600;">Information Officielle de la Plateforme</p>
+        </div>
+        
+        <h2 style="font-size: 18px; font-weight: 700; color: #111827; margin-bottom: 16px;">Bonjour ${recipientName},</h2>
+        
+        <div style="font-size: 15px; line-height: 1.7; color: #374151; background: #fafafa; padding: 20px; border-radius: 12px; border-left: 4px solid #f7a600; margin-bottom: 24px;">
+          ${formattedMessage}
+        </div>
+
+        ${attachmentUrl ? `
+          <div style="background: #fff8f0; border: 1px dashed #f7a600; padding: 15px; border-radius: 12px; margin-bottom: 24px;">
+            <p style="margin: 0; font-size: 13px; font-weight: bold; color: #d97706;">📎 Document joint :</p>
+            <p style="margin: 4px 0 10px 0; font-size: 14px; font-weight: 600; color: #1f2937;">${attachmentName || 'Fichier attaché'}</p>
+            <a href="${attachmentUrl}" target="_blank" style="background-color: #f7a600; color: white; padding: 8px 16px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 12px; display: inline-block;">Télécharger la pièce jointe</a>
+          </div>
+        ` : ''}
+        
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${frontendUrl}/login" style="background-color: #111827; color: white; padding: 14px 28px; border-radius: 12px; text-decoration: none; font-weight: bold; font-size: 14px; display: inline-block;">Accéder à Bamousso RH</a>
+        </div>
+        
+        <div style="border-top: 1px solid #f3f4f6; margin-top: 30px; padding-top: 20px; font-size: 12px; color: #9ca3af; text-align: center;">
+          <p style="margin: 0 0 5px 0;">Cet e-mail a été envoyé par l'administration de Bamousso RH.</p>
+          <p style="margin: 0;">© 2026 Bamousso RH — Tous droits réservés.</p>
+        </div>
+      </div>
+    `;
+
+    await resend.emails.send({
+      from: 'Bamousso RH <information@bamousso.com>',
+      to: email,
+      subject: subject,
+      html: html
+    });
+    await logger.info(`Email de broadcast envoyé à ${email}`, { subject }, "Mailer");
+  } catch (error) {
+    await logger.error(`Erreur envoi email broadcast à ${email}`, error, "Mailer");
+  }
+};

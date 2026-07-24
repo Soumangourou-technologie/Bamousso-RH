@@ -1,0 +1,269 @@
+================================================================================
+                    DOCUMENTATION DÉTAILLÉE DES FONCTIONNALITÉS
+                               BAMOUSSO RH (SaaS)
+================================================================================
+
+Chemin du fichier : /Users/macbook/Desktop/SOUMANGOUROU TECHNOLOGIE/BAMOUSSO RH/Bamousso-RH/DOCUMENTATION_FONCTIONNALITES_BAMOUSSO_RH.txt
+Date de mise à jour : 24 Juillet 2026
+Plateforme : BAMOUSSO RH SaaS
+
+
+--------------------------------------------------------------------------------
+1. PRÉSENTATION GÉNÉRALE
+--------------------------------------------------------------------------------
+Bamousso RH est un Progiciel de Gestion Intégré (ERP/SIRH) en mode SaaS multi-entreprises dédié à la gestion globale du personnel, de la paie, du pointage géolocalisé, du suivi commercial terrain et de la comptabilité interne des entreprises.
+
+L'application prend en compte la hiérarchie d'entreprise, la flexibilité des modes de rémunération (mensuel, journalier, horaire, hybride), ainsi que des rôles utilisateurs très précis garantissant la confidentialité des données et la séparation des pouvoirs.
+
+
+--------------------------------------------------------------------------------
+2. MATRICE DES PROFILS UTILISATEURS ET RÔLES (RBAC)
+--------------------------------------------------------------------------------
+L'application s'articule autour de 7 rôles prédéfinis principaux, complétés par un système de Rôles Personnalisés (Custom Roles / RBAC) :
+
+1. SUPER_ADMIN (Administrateur Plateforme SaaS)
+   - Gestionnaire global du SaaS Bamousso RH. Accès à toutes les entreprises, abonnements, paiements et support technique.
+
+2. COMPANY_ADMIN (Administrateur Entreprise / Dirigeant)
+   - Directeur général ou administrateur de l'entreprise cliente. Contrôle total sur son entreprise, les abonnements, la comptabilité et les configurations.
+
+3. HR_MANAGER (Responsable Ressources Humaines / DRH)
+   - Gestionnaire principal du personnel, de la paie, des contrats, des congés, des mesures disciplinaires et du pointage.
+
+4. HR_ASSISTANT (Assistant RH)
+   - Support au responsable RH pour le suivi quotidien des présences, la collecte des documents et la gestion des demandes courantes.
+
+5. COMMERCIAL (Commercial Terrain / Agent Commercial)
+   - Utilisateur de terrain dédié au prospection, à l'enregistrement des nouveaux clients/prospects et à la prise de rendez-vous avec signature numérique.
+
+6. LIVREUR (Livreur / Agent de Terrain Géolocalisé)
+   - Agent mobile avec suivi GPS en temps réel, pointage sur le terrain et réalisation des missions de livraison.
+
+7. EMPLOYEE (Employé / Salarié Standard)
+   - Tout salarié de l'entreprise. Accès à son espace personnel (bulletins de paie, pointage, congés, tâches, missions, messagerie, suggestions).
+
+
+--------------------------------------------------------------------------------
+3. DÉTAIL EXHAUSTIF DES FONCTIONNALITÉS PAR MODULE ET PROFIL
+--------------------------------------------------------------------------------
+
+================================================================================
+MODULE A : ADMINISTRATION GLOBALE SAAS (SUPER_ADMIN)
+================================================================================
+Profils concernés : SUPER_ADMIN uniquement
+
+Fonctionnalités :
+1. Tableau de bord Super Admin (DashboardSuperAdmin) :
+   - Vue consolidée en temps réel du chiffre d'affaires du SaaS, du nombre total d'entreprises inscrites, des employés actifs et des abonnements.
+   - Graphiques d'évolution des revenus, du taux de rétention et d'utilisation de la plateforme.
+
+2. Gestion des Entreprises & Abonnements (SuperAdminOfflineClients) :
+   - Inscription et configuration des entreprises clientes (Off-line / On-line).
+   - Gestion des plans tarifaires (FITINI, LOUBA, KORO).
+   - Gestion des périodes d'essai (Trial 7 jours) et des dates d'échéance d'abonnement.
+   - Activation, suspension ou verrouillage manuel des comptes entreprises en cas d'impayé.
+   - Ajustement du quota d'employés autorisés et tarification des employés supplémentaires.
+
+3. Support Client Centralisé & Live Chat (Support) :
+   - Réception et traitement des tickets de support émis par les administrateurs et RH d'entreprises.
+   - Système de Live Chat en temps réel via WebSockets (Socket.IO) pour l'assistance directe.
+   - Suivi du statut des tickets (OUVERT, EN_COURS, RESOLU, FERME).
+
+
+================================================================================
+MODULE B : ADMINISTRATION D'ENTREPRISE & GESTION FINANCIÈRE (COMPANY_ADMIN)
+================================================================================
+Profils concernés : COMPANY_ADMIN, (et SUPER_ADMIN en superposition)
+
+Fonctionnalités :
+1. Tableau de Bord Exécutif (DashboardAdmin) :
+   - Synthèse de la masse salariale mensuelle, des effectifs, du taux de présence du jour et des alertes RH critiques.
+   - Raccourcis de gestion stratégique.
+
+2. Gestion de l'Abonnement et Paiements (Payment, Upgrade, PaymentSuccess, PaymentCancelled) :
+   - Consultation du statut de l'abonnement et de la date de renouvellement.
+   - Mise à niveau du plan (Upgrade FITINI -> LOUBA -> KORO).
+   - Paiement en ligne ou hors-ligne des abonnements.
+   - Historique des transactions et factures de la plateforme.
+
+3. Configuration et Paramètres d'Entreprise (Settings) :
+   - Personnalisation de la raison sociale, adresse et logo officiel (utilisé sur les bulletins de paie et documents).
+   - Définition des taux d'heures supplémentaires légaux (125%, 150%, 200%).
+   - Verrouillage/déverrouillage de la paie et des clôtures financières.
+
+4. Gestion de la Comptabilité et Trésorerie (Accounting) :
+   - Suivi des recettes et dépenses de l'entreprise (Transactions d'entreprise).
+   - Catégorisation des flux financiers et calcul du solde en temps réel.
+   - Bilan financier et filtres par période.
+
+5. Gestion des Rôles Personnalisés et Permissions (Roles) :
+   - Création de rôles RH/Administratifs personnalisés (RBAC).
+   - Attribution fine des droits d'accès (Création, Lecture, Modification, Suppression) par module.
+
+6. Organisation des Départements (Departments) :
+   - Création et structuration des départements/services de l'entreprise.
+   - Attribution des responsables de département (Managers).
+
+
+================================================================================
+MODULE C : GESTION DES RESSOURCES HUMAINES & PAIE (HR_MANAGER & HR_ASSISTANT)
+================================================================================
+Profils concernés : HR_MANAGER, HR_ASSISTANT, COMPANY_ADMIN
+
+Fonctionnalités :
+1. Tableau de Bord RH (DashboardHR) :
+   - Indicateurs RH clés : présences du jour, retards, salariés en congé, contrats arrivant à échéance, demandes en attente.
+
+2. Gestion des Employés et Dossiers RH (Employees) :
+   - Fiche complète du salarié (État civil, coordonnées, poste, département, manager hiérarchique, type de contrat).
+   - Configuration du mode de rémunération : Salaire de base (mensuel), Taux horaire, Taux journalier ou Hybride.
+   - Coordonnées bancaires (RIB / Banque) pour le virement des salaires.
+   - Statut du compte (INVITÉ, ACTIF, INACTIF/SUSPENDU).
+
+3. Gestion de la Paie et Bulletins de Salaire (Salaries) :
+   - Calcul automatique de la paie mensuelle incluant : salaire de base, heures supplémentaires (125%, 150%, 200%), primes, retenues et acomptes.
+   - Génération individuelle et par lot des bulletins de paie au format PDF professionnel avec logo de l'entreprise.
+   - Historique des bulletins et possibilité d'envoi automatique aux salariés.
+
+4. Gestion des Congés et Absences (Leaves) :
+   - Visualisation de toutes les demandes de congés déposées par le personnel.
+   - Validation ou rejet motivé des demandes (par le Manager et les RH).
+   - Suivi automatique des soldes de congés payés, congés maladie, permissions exceptionnelles.
+
+5. Suivi du Pointage et des Présences (Attendance) :
+   - Rapport complet des heures d'arrivée, de départ et de pause.
+   - Détection automatique des retards, des heures de travail effectives et des heures supplémentaires.
+   - Validation ou correction manuelle des feutres de pointage par les RH.
+   - Historique exportable des présences.
+
+6. Plannings et Horaires de Travail (WorkSchedules) :
+   - Configuration des horaires officiels de travail (heures de début/fin, jours ouvrés, seuils de tolérance aux retards).
+   - Affectation des plannings par employé ou par département.
+
+7. Demandes d'Explication et Cas Disciplinaires (Explanations, Conflicts) :
+   - Émission de demandes d'explications formelles aux salariés en cas de faute ou retard injustifié.
+   - Suivi des réponses apportées par les salariés.
+   - Ouverture et traitement des dossiers disciplinaires internes (OPEN, UNDER_INVESTIGATION, RESOLVED, CLOSED).
+
+8. Annonces et Communication Interne (Announcements) :
+   - Publication de notes d'information, circulaires et annonces destinées à l'ensemble du personnel ou à des départements spécifiques.
+
+9. Gestion Électronique des Documents RH (Documents) :
+   - Stockage sécurisé des contrats de travail, pièces d'identité, diplômes, fiches de poste et certifications du personnel.
+
+
+================================================================================
+MODULE D : ESPACE COMMERCIAL TERRAIN (COMMERCIAL)
+================================================================================
+Profils concernés : COMMERCIAL, (et attribution / suivi par COMPANY_ADMIN, HR_MANAGER)
+
+Fonctionnalités :
+1. Gestion des Missions de Prospection (Menu "Prospections" / `/missions/prospection`) :
+   - Ordres de mission de prospection attribués par la direction aux commerciaux (Ex: "Prospection Zone Industrielle", "Porte-à-porte grands comptes").
+   - Fiche de mission comprenant : Nom du prospect ciblé, téléphone, adresse/localisation, date limite de réalisation (`dueDate`), consignes.
+   - Suivi d'avancement (Statuts : En attente, En cours, Terminée, Annulée).
+   - Validation de visite sur le terrain : Confirmation par Signature Numérique du prospect rencontré ou accord verbal.
+   - Exportation des ordres de mission au format PDF et rapports globaux de prospection au format Excel (.xlsx).
+
+2. Formulaire Terrain d'Enregistrement Client / Prospect (Menu "Enregistrement Client" / `/client-registration`) :
+   - Collecte complète de l'identité du client (Nom, Prénom, Sexe, Entreprise ou Particulier, Statut juridique, Secteur).
+   - Saisie de la localisation (Ville, Commune/Quartier, Pays).
+   - Renseignements des contacts (Téléphone fixe, Mobile, WhatsApp, Email - avec règle d'obligation d'au moins 1 contact).
+
+3. Upload Intelligent des Pièces d'Identité :
+   - Affichage dynamique des champs selon le type de pièce sélectionné :
+     * Carte Nationale d'Identité (CNI) & Permis de conduire : 2 zones d'upload séparées (Photo Recto Face & Photo Verso Dos).
+     * Passeport & Autre : 1 zone d'upload unique (Scan/Photo du document).
+   - Upload de pièces justificatives d'entreprise complémentaires (RCCM, NIF, etc. jusqu'à 5 fichiers).
+
+4. Planification des Rendez-vous Commercial :
+   - Définition de l'objet, de la description/notes terrain, de la date, de l'heure et du mode de rendez-vous (Présentiel, Appel, Visioconférence).
+
+5. Consentement et Signature Numérique Tactile :
+   - Signature manuscrite directement sur écran tactile (Pad de signature Client & Pad Commercial) avec conversion automatique en image sécurisée.
+   - Mode alternatif : Validation par accord verbal.
+   - Checkbox de consentement conforme pour le traitement des données.
+
+6. Pop-up de Confirmation et Historique Terrain :
+   - Résumé complet et relecture des données saisies avant validation finale.
+   - Onglet "Mes Enregistrements" : Historique personnel des prospects enregistrés en lecture seule pour le commercial.
+   - Consultation centralisée par la direction via le module administrateur (ClientRegistrationAdmin).
+
+
+================================================================================
+MODULE E : AGENTS DE TERRAIN ET LIVREURS (LIVREUR)
+================================================================================
+Profils concernés : LIVREUR, (et suivi par HR_MANAGER, COMPANY_ADMIN)
+
+Fonctionnalités :
+1. Suivi GPS en Temps Réel (GPS Tracking) :
+   - Envoi automatique des coordonnées géographiques (Latitude, Longitude) lors des activités de terrain.
+   - Carte de suivi en temps réel pour la direction et la logistique.
+
+2. Pointage Mobile Géolocalisé :
+   - Pointage de prise de service et fin de service directement depuis l'application mobile ou web sur le lieu de livraison.
+
+
+================================================================================
+MODULE F : ESPACE SALARIÉ / EMPLOYÉ (EMPLOYEE - ACCESSIBLE À TOUS LES PROFILS)
+================================================================================
+Profils concernés : EMPLOYEE, et l'ensemble des salariés quel que soit leur niveau hiérarchique
+
+Fonctionnalités :
+1. Tableau de Bord Employé (DashboardEmployee) :
+   - Vue personnalisée récapitulant les tâches du jour, le statut du pointage, les prochains congés et les annonces d'entreprise.
+
+2. Pointage Quotidien Intégré :
+   - Bouton de pointage d'Arrivée et de Départ.
+   - Validation des coordonnées GPS ou scan de QR Code sur le site de travail.
+
+3. Espace Bulletins de Paie Personnels :
+   - Consultation sécurisée et téléchargement au format PDF de ses propres bulletins de salaire.
+
+4. Demande de Congés et Absences :
+   - Formulaire de demande de congé (sélection des dates, motif, pièce justificative).
+   - Suivi du statut de la demande (EN_ATTENTE, APPROUVE, REJETE) et des soldes restants.
+
+5. Gestion des Tâches Individuelles et d'Équipe (Tasks) :
+   - Tableau de gestion des tâches (Kanban / Liste) attribuées par la hiérarchie.
+   - Mise à jour de l'état d'avancement (A_FAIRE, EN_COURS, TERMINE) et ajout de commentaires.
+
+6. Ordres de Mission et Frais de Déplacement (Missions, ExpenseReports) :
+   - Soumission d'ordres de mission (destination, objectif, dates).
+   - Saisie des notes de frais de mission (justificatifs numérisés, transport, hébergement, restauration) pour remboursement.
+
+7. Messagerie Interne et Tchat d'Équipe (Messaging) :
+   - Discussion directe ou de groupe entre collègues de travail et managers.
+   - Indicateur de statut en ligne (Online / Offline).
+
+8. Boîte à Idées et Suggestions (Suggestions) :
+   - Dépôt de suggestions pour l'amélioration du bien-être au travail ou des processus.
+   - Option d'envoi Anonyme ou Nominatif.
+
+9. Gestion des Demandes d'Explication :
+   - Réception et soumission de réponse écrite aux demandes d'explication adressées par la direction ou les RH.
+
+
+--------------------------------------------------------------------------------
+4. SYNTHÈSE DES DROITS D'ACCÈS PAR RÔLE
+--------------------------------------------------------------------------------
+
++------------------------------+-------------+---------------+------------+--------------+------------+-----------+----------+
+| MODALITÉ / FONCTIONNALITÉ    | SUPER_ADMIN | COMPANY_ADMIN | HR_MANAGER | HR_ASSISTANT | COMMERCIAL |  LIVREUR  | EMPLOYEE |
++------------------------------+-------------+---------------+------------+--------------+------------+-----------+----------+
+| Gestion Multi-SaaS / Clients |    TOTAL    |       -       |     -      |      -       |     -      |     -     |    -     |
+| Comptabilité & Abonnements   |    TOTAL    |     TOTAL     |     -      |      -       |     -      |     -     |    -     |
+| Config Entreprise & Rôles    |    TOTAL    |     TOTAL     |     -      |      -       |     -      |     -     |    -     |
+| Gestion Employés & Salaires  |    LECTURE  |     TOTAL     |   TOTAL    |   LECTURE    |     -      |     -     |    -     |
+| Validation Congés            |    LECTURE  |     TOTAL     |   TOTAL    |   LECTURE    |     -      |     -     |    -     |
+| Pointage & Présences         |    LECTURE  |     TOTAL     |   TOTAL    |    GESTION   |   PROPRE   |  PROPRE   |  PROPRE  |
+| Enregistrement Clients       |    LECTURE  |    LECTURE    |  LECTURE   |      -       |   TOTAL    |     -     |    -     |
+| Suivi GPS Terrain            |    LECTURE  |    LECTURE    |  LECTURE   |   LECTURE    |     -      |   TOTAL   |    -     |
+| Bulletins de Paie (Propres)  |    OUI      |      OUI      |    OUI     |     OUI      |    OUI     |    OUI    |   OUI    |
+| Tâches & Missions Propres    |    OUI      |      OUI      |    OUI     |     OUI      |    OUI     |    OUI    |   OUI    |
+| Messagerie & Suggestions     |    OUI      |      OUI      |    OUI     |     OUI      |    OUI     |    OUI    |   OUI    |
++------------------------------+-------------+---------------+------------+--------------+------------+-----------+----------+
+
+================================================================================
+FIN DE LA DOCUMENTATION - BAMOUSSO RH
+================================================================================

@@ -139,10 +139,16 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           </Link>
 
           {isSuperAdmin && (
-            <Link to="/dashboard/super-admin/offline" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/dashboard/super-admin/offline' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
-              <Wallet className="w-5 h-5" />
-              Clients Hors-Ligne
-            </Link>
+            <>
+              <Link to="/dashboard/super-admin/offline" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/dashboard/super-admin/offline' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
+                <Wallet className="w-5 h-5" />
+                Clients Hors-Ligne
+              </Link>
+              <Link to="/dashboard/super-admin/broadcast" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/dashboard/super-admin/broadcast' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
+                <Megaphone className="w-5 h-5" />
+                Diffusion & Emails
+              </Link>
+            </>
           )}
 
           {(isSuperAdmin || user.role === 'COMPANY_ADMIN') && (

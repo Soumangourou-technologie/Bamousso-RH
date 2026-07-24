@@ -18,9 +18,11 @@ import {
   renewOfflineSubscription,
   changeOfflinePlan,
   getSystemSettings,
-  updateSystemSettings
+  updateSystemSettings,
+  sendBroadcastMessage,
+  getBroadcastHistory
 } from "../controllers/superadmin.controller.js";
-
+import { upload, validateFileType } from "../middleware/upload.js";
 
 const router = Router();
 
@@ -39,6 +41,16 @@ router.delete("/companies/:id", authorize(["SUPER_ADMIN"]), deleteCompany);
 router.post("/companies/offline", authorize(["SUPER_ADMIN"]), createOfflineCompany);
 router.patch("/companies/offline/:id/renew", authorize(["SUPER_ADMIN"]), renewOfflineSubscription);
 router.patch("/companies/offline/:id/plan", authorize(["SUPER_ADMIN"]), changeOfflinePlan);
+
+// Routes Broadcast & Notifications Super Admin
+router.post(
+  "/broadcast",
+  authorize(["SUPER_ADMIN"]),
+  upload.single("attachment"),
+  validateFileType,
+  sendBroadcastMessage
+);
+router.get("/broadcasts", authorize(["SUPER_ADMIN"]), getBroadcastHistory);
 
 router.get("/logs", authorize(["SUPER_ADMIN"]), getSystemLogs);
 router.get("/payments", authorize(["SUPER_ADMIN"]), getAllPayments);

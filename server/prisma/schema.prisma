@@ -717,3 +717,21 @@ model ExpenseReport {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
+/// Modèle Diffusion Système par Super Admin (Broadcast Notifications & Emails)
+model SystemBroadcast {
+  id               String   @id @default(uuid())
+  subject          String
+  message          String
+  targetType       String   @default("ALL") // ALL | SELECTED_COMPANIES | PLAN_FILTER | ROLE_FILTER
+  targetPlan       String?  // FITINI, LOUBA, KORO
+  targetRole       String?  // COMPANY_ADMIN, HR_MANAGER, etc.
+  targetCompanyIds String[] @default([])
+  sendEmail        Boolean  @default(true)
+  sendInApp        Boolean  @default(true)
+  attachmentUrl    String?
+  attachmentName   String?
+
+  createdById      String
+  createdAt        DateTime @default(now())
+}

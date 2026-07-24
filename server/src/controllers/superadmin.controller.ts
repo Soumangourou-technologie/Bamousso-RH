@@ -9,7 +9,8 @@ import bcrypt from "bcryptjs";
 import prisma from "../utils/prisma.js";
 import { z } from "zod";
 import type { AuthRequest } from "../middleware/auth.js";
-import { sendOfflineWelcomeEmail } from "../utils/mailer.js";
+import { sendOfflineWelcomeEmail, sendBroadcastEmail } from "../utils/mailer.js";
+import { uploadToSupabase } from "../utils/supabase.js";
 
 // ─── Schémas de Validation ────────────────────────────────────────────────────
 
@@ -551,6 +552,162 @@ export const updateSystemSettings = async (req: AuthRequest, res: Response): Pro
     res.json({ message: "Paramètres mis à jour avec succès." });
   } catch (error: any) {
     res.status(500).json({ message: "Erreur lors de la mise à jour des paramètres.", error: error.message });
+  }
+};
+
+/**
+ * Diffuse un message/notification générale ou ciblée aux clients SaaS (Super Admin)
+ */
+export const sendBroadcastMessage = async (req: AuthRequest, res: Response): Promise<any> => {
+  try {
+    const superAdminId = req.user?.id || "SYSTEM";
+    const {
+      subject,
+      message,
+      targetType = "ALL", // ALL | SELECTED_COMPANIES | PLAN_FILTER | ROLE_FILTER
+      targetPlan,
+      targetRole,
+      sendEmail = "true",
+      sendInApp = "true",
+    } = req.body;
+
+    let targetCompanyIds: string[] = [];
+    if (req.body.targetCompanyIds) {
+      if (typeof req.body.targetCompanyIds === 'string') {
+        try {
+          targetCompanyIds = JSON.parse(req.body.targetCompanyIds);
+        } catch {
+          targetCompanyIds = [req.body.targetCompanyIds];
+        }
+      } else if (Array.isArray(req.body.targetCompanyIds)) {
+        targetCompanyIds = req.body.targetCompanyIds;
+      }
+    }
+
+    const shouldSendEmail = sendEmail === true || sendEmail === "true";
+    const shouldSendInApp = sendInApp === true || sendInApp === "true";
+
+    if (!subject || !message) {
+      return res.status(400).json({ message: "Le sujet et le message sont obligatoires." });
+    }
+
+    // Traitement du fichier joint si présent
+    let attachmentUrl: string | null = null;
+    let attachmentName: string | null = null;
+
+    if (req.file) {
+      attachmentName = req.file.originalname;
+      attachmentUrl = await uploadToSupabase(req.file as any, 'bamousso');
+    }
+
+    // Construction du filtre des utilisateurs destinataires
+    const userWhere: any = {
+      status: 'ACTIVE'
+    };
+
+    if (targetType === 'SELECTED_COMPANIES' && targetCompanyIds.length > 0) {
+      userWhere.companyId = { in: targetCompanyIds };
+    } else if (targetType === 'PLAN_FILTER' && targetPlan) {
+      userWhere.company = { plan: targetPlan };
+    }
+
+    if (targetRole && targetRole !== 'ALL') {
+      userWhere.role = targetRole;
+    }
+
+    // Récupérer les utilisateurs cibles
+    const targetUsers = await prisma.user.findMany({
+      where: userWhere,
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        companyId: true,
+        company: {
+          select: { name: true }
+        }
+      }
+    });
+
+    // 1. Envoi In-App (Notifications)
+    if (shouldSendInApp && targetUsers.length > 0) {
+      const notifData = targetUsers.map(u => ({
+        title: subject,
+        message: message,
+        type: 'SYSTEM_BROADCAST',
+        userId: u.id,
+        companyId: u.companyId,
+        read: false
+      }));
+
+      await prisma.notification.createMany({
+        data: notifData
+      });
+    }
+
+    // 2. Envoi E-mail via Resend
+    if (shouldSendEmail && targetUsers.length > 0) {
+      void (async () => {
+        for (const u of targetUsers) {
+          if (u.email) {
+            const recipientName = `${u.firstName} ${u.lastName}`;
+            await sendBroadcastEmail(
+              u.email,
+              recipientName,
+              subject,
+              message,
+              attachmentUrl,
+              attachmentName
+            );
+          }
+        }
+      })();
+    }
+
+    // 3. Enregistrement dans SystemBroadcast
+    // @ts-ignore
+    const broadcastRecord = await prisma.systemBroadcast.create({
+      data: {
+        subject,
+        message,
+        targetType,
+        targetPlan: targetPlan || null,
+        targetRole: targetRole || null,
+        targetCompanyIds,
+        sendEmail: shouldSendEmail,
+        sendInApp: shouldSendInApp,
+        attachmentUrl,
+        attachmentName,
+        createdById: superAdminId
+      }
+    });
+
+    res.json({
+      success: true,
+      message: `Message diffusé avec succès à ${targetUsers.length} destinataire(s).`,
+      recipientCount: targetUsers.length,
+      broadcast: broadcastRecord
+    });
+  } catch (error: any) {
+    console.error("Erreur diffusion message superadmin:", error);
+    res.status(500).json({ message: "Erreur lors de la diffusion du message.", error: error.message });
+  }
+};
+
+/**
+ * Récupère l'historique des diffusions envoyées par le Super Admin
+ */
+export const getBroadcastHistory = async (req: AuthRequest, res: Response): Promise<any> => {
+  try {
+    // @ts-ignore
+    const broadcasts = await prisma.systemBroadcast.findMany({
+      orderBy: { createdAt: 'desc' },
+      take: 50
+    });
+    res.json(broadcasts);
+  } catch (error: any) {
+    res.status(500).json({ message: "Erreur lors de la récupération de l'historique de diffusion.", error: error.message });
   }
 };
 
