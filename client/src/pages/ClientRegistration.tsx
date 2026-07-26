@@ -225,9 +225,20 @@ const ClientRegistration = () => {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       
-      // Suivi conversion Lead Meta Pixel
+      // Extraction des coordonnées du prospect pour l'analytique Pixel Meta
+      const firstName = pendingFormData.get('firstName')?.toString() || '';
+      const lastName = pendingFormData.get('lastName')?.toString() || '';
+      const email = pendingFormData.get('email')?.toString() || '';
+      const phone = pendingFormData.get('phoneMobile')?.toString() || pendingFormData.get('whatsapp')?.toString() || '';
+      const companyName = pendingFormData.get('companyName')?.toString() || '';
+
+      // Suivi conversion Lead Meta Pixel avec coordonnées
       trackMetaEvent('Lead', {
         formType: 'ClientRegistration',
+        name: `${firstName} ${lastName}`.trim(),
+        email,
+        phone,
+        companyName,
       });
 
       setShowConfirmModal(false);

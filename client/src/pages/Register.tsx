@@ -46,13 +46,16 @@ const Register = () => {
       // 2. Connexion automatique
       login(response.data.user, response.data.company);
       
-      // Suivi de conversion Meta Pixel
+      // Suivi de conversion Meta Pixel avec coordonnées du gérant
       trackMetaEvent('CompleteRegistration', {
         plan: selectedPlan,
         billingCycle,
         value: totalAmount,
         currency: 'XOF',
         companyName: data.companyName,
+        name: `${data.firstName || ''} ${data.lastName || ''}`.trim(),
+        email: data.email,
+        phone: data.phone,
       });
 
       // 3. Redirection vers le paiement

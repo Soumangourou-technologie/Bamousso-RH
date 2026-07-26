@@ -17,7 +17,9 @@ import {
   Sliders,
   Zap,
   Globe,
-  BarChart2
+  BarChart2,
+  Phone,
+  Mail
 } from 'lucide-react';
 
 interface PixelConfig {
@@ -535,9 +537,9 @@ fbq('track', 'PageView');
                 <tr>
                   <th className="py-3 px-4 rounded-l-xl">Date & Heure</th>
                   <th className="py-3 px-4">Événement</th>
-                  <th className="py-3 px-4">Source</th>
+                  <th className="py-3 px-4">Contact / Coordonnées Capturées</th>
                   <th className="py-3 px-4">Campagne UTM</th>
-                  <th className="py-3 px-4">URL</th>
+                  <th className="py-3 px-4">Source</th>
                   <th className="py-3 px-4 rounded-r-xl">Statut CAPI</th>
                 </tr>
               </thead>
@@ -549,34 +551,65 @@ fbq('track', 'PageView');
                     </td>
                   </tr>
                 ) : (
-                  filteredEvents.map((ev) => (
-                    <tr key={ev.id} className="hover:bg-white/5 transition-colors">
-                      <td className="py-3 px-4 text-gray-400">
-                        {new Date(ev.createdAt).toLocaleString('fr-FR')}
-                      </td>
-                      <td className="py-3 px-4">
-                        <span className="font-bold text-white bg-white/10 px-2.5 py-1 rounded-lg">
-                          {ev.eventName}
-                        </span>
-                      </td>
-                      <td className="py-3 px-4">
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${ev.eventSource === 'SERVER_CAPI' ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30' : 'bg-blue-500/20 text-blue-300 border border-blue-500/30'}`}>
-                          {ev.eventSource}
-                        </span>
-                      </td>
-                      <td className="py-3 px-4 text-brand-primary font-semibold">
-                        {ev.utmCampaign || ev.utmSource || '-'}
-                      </td>
-                      <td className="py-3 px-4 text-gray-400 truncate max-w-xs" title={ev.url}>
-                        {ev.url || '-'}
-                      </td>
-                      <td className="py-3 px-4">
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${ev.status === 'SUCCESS' ? 'bg-emerald-500/20 text-emerald-400' : ev.status === 'TEST' ? 'bg-amber-500/20 text-amber-400' : 'bg-rose-500/20 text-rose-400'}`}>
-                          {ev.status}
-                        </span>
-                      </td>
-                    </tr>
-                  ))
+                  filteredEvents.map((ev) => {
+                    const cData = ev.customData || {};
+                    const hasContact = cData.name || cData.email || cData.phone || cData.companyName;
+
+                    return (
+                      <tr key={ev.id} className="hover:bg-white/5 transition-colors">
+                        <td className="py-3 px-4 text-gray-400">
+                          {new Date(ev.createdAt).toLocaleString('fr-FR')}
+                        </td>
+                        <td className="py-3 px-4">
+                          <span className="font-bold text-white bg-white/10 px-2.5 py-1 rounded-lg">
+                            {ev.eventName}
+                          </span>
+                        </td>
+                        <td className="py-3 px-4">
+                          {hasContact ? (
+                            <div className="bg-brand-primary/10 border border-brand-primary/20 p-2 rounded-xl text-[11px] space-y-1">
+                              {cData.name && (
+                                <div className="font-bold text-white flex items-center gap-1.5">
+                                  <Users className="w-3.5 h-3.5 text-brand-primary shrink-0" />
+                                  <span>{cData.name}</span>
+                                  {cData.companyName && <span className="text-gray-400 font-normal">({cData.companyName})</span>}
+                                </div>
+                              )}
+                              <div className="flex flex-wrap gap-2 text-[10px] text-gray-300">
+                                {cData.phone && (
+                                  <a href={`tel:${cData.phone}`} className="flex items-center gap-1 text-emerald-400 hover:underline">
+                                    <Phone className="w-3 h-3" />
+                                    {cData.phone}
+                                  </a>
+                                )}
+                                {cData.email && (
+                                  <a href={`mailto:${cData.email}`} className="flex items-center gap-1 text-blue-400 hover:underline truncate max-w-xs">
+                                    <Mail className="w-3 h-3" />
+                                    {cData.email}
+                                  </a>
+                                )}
+                              </div>
+                            </div>
+                          ) : (
+                            <span className="text-gray-500 italic text-[11px]">Visiteur Anonyme</span>
+                          )}
+                        </td>
+                        <td className="py-3 px-4 text-brand-primary font-semibold">
+                          {ev.utmCampaign || ev.utmSource || '-'}
+                        </td>
+                        <td className="py-3 px-4">
+                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${ev.eventSource === 'SERVER_CAPI' ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30' : 'bg-blue-500/20 text-blue-300 border border-blue-500/30'}`}>
+                            {ev.eventSource}
+                          </span>
+                        </td>
+                        <td className="py-3 px-4">
+                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${ev.status === 'SUCCESS' ? 'bg-emerald-500/20 text-emerald-400' : ev.status === 'TEST' ? 'bg-amber-500/20 text-amber-400' : 'bg-rose-500/20 text-rose-400'}`}>
+                            {ev.status}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })
                 )}
               </tbody>
             </table>
