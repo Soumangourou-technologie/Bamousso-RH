@@ -742,6 +742,7 @@ model MetaPixelConfig {
   pixelId            String   @default("3595484767284161")
   conversionsApiToken String?  // Access token Meta Conversions API (CAPI)
   testEventCode      String?  // Code d'événement de test Meta (ex: TEST12345)
+  webhookVerifyToken String?  @default("bamousso_meta_lead_token_2026") // Token de vérification Webhook Meta Lead Ads
   isEnabled          Boolean  @default(true)
   isCapiEnabled      Boolean  @default(true)
   trackPageViews     Boolean  @default(true)

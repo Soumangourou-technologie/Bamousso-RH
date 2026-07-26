@@ -58,6 +58,7 @@ export const updateMetaPixelConfig = async (req: Request, res: Response) => {
       pixelId,
       conversionsApiToken,
       testEventCode,
+      webhookVerifyToken,
       isEnabled,
       isCapiEnabled,
       trackPageViews,
@@ -73,6 +74,7 @@ export const updateMetaPixelConfig = async (req: Request, res: Response) => {
         pixelId: pixelId !== undefined ? pixelId.trim() : currentConfig.pixelId,
         conversionsApiToken: conversionsApiToken !== undefined ? conversionsApiToken.trim() : currentConfig.conversionsApiToken,
         testEventCode: testEventCode !== undefined ? testEventCode.trim() : currentConfig.testEventCode,
+        webhookVerifyToken: webhookVerifyToken !== undefined ? webhookVerifyToken.trim() : currentConfig.webhookVerifyToken,
         isEnabled: isEnabled !== undefined ? Boolean(isEnabled) : currentConfig.isEnabled,
         isCapiEnabled: isCapiEnabled !== undefined ? Boolean(isCapiEnabled) : currentConfig.isCapiEnabled,
         trackPageViews: trackPageViews !== undefined ? Boolean(trackPageViews) : currentConfig.trackPageViews,
@@ -362,3 +364,87 @@ export const sendTestEvent = async (req: Request, res: Response) => {
     return res.status(500).json({ error: 'Erreur lors de l’envoi de l’événement de test' });
   }
 };
+
+// 7. Webhook GET : Vérification du Webhook Meta Lead Ads par Facebook
+export const verifyLeadWebhook = async (req: Request, res: Response) => {
+  try {
+    const config = await getOrCreateConfig();
+    const mode = req.query['hub.mode'];
+    const token = req.query['hub.verify_token'];
+    const challenge = req.query['hub.challenge'];
+
+    const expectedToken = config.webhookVerifyToken || 'bamousso_meta_lead_token_2026';
+
+    if (mode === 'subscribe' && token === expectedToken) {
+      console.log('[Meta Webhook] Vérification Webhook réussie !');
+      return res.status(200).send(challenge);
+    } else {
+      console.warn('[Meta Webhook] Token de vérification incorrect');
+      return res.sendStatus(403);
+    }
+  } catch (error) {
+    console.error('Erreur verifyLeadWebhook:', error);
+    return res.status(500).json({ error: 'Erreur verification webhook' });
+  }
+};
+
+// 8. Webhook POST : Réception directe des prospects depuis les formulaires instantanés Facebook Lead Ads
+export const receiveLeadWebhook = async (req: Request, res: Response) => {
+  try {
+    const body = req.body;
+    console.log('[Meta Webhook] Lead Payload reçu:', JSON.stringify(body));
+
+    // Extraction des données du Lead
+    const name = body.name || body.full_name || body.lead_name || body.field_data?.find((f: any) => f.name === 'full_name')?.values[0] || 'Prospect Meta Lead Ads';
+    const email = body.email || body.field_data?.find((f: any) => f.name === 'email')?.values[0] || null;
+    const phone = body.phone || body.phone_number || body.field_data?.find((f: any) => f.name === 'phone_number')?.values[0] || null;
+    const companyName = body.company_name || body.company || body.field_data?.find((f: any) => f.name === 'company_name')?.values[0] || 'Prospect Facebook';
+    const adName = body.ad_name || body.campaign_name || 'Campagne Facebook Lead Ads';
+
+    // 1. Enregistrement de l'événement Pixel 'Lead'
+    const event = await prisma.metaPixelEvent.create({
+      data: {
+        eventName: 'Lead',
+        eventSource: 'SERVER_CAPI',
+        utmCampaign: adName,
+        utmSource: 'facebook_lead_ads',
+        customData: {
+          name,
+          email,
+          phone,
+          companyName,
+          adName,
+          leadGenId: body.leadgen_id || body.id || null,
+        } as any,
+        status: 'SUCCESS',
+      },
+    });
+
+    // 2. Création automatique de la fiche prospect (ClientRegistration) dans Bamousso RH si une entreprise existe
+    const firstCompany = await prisma.company.findFirst();
+    if (firstCompany && (name || email || phone)) {
+      const nameParts = name.trim().split(' ');
+      const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : name;
+      const firstName = nameParts[0] || 'Prospect';
+
+      await prisma.clientRegistration.create({
+        data: {
+          lastName,
+          firstName,
+          clientType: 'PROSPECT',
+          companyName: companyName || 'Prospect Facebook Ads',
+          email: email || undefined,
+          phoneMobile: phone || undefined,
+          company: { connect: { id: firstCompany.id } },
+          rdvDescription: `Prospect importé automatiquement via Facebook Lead Ads (${adName})`,
+        } as any,
+      });
+    }
+
+    return res.status(200).json({ status: 'EVENT_RECEIVED', eventId: event.id });
+  } catch (error) {
+    console.error('Erreur receiveLeadWebhook:', error);
+    return res.status(200).json({ status: 'ACCEPTED_WITH_LOG' });
+  }
+};
+

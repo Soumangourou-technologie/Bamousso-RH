@@ -7,13 +7,17 @@ import {
   trackEvent,
   getMetaPixelAnalytics,
   sendTestEvent,
+  verifyLeadWebhook,
+  receiveLeadWebhook,
 } from '../controllers/metaPixel.controller.js';
 
 const router = Router();
 
-// Routes Publiques (suivi client / landing)
+// Routes Publiques (suivi client / landing / webhooks Meta)
 router.get('/public-config', getPublicPixelConfig);
 router.post('/track', trackEvent);
+router.get('/lead-webhook', verifyLeadWebhook);
+router.post('/lead-webhook', receiveLeadWebhook);
 
 // Routes Securisées (SUPER_ADMIN uniquement)
 router.get('/config', authenticate, authorize(['SUPER_ADMIN']), getMetaPixelConfig);

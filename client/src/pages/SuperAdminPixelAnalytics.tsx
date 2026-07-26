@@ -19,13 +19,16 @@ import {
   Globe,
   BarChart2,
   Phone,
-  Mail
+  Mail,
+  UserPlus,
+  Link2
 } from 'lucide-react';
 
 interface PixelConfig {
   pixelId: string;
   conversionsApiToken?: string;
   testEventCode?: string;
+  webhookVerifyToken?: string;
   isEnabled: boolean;
   isCapiEnabled: boolean;
   trackPageViews: boolean;
@@ -55,6 +58,7 @@ interface AnalyticsData {
     isCapiEnabled: boolean;
     hasCapiToken: boolean;
     testEventCode?: string;
+    webhookVerifyToken?: string;
   };
   kpis: {
     totalEvents: number;
@@ -80,7 +84,7 @@ interface AnalyticsData {
 }
 
 export default function SuperAdminPixelAnalytics() {
-  const [activeTab, setActiveTab] = useState<'overview' | 'stream' | 'config' | 'test'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'stream' | 'leads' | 'config' | 'test'>('overview');
   const [loading, setLoading] = useState<boolean>(true);
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   
@@ -109,6 +113,32 @@ export default function SuperAdminPixelAnalytics() {
   // Search & Filter state for Stream tab
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedEventFilter, setSelectedEventFilter] = useState<string>('ALL');
+
+  // Simulation Lead Ads state
+  const [simLead, setSimLead] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    companyName: '',
+    adName: 'Facebook Lead Ads Promo',
+  });
+  const [simulating, setSimulating] = useState<boolean>(false);
+  const [simResult, setSimResult] = useState<any>(null);
+
+  const handleSimulateLead = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSimulating(true);
+    setSimResult(null);
+    try {
+      const res = await api.post('/meta-pixel/lead-webhook', simLead);
+      setSimResult({ success: true, data: res.data });
+      fetchAnalyticsAndConfig();
+    } catch (err: any) {
+      setSimResult({ error: err.message || 'Erreur simulation' });
+    } finally {
+      setSimulating(false);
+    }
+  };
 
   useEffect(() => {
     fetchAnalyticsAndConfig();
@@ -275,6 +305,18 @@ fbq('track', 'PageView');
               {analytics.recentEvents.length}
             </span>
           )}
+        </button>
+
+        <button
+          onClick={() => setActiveTab('leads')}
+          className={`flex items-center gap-2 px-5 py-3 rounded-t-2xl font-bold text-sm transition-all ${
+            activeTab === 'leads'
+              ? 'bg-brand-primary text-white border-t-2 border-brand-primary shadow-lg shadow-brand-primary/20'
+              : 'text-gray-400 hover:text-white hover:bg-white/5'
+          }`}
+        >
+          <UserPlus className="w-4 h-4 text-emerald-400" />
+          Lead Ads Facebook & Webhook
         </button>
 
         <button
@@ -820,6 +862,155 @@ fbq('track', 'PageView');
 
                 <pre className="text-[11px] text-emerald-400 font-mono overflow-x-auto p-3 bg-black/40 rounded-xl max-h-60 border border-white/5">
                   {JSON.stringify(testResult, null, 2)}
+                </pre>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+      {/* CONTENU ONGLET : LEAD ADS FACEBOOK & WEBHOOK */}
+      {activeTab === 'leads' && (
+        <div className="space-y-8 max-w-4xl mx-auto">
+          {/* Carte d'information & Webhook URL */}
+          <div className="bg-[#1A0F0A] p-6 rounded-3xl border border-white/10 shadow-2xl space-y-6">
+            <div className="flex items-center gap-3">
+              <div className="p-3 bg-emerald-500/10 text-emerald-400 rounded-2xl border border-emerald-500/20">
+                <UserPlus className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="text-lg font-black text-white">Intégration Directe Facebook Lead Ads (Formulaires Instantanés)</h3>
+                <p className="text-xs text-gray-400">
+                  Importation automatique des coordonnées (Nom, Tél, Mail, Entreprise) dès qu'un prospect valide un formulaire directement sur Facebook.
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+              <div className="bg-white/5 p-4 rounded-2xl border border-white/10 space-y-2">
+                <div className="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
+                  <Link2 className="w-4 h-4 text-brand-primary" />
+                  URL du Webhook Meta Lead Ads
+                </div>
+                <div className="text-xs font-mono font-bold text-emerald-400 bg-black/50 p-2.5 rounded-xl border border-white/10 select-all">
+                  https://bamoussorh.com/api/meta-pixel/lead-webhook
+                </div>
+              </div>
+
+              <div className="bg-white/5 p-4 rounded-2xl border border-white/10 space-y-2">
+                <div className="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
+                  <ShieldCheck className="w-4 h-4 text-blue-400" />
+                  Jeton de Vérification (Verify Token)
+                </div>
+                <div className="text-xs font-mono font-bold text-blue-400 bg-black/50 p-2.5 rounded-xl border border-white/10 select-all">
+                  {configForm.webhookVerifyToken || 'bamousso_meta_lead_token_2026'}
+                </div>
+              </div>
+            </div>
+
+            <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl text-xs text-emerald-300 space-y-2">
+              <div className="font-bold flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 shrink-0" />
+                Comment ça marche pour tes patrons ?
+              </div>
+              <p className="text-[11px] leading-relaxed opacity-90">
+                1. Quand vous créez une campagne publicitaire sur Facebook Meta Ads Manager, choisissez le format **« Formulaires Instantanés / Lead Ads »**.<br />
+                2. Facebook pré-remplira automatiquement le Nom, Téléphone et Email du prospect.<br />
+                3. Dès que le prospect clique sur "Envoyer", Meta transmet ses coordonnées à cette URL Webhook et Bamousso RH crée automatiquement sa fiche prospect !
+              </p>
+            </div>
+          </div>
+
+          {/* Outil de Test & Simulation de Lead Form */}
+          <div className="bg-[#1A0F0A] p-6 rounded-3xl border border-white/10 shadow-2xl space-y-6">
+            <div>
+              <h3 className="text-base font-black text-white flex items-center gap-2">
+                <Zap className="w-5 h-5 text-amber-400" />
+                Simulateur de Formulaire Facebook Lead Ads (Test Direct)
+              </h3>
+              <p className="text-xs text-gray-400 mt-1">
+                Simulez l'arrivée instantanée d'un prospect Facebook pour vérifier son intégration immédiate dans Bamousso RH.
+              </p>
+            </div>
+
+            <form onSubmit={handleSimulateLead} className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-gray-300 mb-1">Nom & Prénom du Prospect *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="ex: Jean Koffi"
+                    value={simLead.name}
+                    onChange={(e) => setSimLead({ ...simLead, name: e.target.value })}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-primary"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-gray-300 mb-1">Nom de l'Entreprise *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="ex: Société Abidjan Transport"
+                    value={simLead.companyName}
+                    onChange={(e) => setSimLead({ ...simLead, companyName: e.target.value })}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-primary"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-gray-300 mb-1">Téléphone Mobile / WhatsApp *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="ex: 0708091011"
+                    value={simLead.phone}
+                    onChange={(e) => setSimLead({ ...simLead, phone: e.target.value })}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-primary font-mono"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-gray-300 mb-1">Adresse Email *</label>
+                  <input
+                    type="email"
+                    required
+                    placeholder="ex: jean.koffi@gmail.com"
+                    value={simLead.email}
+                    onChange={(e) => setSimLead({ ...simLead, email: e.target.value })}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-primary font-mono"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-300 mb-1">Nom de la Campagne Pub Facebook</label>
+                <input
+                  type="text"
+                  value={simLead.adName}
+                  onChange={(e) => setSimLead({ ...simLead, adName: e.target.value })}
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-primary"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={simulating}
+                className="w-full bg-emerald-500 hover:bg-emerald-600 text-black font-black py-3 rounded-xl transition shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 text-xs uppercase tracking-wider"
+              >
+                {simulating ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                Simuler l'envoi du Formulaire Facebook Lead Ads
+              </button>
+            </form>
+
+            {simResult && (
+              <div className="p-4 bg-black/60 rounded-2xl border border-white/10 space-y-2">
+                <div className="text-xs font-bold text-emerald-400 flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4" />
+                  Prospect capturé et fiche enregistrée dans Bamousso RH avec succès !
+                </div>
+                <pre className="text-[10px] text-gray-300 font-mono bg-black/40 p-3 rounded-xl overflow-x-auto border border-white/5">
+                  {JSON.stringify(simResult, null, 2)}
                 </pre>
               </div>
             )}
