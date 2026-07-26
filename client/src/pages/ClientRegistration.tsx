@@ -8,6 +8,8 @@ import {
 } from 'lucide-react';
 import api from '../utils/api';
 import SignaturePad from '../components/SignaturePad';
+import { trackMetaEvent } from '../utils/metaPixel';
+
 
 interface ClientDoc {
   id: string;
@@ -222,6 +224,12 @@ const ClientRegistration = () => {
       await api.post('/client-registrations', pendingFormData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
+      
+      // Suivi conversion Lead Meta Pixel
+      trackMetaEvent('Lead', {
+        formType: 'ClientRegistration',
+      });
+
       setShowConfirmModal(false);
       setSuccess(true);
       setTimeout(() => {

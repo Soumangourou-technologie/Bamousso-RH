@@ -148,6 +148,10 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                 <Megaphone className="w-5 h-5" />
                 Diffusion & Emails
               </Link>
+              <Link to="/dashboard/super-admin/pixel-analytics" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/dashboard/super-admin/pixel-analytics' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
+                <BarChart3 className="w-5 h-5" />
+                Analytique Meta / Pixel
+              </Link>
             </>
           )}
 

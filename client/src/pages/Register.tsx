@@ -7,6 +7,8 @@ import { Eye, EyeOff, Building2, CheckCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PricingToggle } from '../components/PricingToggle';
 import { BillingCycle, PlanType, PRICING_PLANS, calculateTotalAmount, EXTRA_EMPLOYEE_COST_MONTHLY } from '@shared/pricing';
+import { trackMetaEvent } from '../utils/metaPixel';
+
 
 const plansList = [
   PRICING_PLANS.FITINI,
@@ -44,6 +46,15 @@ const Register = () => {
       // 2. Connexion automatique
       login(response.data.user, response.data.company);
       
+      // Suivi de conversion Meta Pixel
+      trackMetaEvent('CompleteRegistration', {
+        plan: selectedPlan,
+        billingCycle,
+        value: totalAmount,
+        currency: 'XOF',
+        companyName: data.companyName,
+      });
+
       // 3. Redirection vers le paiement
       navigate('/payment', { 
         state: { 

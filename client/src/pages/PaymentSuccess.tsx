@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CheckCircle, Loader2, AlertCircle } from 'lucide-react';
+import { trackMetaEvent } from '../utils/metaPixel';
 
 const PaymentSuccess = () => {
   const navigate = useNavigate();
@@ -19,7 +20,10 @@ const PaymentSuccess = () => {
       
       // Si GeniusPay nous dit déjà que c'est bon dans l'URL
       if (urlStatus === 'completed' || urlStatus === 'success') {
-        if (isMounted) setStatus('success');
+        if (isMounted) {
+          setStatus('success');
+          trackMetaEvent('Subscribe', { status: 'SUCCESS', method: 'URL_STATUS' });
+        }
         return;
       }
 
@@ -44,6 +48,7 @@ const PaymentSuccess = () => {
           const data = await response.json();
           if (data.success && isMounted) {
             setStatus('success');
+            trackMetaEvent('Subscribe', { status: 'SUCCESS', method: 'API_VERIFY' });
           } else if (retryCount < maxRetries) {
             retryCount++;
             setTimeout(verifyPayment, 3000);

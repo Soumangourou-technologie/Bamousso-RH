@@ -5,6 +5,8 @@ import { Building2, CheckCircle, Users, Clock, Calendar, ArrowRight, Loader2, Me
 import { PricingToggle } from '../components/PricingToggle';
 import { BillingCycle, PRICING_PLANS } from '@shared/pricing';
 import api from '../utils/api';
+import { trackMetaEvent } from '../utils/metaPixel';
+
 
 const Landing = () => {
 
@@ -26,8 +28,8 @@ const Landing = () => {
     void fetchContacts();
   }, []);
 
-  const handleSelectPlan = () => {
-    // navigate('/register', { state: { selectedPlanId: planId, billingCycle } });
+  const handleSelectPlan = (planId?: string) => {
+    trackMetaEvent('Contact', { planId, type: 'WhatsApp' });
     setIsWhatsappOpen(true);
   };
 

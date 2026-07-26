@@ -735,3 +735,39 @@ model SystemBroadcast {
   createdById      String
   createdAt        DateTime @default(now())
 }
+
+/// Configuration du Pixel Meta / Facebook & API Conversions (Super-Admin)
+model MetaPixelConfig {
+  id                 String   @id @default(uuid())
+  pixelId            String   @default("3595484767284161")
+  conversionsApiToken String?  // Access token Meta Conversions API (CAPI)
+  testEventCode      String?  // Code d'événement de test Meta (ex: TEST12345)
+  isEnabled          Boolean  @default(true)
+  isCapiEnabled      Boolean  @default(true)
+  trackPageViews     Boolean  @default(true)
+  trackRegistrations Boolean  @default(true)
+  trackSubscribes    Boolean  @default(true)
+  updatedAt          DateTime @updatedAt
+  createdAt          DateTime @default(now())
+}
+
+/// Enregistrement des Événements du Pixel Meta (Navigateur + API Conversions CAPI)
+model MetaPixelEvent {
+  id           String   @id @default(uuid())
+  eventName    String   // PageView, Lead, CompleteRegistration, Subscribe, ProspectClick, Contact, Custom
+  eventSource  String   @default("BROWSER") // BROWSER | SERVER_CAPI | BOTH
+  userIp       String?
+  userAgent    String?
+  url          String?
+  utmSource    String?
+  utmMedium    String?
+  utmCampaign  String?
+  utmContent   String?
+  utmTerm      String?
+  fbclid       String?
+  customData   Json?    // Détails supplémentaires (valeur, devise, type de plan, etc.)
+  status       String   @default("SUCCESS") // SUCCESS | TEST | FAILED
+  capiResponse Json?    // Réponse de l'API Meta Conversions
+  createdAt    DateTime @default(now())
+}
+

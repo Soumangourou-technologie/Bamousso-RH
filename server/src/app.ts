@@ -43,6 +43,7 @@ import settingsRoutes from "./routes/settings.routes.js";
 import workScheduleRoutes from "./routes/workSchedule.routes.js";
 import payrollItemRoutes from "./routes/payrollItem.routes.js";
 import accountingRoutes from "./routes/accounting.routes.js";
+import metaPixelRoutes from "./routes/metaPixel.routes.js";
 
 // Chargement des variables d'environnement
 dotenv.config();
@@ -114,6 +115,7 @@ app.use("/api/settings", apiLimiter, settingsRoutes);
 app.use("/api/work-schedules", apiLimiter, workScheduleRoutes);
 app.use("/api/payroll-items", apiLimiter, payrollItemRoutes);
 app.use("/api/accounting", apiLimiter, accountingRoutes);
+app.use("/api/meta-pixel", apiLimiter, metaPixelRoutes);
 
 
 // Route de test pour vérifier que l'API est en ligne

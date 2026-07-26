@@ -16,6 +16,8 @@ import Settings from './pages/Settings';
 import DashboardSuperAdmin from './pages/DashboardSuperAdmin';
 import SuperAdminOfflineClients from './pages/SuperAdminOfflineClients';
 import SuperAdminBroadcast from './pages/SuperAdminBroadcast';
+import SuperAdminPixelAnalytics from './pages/SuperAdminPixelAnalytics';
+import MetaPixelTracker from './components/MetaPixelTracker';
 import Unauthorized from './pages/Unauthorized';
 import DashboardRedirect from './pages/DashboardRedirect';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -58,6 +60,7 @@ const RootRoute = () => {
 function App() {
   return (
     <BrowserRouter>
+      <MetaPixelTracker />
       <ThemeProvider>
         <AuthProvider>
           <NotificationProvider>
@@ -84,6 +87,7 @@ function App() {
                     <Route path="/dashboard/super-admin" element={<DashboardSuperAdmin />} />
                     <Route path="/dashboard/super-admin/offline" element={<SuperAdminOfflineClients />} />
                     <Route path="/dashboard/super-admin/broadcast" element={<SuperAdminBroadcast />} />
+                    <Route path="/dashboard/super-admin/pixel-analytics" element={<SuperAdminPixelAnalytics />} />
                   </Route>
 
                   {/* Modules protégés par rôle (RH/Admin) */}

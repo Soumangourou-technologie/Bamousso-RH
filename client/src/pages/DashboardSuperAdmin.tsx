@@ -4,7 +4,7 @@ import api from '../utils/api';
 import { 
   Building2, CheckCircle, Ban, 
   X, Search, Filter, ShieldCheck, UserPlus, 
-  Wallet, MoreVertical, FileText, Terminal, Megaphone
+  Wallet, MoreVertical, FileText, Terminal, Megaphone, Activity
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import jsPDF from 'jspdf';
@@ -301,6 +301,12 @@ const DashboardSuperAdmin = () => {
             </div>
           </div>
           <div className="flex flex-wrap gap-3">
+            <Link
+              to="/dashboard/super-admin/pixel-analytics"
+              className="bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-3.5 rounded-2xl font-black flex items-center gap-2.5 shadow-lg shadow-blue-500/20 transition-all active:scale-95 text-sm"
+            >
+              <Activity className="w-5 h-5 text-white" /> Pixel & Pubs Meta
+            </Link>
             <Link
               to="/dashboard/super-admin/broadcast"
               className="bg-linear-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white px-6 py-3.5 rounded-2xl font-black flex items-center gap-2.5 shadow-lg shadow-orange-500/20 transition-all active:scale-95 text-sm"
