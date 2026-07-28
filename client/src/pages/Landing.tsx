@@ -52,7 +52,7 @@ const Landing = () => {
           <a href="#pricing" className="hidden md:inline-block font-bold text-gray-300 hover:text-brand-primary transition-colors text-sm uppercase tracking-wider">
             Tarifs
           </a>
-          <Link to="/register" className="glass-card hover:border-brand-primary/50 text-white px-5 py-2.5 rounded-full font-bold transition-all text-sm hover:-translate-y-0.5">
+          <Link to="/register" className="bg-white/10 hover:bg-brand-primary text-white border border-white/20 hover:border-brand-primary px-5 py-2.5 rounded-full font-bold transition-all text-sm shadow-md hover:shadow-brand-primary/30">
             S'inscrire
           </Link>
           <Link to="/login" className="bg-brand-primary hover:bg-brand-800 text-white px-6 py-2.5 rounded-full font-bold shadow-lg shadow-brand-primary/30 transition-all hover:-translate-y-0.5">
@@ -106,9 +106,9 @@ const Landing = () => {
                 variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
                 className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4"
               >
-                <a href="#pricing" className="w-full sm:w-auto bg-brand-primary text-white px-10 py-5 rounded-full font-black text-lg hover:scale-105 transition-all flex items-center justify-center gap-3 shadow-2xl shadow-brand-primary/30 premium-glow">
-                  Découvrir nos offres <ArrowRight className="w-6 h-6" />
-                </a>
+                <Link to="/register" className="w-full sm:w-auto bg-brand-primary text-white px-10 py-5 rounded-full font-black text-lg hover:scale-105 transition-all flex items-center justify-center gap-3 shadow-2xl shadow-brand-primary/30 premium-glow">
+                  S'inscrire / Créer un compte <ArrowRight className="w-6 h-6" />
+                </Link>
                 <Link to="/login" className="w-full sm:w-auto glass-card text-white px-10 py-5 rounded-full font-black text-lg hover:border-brand-primary/50 transition-all flex items-center justify-center gap-2">
                   Espace Client
                 </Link>
