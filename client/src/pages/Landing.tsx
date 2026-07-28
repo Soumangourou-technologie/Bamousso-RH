@@ -1,16 +1,16 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Building2, CheckCircle, Users, Clock, Calendar, ArrowRight, Loader2, MessageCircle, X } from 'lucide-react';
 import { PricingToggle } from '../components/PricingToggle';
 import { FAQSection } from '../components/FAQSection';
-import { BillingCycle, PRICING_PLANS } from '@shared/pricing';
+import { BillingCycle, PlanType, PRICING_PLANS } from '@shared/pricing';
 import api from '../utils/api';
 import { trackMetaEvent } from '../utils/metaPixel';
 
 
 const Landing = () => {
-
+  const navigate = useNavigate();
   const [billingCycle, setBillingCycle] = useState<BillingCycle>('MONTHLY');
   const [whatsappContacts, setWhatsappContacts] = useState<string[]>([]);
   const [isWhatsappOpen, setIsWhatsappOpen] = useState(false);
@@ -29,9 +29,14 @@ const Landing = () => {
     void fetchContacts();
   }, []);
 
-  const handleSelectPlan = (planId?: string) => {
-    trackMetaEvent('Contact', { planId, type: 'WhatsApp' });
-    setIsWhatsappOpen(true);
+  const handleSelectPlan = (planId: PlanType) => {
+    trackMetaEvent('InitiateCheckout', { planId, billingCycle });
+    navigate('/register', { 
+      state: { 
+        selectedPlanId: planId, 
+        billingCycle 
+      } 
+    });
   };
 
   return (
@@ -216,7 +221,7 @@ const Landing = () => {
               ]}
               delay={0.2}
               isLoading={false}
-              onSelect={() => handleSelectPlan()}
+              onSelect={() => handleSelectPlan('FITINI')}
             />
             
             {/* LOUBA (Popular) */}
@@ -237,7 +242,7 @@ const Landing = () => {
               isPopular={true}
               delay={0.4}
               isLoading={false}
-              onSelect={() => handleSelectPlan()}
+              onSelect={() => handleSelectPlan('LOUBA')}
             />
             
             {/* Kôrô */}
@@ -255,7 +260,7 @@ const Landing = () => {
               ]}
               delay={0.6}
               isLoading={false}
-              onSelect={() => handleSelectPlan()}
+              onSelect={() => handleSelectPlan('KORO')}
             />
           </div>
         </div>
