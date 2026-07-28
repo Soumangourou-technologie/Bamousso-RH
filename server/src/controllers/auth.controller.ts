@@ -6,7 +6,7 @@ import { Prisma } from "@prisma/client";
 import prisma from "../utils/prisma.js";
 import { z } from "zod";
 import { catchAsync } from '../utils/catchAsync.js';
-import { sendPasswordResetEmail } from '../utils/mailer.js';
+import { sendPasswordResetEmail, sendRegistrationWelcomeEmail } from '../utils/mailer.js';
 
 const registerSchema = z.object({
   email: z.string().email("Format d'email invalide"),
@@ -127,6 +127,15 @@ export const registerCompany = catchAsync(async (req: Request, res: Response) =>
 
       return { company, user };
     });
+
+    // Envoi de l'email de bienvenue avec les identifiants d'accès
+    await sendRegistrationWelcomeEmail(
+      registrationResult.user.email,
+      registrationResult.user.firstName,
+      registrationResult.company.name,
+      registrationResult.company.plan,
+      password
+    );
 
     // Générer le token JWT pour permettre la connexion immédiate
     const jwtSecret = process.env.JWT_SECRET;

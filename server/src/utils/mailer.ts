@@ -126,6 +126,60 @@ export const sendPasswordResetEmail = async (email: string, name: string, token:
 };
 
 /**
+ * Envoie un email de bienvenue lors de l'inscription en ligne avec récapitulatif des identifiants
+ */
+export const sendRegistrationWelcomeEmail = async (
+  email: string, 
+  firstName: string, 
+  companyName: string, 
+  plan: string, 
+  rawPassword: string
+) => {
+  try {
+    const frontendUrl = process.env.FRONTEND_URL || 'https://www.bamousso.com';
+    
+    await resend.emails.send({
+      from: 'Bamousso RH <bienvenue@bamousso.com>',
+      to: email,
+      subject: `🎉 Bienvenue sur Bamousso RH - Identifiants de l'entreprise ${companyName}`,
+      html: `
+        <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 30px; color: #1a0f0a; max-width: 600px; margin: 0 auto; border: 1px solid #f0f0f0; border-radius: 16px; background-color: #ffffff;">
+          <div style="text-align: center; margin-bottom: 24px;">
+            <h1 style="color: #ff5722; font-size: 28px; font-weight: 900; margin: 0; letter-spacing: -1px;">BAMOUSSO RH</h1>
+            <p style="font-size: 13px; color: #666; font-weight: 600; text-transform: uppercase; tracking: 2px;">La Mère de votre Gestion RH</p>
+          </div>
+          
+          <h2 style="font-size: 18px; font-weight: 700; color: #1a0f0a;">Bonjour ${firstName},</h2>
+          <p style="font-size: 15px; line-height: 1.6; color: #444;">Félicitations ! Votre entreprise <strong>${companyName}</strong> a été enregistrée avec succès sur la plateforme Bamousso RH (Formule ${plan}).</p>
+          
+          <p style="font-size: 15px; font-weight: 700; color: #1a0f0a; margin-top: 20px;">Voici le récapitulatif de vos identifiants d'accès :</p>
+          <div style="background: #fff3e0; padding: 20px; border-radius: 12px; border-left: 4px solid #ff5722; margin: 15px 0;">
+            <p style="margin: 6px 0; font-size: 14px;"><strong>Entreprise :</strong> ${companyName}</p>
+            <p style="margin: 6px 0; font-size: 14px;"><strong>Administrateur :</strong> ${firstName}</p>
+            <p style="margin: 6px 0; font-size: 14px;"><strong>Email de connexion :</strong> <span style="color: #ff5722; font-weight: bold;">${email}</span></p>
+            <p style="margin: 6px 0; font-size: 14px;"><strong>Mot de passe :</strong> <span style="font-family: monospace; font-size: 15px; background: #fff; padding: 2px 8px; border-radius: 4px; border: 1px solid #ffd0b0;">${rawPassword}</span></p>
+          </div>
+          
+          <p style="font-size: 13px; color: #666; line-height: 1.5;">Pour des raisons de sécurité, nous vous recommandons de conserver cet email précieusement ou de modifier votre mot de passe si vous le souhaitez depuis vos paramètres d'espace.</p>
+          
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="${frontendUrl}/login" style="background-color: #ff5722; color: white; padding: 14px 32px; border-radius: 12px; text-decoration: none; font-weight: 800; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 12px rgba(255,87,34,0.3); display: inline-block;">Accéder à mon espace client</a>
+          </div>
+          
+          <div style="border-top: 1px solid #eee; margin-top: 30px; padding-top: 20px; font-size: 12px; color: #888; text-align: center;">
+            <p style="margin: 0 0 5px 0;">Besoin d'assistance ? Contactez notre support direct sur WhatsApp ou à support@bamousso.ci</p>
+            <p style="margin: 0;">L'équipe Bamousso RH</p>
+          </div>
+        </div>
+      `,
+    });
+    await logger.info(`Email de bienvenue à l'inscription envoyé à ${email}`, { companyName }, "Mailer");
+  } catch (error) {
+    await logger.error("Erreur envoi email bienvenue inscription", error, "Mailer");
+  }
+};
+
+/**
  * Envoie un email de bienvenue pour une création manuelle (hors-ligne) par le Super Admin
  */
 export const sendOfflineWelcomeEmail = async (email: string, name: string, companyName: string, plan: string, defaultPassword: string) => {
