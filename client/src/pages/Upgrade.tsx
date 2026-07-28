@@ -8,6 +8,22 @@ import { BillingCycle, PlanType, PRICING_PLANS, calculateTotalAmount, EXTRA_EMPL
 
 const AVAILABLE_PLANS = [
   { 
+    id: 'FITINI', 
+    name: PRICING_PLANS.FITINI.name, 
+    maxBase: PRICING_PLANS.FITINI.maxBase, 
+    description: PRICING_PLANS.FITINI.description,
+    icon: Zap,
+    color: 'text-brand-primary',
+    bg: 'bg-brand-primary/10',
+    border: 'border-brand-primary/20',
+    features: [
+      "Jusqu'à 5 employés inclus",
+      "Pointage & Gestion des Congés",
+      "Gestion de la Paie simplifiée",
+      "Support client prioritaire"
+    ]
+  },
+  { 
     id: 'LOUBA', 
     name: PRICING_PLANS.LOUBA.name, 
     maxBase: PRICING_PLANS.LOUBA.maxBase, 
@@ -53,22 +69,15 @@ const UpgradePlan = () => {
   const currentPlan = company?.plan || 'FITINI';
   const currentExtraEmployees = company?.extraEmployees || 0;
 
-  // Déterminer le plan initialement sélectionné (transmis par la route si existant)
-  const initialSelectedPlan = location.state?.selectedPlanId || 
-    (currentPlan === 'FITINI' ? 'LOUBA' : 'KORO');
+  // Déterminer le plan initialement sélectionné
+  const initialSelectedPlan = location.state?.selectedPlanId || currentPlan;
 
-  const [selectedPlan, setSelectedPlan] = useState<PlanType>(
-    initialSelectedPlan === 'FITINI' ? 'LOUBA' : initialSelectedPlan as PlanType
-  );
+  const [selectedPlan, setSelectedPlan] = useState<PlanType>(initialSelectedPlan as PlanType);
   const [billingCycle, setBillingCycle] = useState<BillingCycle>((company as any)?.billingCycle || 'MONTHLY');
   const [extraEmployees, setExtraEmployees] = useState<number>(currentExtraEmployees);
 
-  // Filtrer les plans : n'afficher que ceux STRICTEMENT SUPÉRIEURS au plan actuel
-  const eligiblePlans = AVAILABLE_PLANS.filter(p => {
-    if (currentPlan === 'FITINI') return true; // Tout est supérieur à Fitini
-    if (currentPlan === 'LOUBA') return p.id === 'KORO'; // Seul Kôrô est supérieur à Louba
-    return false; // Si Kôrô, aucun upgrade possible
-  });
+  // Toutes les formules sont éligibles pour renouvellement ou upgrade
+  const eligiblePlans = AVAILABLE_PLANS;
 
   const selectedPlanDetails = AVAILABLE_PLANS.find(p => p.id === selectedPlan) || eligiblePlans[0];
 
@@ -92,7 +101,7 @@ const UpgradePlan = () => {
         extraEmployees: selectedPlanDetails.id === 'KORO' ? 0 : extraEmployees,
         companyName: company?.name || "Votre entreprise",
         companyId: company?.id,
-        isAddOn: false // C'est une évolution d'abonnement principal
+        isAddOn: false
       }
     });
   };
@@ -105,36 +114,17 @@ const UpgradePlan = () => {
       <div className="text-center space-y-3 relative">
         <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-72 h-72 bg-brand-primary/10 rounded-full blur-3xl pointer-events-none" />
         <div className="inline-flex items-center gap-2 bg-brand-primary/10 border border-brand-primary/20 text-brand-primary px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest shadow-sm relative z-10">
-          <Sparkles className="w-4 h-4 animate-pulse" /> Évolution d'offre
+          <Sparkles className="w-4 h-4 animate-pulse" /> Gestion des Abonnements
         </div>
         <h1 className="text-3xl md:text-4xl font-black text-gray-900 dark:text-white tracking-tighter relative z-10">
-          Faites passer <span className="bg-linear-to-r from-brand-primary to-brand-accent bg-clip-text text-transparent">{company?.name}</span> au niveau supérieur
+          Renouvelez ou faites évoluer <span className="bg-linear-to-r from-brand-primary to-brand-accent bg-clip-text text-transparent">{company?.name}</span>
         </h1>
         <p className="text-gray-500 dark:text-gray-400 text-sm md:text-base max-w-2xl mx-auto font-medium relative z-10">
-          Débloquez des outils puissants de gestion RH et de communication en choisissant une formule adaptée à votre croissance.
+          Renouvelez votre formule actuelle ou débloquez un niveau supérieur pour accompagner la croissance de votre entreprise.
         </p>
       </div>
 
-      {currentPlan === 'KORO' ? (
-        <div className="bg-white dark:bg-gray-800 rounded-3xl p-10 shadow-xl border border-gray-100 dark:border-gray-700 text-center space-y-6">
-          <div className="w-20 h-20 mx-auto rounded-2xl bg-purple-500/10 text-purple-500 flex items-center justify-center shadow-inner">
-            <Award className="w-10 h-10" />
-          </div>
-          <div className="space-y-2">
-            <h2 className="text-2xl font-black text-gray-900 dark:text-white">Vous êtes sur l'offre Kôrô (Ultime)</h2>
-            <p className="text-gray-500 dark:text-gray-400 max-w-lg mx-auto font-medium">
-              Votre entreprise bénéficie déjà de l'intégralité des modules de la plateforme Bamousso avec un nombre d'employés illimité et le support prioritaire.
-            </p>
-          </div>
-          <button 
-            onClick={() => navigate('/dashboard')} 
-            className="bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 px-6 py-3 rounded-2xl text-sm font-bold dark:text-white transition-all"
-          >
-            Retour au tableau de bord
-          </button>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Panneau de gauche : Sélection des formules éligibles */}
           <div className="lg:col-span-2 space-y-6">
             <div className="flex flex-col md:flex-row items-center justify-between mb-4 gap-4">
@@ -183,7 +173,18 @@ const UpgradePlan = () => {
                           <Icon className="w-6 h-6" />
                         </div>
                         <div>
-                          <h4 className="font-black text-xl text-gray-900 dark:text-white">{plan.name}</h4>
+                          <div className="flex items-center gap-2">
+                            <h4 className="font-black text-xl text-gray-900 dark:text-white">{plan.name}</h4>
+                            {plan.id === currentPlan ? (
+                              <span className="text-[10px] font-black uppercase tracking-wider text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-md border border-emerald-200 dark:border-emerald-800">
+                                Renouvellement
+                              </span>
+                            ) : (
+                              <span className="text-[10px] font-black uppercase tracking-wider text-brand-primary bg-brand-primary/10 px-2 py-0.5 rounded-md border border-brand-primary/20">
+                                Upgrade
+                              </span>
+                            )}
+                          </div>
                           <p className="text-brand-primary font-black text-sm">
                             {(billingCycle === 'YEARLY' ? PRICING_PLANS[plan.id as PlanType].priceYearly : PRICING_PLANS[plan.id as PlanType].priceMonthly).toLocaleString()} 
                             <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest"> FCFA / {billingCycle === 'YEARLY' ? 'an' : 'mois'}</span>
@@ -339,7 +340,6 @@ const UpgradePlan = () => {
             </div>
           </div>
         </div>
-      )}
     </div>
   );
 };
