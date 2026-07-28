@@ -325,16 +325,21 @@ const UpgradePlan = () => {
                 </div>
 
                 <button
-                  onClick={handleProceedToPayment}
-                  disabled={!selectedPlanDetails}
-                  className="w-full bg-linear-to-r from-brand-primary to-brand-accent text-white py-4 rounded-2xl font-black text-sm uppercase tracking-widest shadow-lg shadow-brand-primary/25 hover:shadow-brand-primary/45 hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2 disabled:opacity-40 disabled:pointer-events-none"
+                  onClick={() => { void handleProceedToPayment; }}
+                  disabled={true}
+                  className="w-full bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 py-4 rounded-2xl font-black text-sm uppercase tracking-widest cursor-not-allowed opacity-60 flex items-center justify-center gap-2 shadow-none"
                 >
-                  Valider & Payer <ArrowRight className="w-4 h-4" />
+                  Paiement temporairement indisponible <ArrowRight className="w-4 h-4" />
                 </button>
 
-                <p className="text-[10px] text-center text-gray-400 font-medium">
-                  Le paiement est traité via GeniusPay. Votre offre et sa durée de 30 jours seront appliquées immédiatement après validation.
-                </p>
+                <div className="p-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/40 rounded-xl text-center">
+                  <p className="text-xs font-bold text-amber-700 dark:text-amber-400">
+                    🛠️ Service de paiement en cours de mise à jour système.
+                  </p>
+                  <p className="text-[10px] text-amber-600/80 dark:text-amber-400/80 mt-0.5">
+                    Le module de règlement direct sera réactivé très prochainement. Merci de votre patience.
+                  </p>
+                </div>
               </div>
             </div>
           </div>

@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Building2, CheckCircle, Users, Clock, Calendar, ArrowRight, Loader2, MessageCircle, X } from 'lucide-react';
 import { PricingToggle } from '../components/PricingToggle';
+import { FAQSection } from '../components/FAQSection';
 import { BillingCycle, PRICING_PLANS } from '@shared/pricing';
 import api from '../utils/api';
 import { trackMetaEvent } from '../utils/metaPixel';
@@ -41,10 +42,16 @@ const Landing = () => {
           <Building2 className="w-8 h-8 text-brand-primary" />
           <span className="text-2xl font-black tracking-tight text-text-primary">BAMOUSSO</span>
         </div>
-        <div className="flex items-center gap-4">
-          {/* <Link to="/register" className="hidden md:inline-block font-semibold text-text-secondary hover:text-brand-primary transition-colors">
-            S'inscrire
-          </Link> */}
+        <div className="flex items-center gap-6">
+          <a href="#features" className="hidden md:inline-block font-bold text-gray-300 hover:text-brand-primary transition-colors text-sm uppercase tracking-wider">
+            Fonctionnalités
+          </a>
+          <a href="#faq" className="hidden md:inline-block font-bold text-gray-300 hover:text-brand-primary transition-colors text-sm uppercase tracking-wider">
+            FAQ
+          </a>
+          <a href="#pricing" className="hidden md:inline-block font-bold text-gray-300 hover:text-brand-primary transition-colors text-sm uppercase tracking-wider">
+            Tarifs
+          </a>
           <Link to="/login" className="bg-brand-primary hover:bg-brand-800 text-white px-6 py-2.5 rounded-full font-bold shadow-lg shadow-brand-primary/30 transition-all hover:-translate-y-0.5">
             Espace Client
           </Link>
@@ -136,7 +143,7 @@ const Landing = () => {
       </div>
 
       {/* Features with Collage */}
-      <div className="py-32 relative overflow-hidden">
+      <div id="features" className="py-32 relative overflow-hidden">
         <div className="container mx-auto px-6 relative z-10">
           <div className="flex flex-col lg:flex-row items-center gap-20 mb-20">
             <div className="lg:w-2/5">
@@ -176,6 +183,9 @@ const Landing = () => {
           </div>
         </div>
       </div>
+
+      {/* FAQ Section */}
+      <FAQSection />
 
       {/* Pricing Section */}
       <div id="pricing" className="py-24 bg-surface-base relative bg-senufo">

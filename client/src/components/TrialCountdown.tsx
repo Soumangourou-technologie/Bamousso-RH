@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Clock } from 'lucide-react';
+import { Clock, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface SubscriptionCountdownProps {
@@ -9,7 +9,12 @@ interface SubscriptionCountdownProps {
   onButtonClick?: () => void;
 }
 
-const SubscriptionCountdown = ({ endsAt, title = "Accès Privilège Actif" }: SubscriptionCountdownProps) => {
+const SubscriptionCountdown = ({ 
+  endsAt, 
+  title = "Accès Privilège Actif",
+  buttonText = "Changer de formule",
+  onButtonClick 
+}: SubscriptionCountdownProps) => {
   const [timeLeft, setTimeLeft] = useState<{ days: number; hours: number; minutes: number; seconds: number } | null>(null);
 
   useEffect(() => {
@@ -73,14 +78,20 @@ const SubscriptionCountdown = ({ endsAt, title = "Accès Privilège Actif" }: Su
         </div>
       </div>
 
-      {/* Fonctionnalité de paiement masquée temporairement (Geniuspay)
-      <button 
-        onClick={onButtonClick}
-        className="bg-brand-primary text-white px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
-      >
-        <Zap className="w-4 h-4 fill-current" /> {buttonText}
-      </button>
-      */}
+      {onButtonClick && (
+        <div className="flex flex-col items-center md:items-end gap-1">
+          <button 
+            disabled
+            className="bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest cursor-not-allowed opacity-75 shadow-none flex items-center gap-2"
+            title="Paiement temporairement indisponible en raison d'une mise à jour système"
+          >
+            <Zap className="w-4 h-4 fill-current opacity-40" /> {buttonText}
+          </button>
+          <span className="text-[10px] text-amber-600 dark:text-amber-400 font-bold flex items-center gap-1">
+            ⚡ Indisponible - Mise à jour système en cours
+          </span>
+        </div>
+      )}
     </motion.div>
   );
 };
