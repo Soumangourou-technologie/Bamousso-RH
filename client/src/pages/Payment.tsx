@@ -38,22 +38,13 @@ const Payment = () => {
       if (response.data.success && response.data.url) {
         try {
           const targetUrl = new URL(response.data.url);
-          const isAllowedHost = 
-            targetUrl.hostname === 'geniuspay.ci' ||
-            targetUrl.hostname.endsWith('.geniuspay.ci') ||
-            targetUrl.hostname === 'genius.ci' ||
-            targetUrl.hostname.endsWith('.genius.ci') ||
-            targetUrl.hostname === 'pay.genius.ci';
-
-          if ((targetUrl.protocol === 'https:' || targetUrl.protocol === 'http:') && isAllowedHost) {
+          if (targetUrl.protocol === 'https:' || targetUrl.protocol === 'http:') {
             window.location.href = targetUrl.toString();
           } else {
-            alert("URL de paiement invalide ou non sécurisée.");
-            setStatus('IDLE');
+            window.location.href = response.data.url;
           }
         } catch {
-          alert("URL de paiement invalide.");
-          setStatus('IDLE');
+          window.location.href = response.data.url;
         }
       } else {
         alert("Erreur: " + (response.data.message || "Impossible d'initier le paiement."));
