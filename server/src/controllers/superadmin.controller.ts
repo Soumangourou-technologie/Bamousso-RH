@@ -595,9 +595,10 @@ export const sendBroadcastMessage = async (req: AuthRequest, res: Response): Pro
     let attachmentUrl: string | null = null;
     let attachmentName: string | null = null;
 
-    if (req.file) {
-      attachmentName = req.file.originalname;
-      attachmentUrl = await uploadToSupabase(req.file as any, 'bamousso');
+    const reqFile = (req as any).file;
+    if (reqFile) {
+      attachmentName = reqFile.originalname;
+      attachmentUrl = await uploadToSupabase(reqFile, 'bamousso');
     }
 
     // Construction du filtre des utilisateurs destinataires
