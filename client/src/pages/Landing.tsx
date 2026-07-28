@@ -52,6 +52,9 @@ const Landing = () => {
           <a href="#pricing" className="hidden md:inline-block font-bold text-gray-300 hover:text-brand-primary transition-colors text-sm uppercase tracking-wider">
             Tarifs
           </a>
+          <Link to="/register" className="glass-card hover:border-brand-primary/50 text-white px-5 py-2.5 rounded-full font-bold transition-all text-sm hover:-translate-y-0.5">
+            S'inscrire
+          </Link>
           <Link to="/login" className="bg-brand-primary hover:bg-brand-800 text-white px-6 py-2.5 rounded-full font-bold shadow-lg shadow-brand-primary/30 transition-all hover:-translate-y-0.5">
             Espace Client
           </Link>
