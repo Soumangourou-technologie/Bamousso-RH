@@ -4,7 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Building2, CheckCircle, ShieldAlert, Sparkles, Star, Award, Zap, ArrowRight, Info } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PricingToggle } from '../components/PricingToggle';
-import { BillingCycle, PlanType, PRICING_PLANS, calculateTotalAmount, EXTRA_EMPLOYEE_COST_MONTHLY } from '@shared/pricing';
+import { BillingCycle, PlanType, PRICING_PLANS, EXTRA_EMPLOYEE_COST_MONTHLY } from '@shared/pricing';
 
 const AVAILABLE_PLANS = [
   { 
@@ -76,15 +76,32 @@ const UpgradePlan = () => {
   const [billingCycle, setBillingCycle] = useState<BillingCycle>((company as any)?.billingCycle || 'MONTHLY');
   const [extraEmployees, setExtraEmployees] = useState<number>(currentExtraEmployees);
 
+  const isSamePlan = selectedPlan === currentPlan;
+  const isSubscriptionActive = company?.subscriptionStatus === 'ACTIVE';
+
+  // Mode de paiement : si même plan + abonnement actif, l'admin peut payer uniquement les employés supplémentaires (ADD_ON)
+  const [actionType, setActionType] = useState<'ADD_ON' | 'FULL'>('ADD_ON');
+
+  const isAddOnMode = isSamePlan && isSubscriptionActive && actionType === 'ADD_ON';
+
+  // Coût unitaire des employés
+  const extraUnitCost = billingCycle === 'YEARLY' ? EXTRA_EMPLOYEE_COST_MONTHLY * 12 : EXTRA_EMPLOYEE_COST_MONTHLY;
+  const extraCost = selectedPlan === 'KORO' ? 0 : extraEmployees * extraUnitCost;
+
+  // Coût du plan principal (0 FCFA si simple ajout d'option sur abonnement actif)
+  const planBaseCost = isAddOnMode ? 0 : (
+    billingCycle === 'YEARLY' 
+      ? (PRICING_PLANS[selectedPlan]?.priceYearly || 0)
+      : (PRICING_PLANS[selectedPlan]?.priceMonthly || 0)
+  );
+
   // Toutes les formules sont éligibles pour renouvellement ou upgrade
   const eligiblePlans = AVAILABLE_PLANS;
-
   const selectedPlanDetails = AVAILABLE_PLANS.find(p => p.id === selectedPlan) || eligiblePlans[0];
 
   // Calculer le montant final
   const calculateTotal = () => {
-    if (!selectedPlanDetails) return 0;
-    return calculateTotalAmount(selectedPlan, billingCycle, extraEmployees);
+    return planBaseCost + extraCost;
   };
 
   const handleProceedToPayment = () => {
@@ -94,14 +111,14 @@ const UpgradePlan = () => {
       state: {
         plan: {
           id: selectedPlanDetails.id,
-          name: selectedPlanDetails.name,
+          name: isAddOnMode ? `${selectedPlanDetails.name} (+${extraEmployees} employé(s))` : selectedPlanDetails.name,
           finalPrice: calculateTotal(),
         },
         billingCycle,
         extraEmployees: selectedPlanDetails.id === 'KORO' ? 0 : extraEmployees,
         companyName: company?.name || "Votre entreprise",
         companyId: company?.id,
-        isAddOn: false
+        isAddOn: isAddOnMode
       }
     });
   };
@@ -272,15 +289,48 @@ const UpgradePlan = () => {
 
                 <hr className="border-gray-100 dark:border-gray-700/50" />
 
+                {/* Choix d'action pour le même plan actif */}
+                {isSamePlan && isSubscriptionActive && (
+                  <div className="bg-brand-primary/5 p-3 rounded-2xl border border-brand-primary/20 space-y-2">
+                    <span className="text-[10px] font-black uppercase text-brand-primary tracking-wider">Option de facturation</span>
+                    <div className="space-y-1.5">
+                      <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-gray-800 dark:text-gray-200">
+                        <input 
+                          type="radio" 
+                          name="actionType" 
+                          checked={actionType === 'ADD_ON'} 
+                          onChange={() => setActionType('ADD_ON')}
+                          className="accent-brand-primary"
+                        />
+                        <span>Ajouter uniquement les employés (+{extraEmployees})</span>
+                      </label>
+                      <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-gray-800 dark:text-gray-200">
+                        <input 
+                          type="radio" 
+                          name="actionType" 
+                          checked={actionType === 'FULL'} 
+                          onChange={() => setActionType('FULL')}
+                          className="accent-brand-primary"
+                        />
+                        <span>Renouveler la formule complète (+30 jours)</span>
+                      </label>
+                    </div>
+                  </div>
+                )}
+
                 {selectedPlanDetails ? (
                   <div className="space-y-4">
                     <div className="flex justify-between items-start">
                       <div>
-                        <span className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Nouvelle Formule</span>
+                        <span className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">
+                          {isAddOnMode ? "Formule Actuelle" : "Nouvelle Formule"}
+                        </span>
                         <p className="text-lg font-black text-gray-900 dark:text-white">{selectedPlanDetails.name}</p>
                       </div>
                       <p className="font-black text-gray-900 dark:text-white text-sm mt-4">
-                        {(billingCycle === 'YEARLY' ? PRICING_PLANS[selectedPlanDetails.id as PlanType].priceYearly : PRICING_PLANS[selectedPlanDetails.id as PlanType].priceMonthly).toLocaleString()} FCFA
+                        {isAddOnMode 
+                          ? <span className="text-emerald-500 font-bold text-xs">Inclus (Actif)</span>
+                          : `${(billingCycle === 'YEARLY' ? PRICING_PLANS[selectedPlanDetails.id as PlanType].priceYearly : PRICING_PLANS[selectedPlanDetails.id as PlanType].priceMonthly).toLocaleString()} FCFA`}
                       </p>
                     </div>
 
@@ -291,7 +341,7 @@ const UpgradePlan = () => {
                           <p className="text-xs font-bold text-orange-500">+ {extraEmployees} employé(s)</p>
                         </div>
                         <p className="font-bold text-gray-700 dark:text-gray-300 text-xs">
-                          {(extraEmployees * (billingCycle === 'YEARLY' ? EXTRA_EMPLOYEE_COST_MONTHLY * 12 : EXTRA_EMPLOYEE_COST_MONTHLY)).toLocaleString()} FCFA
+                          {(extraEmployees * extraUnitCost).toLocaleString()} FCFA
                         </p>
                       </div>
                     )}
