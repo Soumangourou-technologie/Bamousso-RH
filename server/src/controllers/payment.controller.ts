@@ -26,13 +26,24 @@ export const initiatePayment = async (req: Request, res: Response) => {
     // Si on veut, on peut vérifier idempotencyKey ici pour empêcher les doublons, 
     // ou la passer à GeniusPay. L'ajout règle l'alerte Herozion.
 
+    // Normaliser le nom du plan pour gérer les accents (ex: "Kôrô" -> "KORO")
+    let normalizedPlan: PlanType = 'FITINI';
+    const rawPlan = String(plan || '').toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+    if (rawPlan.includes('KORO')) {
+      normalizedPlan = 'KORO';
+    } else if (rawPlan.includes('LOUBA')) {
+      normalizedPlan = 'LOUBA';
+    } else if (rawPlan.includes('FITINI')) {
+      normalizedPlan = 'FITINI';
+    }
+
     // Calcul sécurisé du montant côté serveur
     let calculatedAmount = 0;
     if (isAddOn) {
       // Pour les add-ons d'employés, on doit savoir le billingCycle actuel de l'entreprise
       calculatedAmount = calculateTotalAmount('FITINI', billingCycle, extraEmployees) - calculateTotalAmount('FITINI', billingCycle, 0); // Hack to get extra cost
     } else {
-      calculatedAmount = calculateTotalAmount(plan as PlanType, billingCycle, extraEmployees);
+      calculatedAmount = calculateTotalAmount(normalizedPlan, billingCycle, extraEmployees);
     }
 
     if (calculatedAmount <= 0) {
