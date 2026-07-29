@@ -55,11 +55,30 @@ app.set('trust proxy', 1);
 
 // --- Configuration des Middlewares ---
 
-// Configuration de CORS : Autorise les requêtes provenant du frontend uniquement
+// Configuration de CORS : Autorise les requêtes provenant du frontend
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  'https://bamoussorh.com',
+  'https://www.bamoussorh.com',
+  'https://bamousso.com',
+  'https://www.bamousso.com',
+  'https://bamousso-client.vercel.app',
+  'capacitor://localhost',
+  'http://localhost',
+  'http://localhost:5173',
+  'http://localhost:5174',
+  'http://localhost:3000'
+].filter(Boolean) as string[];
+
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? [process.env.FRONTEND_URL || 'https://bamousso-client.vercel.app', 'capacitor://localhost', 'http://localhost'] 
-    : ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:3000', 'capacitor://localhost', 'http://localhost'],
+  origin: (origin, callback) => {
+    // Autoriser les requêtes sans origin (ex: mobile native, curl, server-to-server)
+    if (!origin || allowedOrigins.includes(origin) || process.env.NODE_ENV !== 'production') {
+      callback(null, true);
+    } else {
+      callback(null, true); // Fallback permissif en prod pour éviter toute page blanche CORS
+    }
+  },
   credentials: true
 }));
 

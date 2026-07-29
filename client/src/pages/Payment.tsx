@@ -8,6 +8,8 @@ const Payment = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [status, setStatus] = useState<'IDLE' | 'PROCESSING' | 'SUCCESS'>('IDLE');
+  const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   // Si on atterrit ici sans plan (ex: rafraichissement), on redirige.
   useEffect(() => {
@@ -23,6 +25,7 @@ const Payment = () => {
   const handlePayment = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus('PROCESSING');
+    setErrorMsg(null);
 
     try {
       const response = await api.post('/payment/initiate', {
@@ -36,24 +39,23 @@ const Payment = () => {
       });
 
       if (response.data.success && response.data.url) {
+        const url = response.data.url;
+        setCheckoutUrl(url);
+        
+        // Redirection vers GeniusPay
         try {
-          const targetUrl = new URL(response.data.url);
-          if (targetUrl.protocol === 'https:' || targetUrl.protocol === 'http:') {
-            window.location.href = targetUrl.toString();
-          } else {
-            window.location.href = response.data.url;
-          }
+          window.location.assign(url);
         } catch {
-          window.location.href = response.data.url;
+          window.location.href = url;
         }
       } else {
-        alert("Erreur: " + (response.data.message || "Impossible d'initier le paiement."));
+        setErrorMsg(response.data.message || "Impossible d'initier le paiement.");
         setStatus('IDLE');
       }
     } catch (error: any) {
       console.error("Payment Error:", error);
-      const errorMsg = error.response?.data?.message || error.response?.data?.error || "Erreur de connexion au serveur.";
-      alert(`Erreur: ${errorMsg}`);
+      const msg = error.response?.data?.message || error.response?.data?.error || "Erreur de connexion au serveur.";
+      setErrorMsg(msg);
       setStatus('IDLE');
     }
   };
@@ -110,7 +112,7 @@ const Payment = () => {
           </div>
 
           {/* Formulaire de paiement */}
-          <div className="md:w-3/5 p-8 relative">
+          <div className="md:w-3/5 p-8 relative flex flex-col justify-between">
             
             {status === 'SUCCESS' ? (
               <motion.div 
@@ -130,23 +132,38 @@ const Payment = () => {
               <motion.div 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="absolute inset-0 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm z-10 flex flex-col items-center justify-center p-8 text-center"
+                className="absolute inset-0 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm z-10 flex flex-col items-center justify-center p-8 text-center"
               >
                 <motion.div animate={{ scale: [1, 1.1, 1] }} transition={{ repeat: Infinity, duration: 1.5 }}>
-                  <Phone className="w-16 h-16 text-orange-500 mb-6" />
+                  <Phone className="w-16 h-16 text-orange-500 mb-6 mx-auto" />
                 </motion.div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Validation en cours</h3>
-                <p className="text-gray-600 dark:text-gray-400">
-                  Veuillez consulter votre téléphone et taper votre code secret pour valider le paiement.
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Redirection vers la caisse...</h3>
+                <p className="text-gray-600 dark:text-gray-400 mb-6 text-sm">
+                  Veuillez patienter pendant le chargement du guichet de paiement GeniusPay.
                 </p>
+                {checkoutUrl && (
+                  <a
+                    href={checkoutUrl}
+                    target="_self"
+                    className="bg-orange-500 text-white font-black px-6 py-4 rounded-xl shadow-xl hover:bg-orange-600 transition-all text-xs uppercase tracking-widest inline-flex items-center gap-2"
+                  >
+                    Ouvrir la caisse GeniusPay ↗
+                  </a>
+                )}
               </motion.div>
             ) : null}
 
+            {errorMsg && (
+              <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-xl mb-6 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 text-sm font-medium">
+                ⚠️ {errorMsg}
+              </div>
+            )}
+
             <div className="bg-orange-50 dark:bg-orange-900/20 p-6 rounded-2xl mb-8 border border-orange-100 dark:border-orange-800">
               <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed text-center font-medium">
-                Paiement par Mobile Money ou Carte Bancaire 100% sécurisé.
+                Paiement par Mobile Money (Wave, Orange, MTN, Moov) ou Carte Bancaire 100% sécurisé.
                 <br /><br />
-                Vous allez être redirigé vers notre plateforme de paiement certifiée pour finaliser votre transaction en toute sécurité.
+                Vous allez être redirigé vers notre plateforme certifiée GeniusPay pour finaliser votre paiement.
               </p>
             </div>
 
@@ -154,7 +171,7 @@ const Payment = () => {
               <button
                 type="submit"
                 disabled={status === 'PROCESSING'}
-                className="w-full bg-orange-500 text-white py-4 rounded-xl font-bold hover:bg-orange-600 transition-all shadow-xl shadow-orange-500/30 flex justify-center items-center gap-2 text-lg"
+                className="w-full bg-orange-500 text-white py-4 rounded-xl font-bold hover:bg-orange-600 transition-all shadow-xl shadow-orange-500/30 flex justify-center items-center gap-2 text-lg disabled:opacity-50"
               >
                 {status === 'PROCESSING' ? (
                   <Loader2 className="w-6 h-6 animate-spin" />

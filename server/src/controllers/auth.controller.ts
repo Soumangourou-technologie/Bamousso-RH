@@ -257,10 +257,9 @@ export const login = catchAsync(async (req: Request, res: Response, next: NextFu
   if (!user) {
     return res.status(400).json({ message: "Identifiants invalides" });
   }
-  const blockedRoles = ['EMPLOYEE', 'HR_MANAGER', 'COMMERCIAL'];
-  if (user.company && !user.company.isActive && blockedRoles.includes(user.role)) {
+  if (user.company && !user.company.isActive && user.role !== 'SUPER_ADMIN') {
     return res.status(403).json({ 
-      message: "L'accès à cette entreprise a été suspendu. Veuillez contacter l'administrateur." 
+      message: "Compte en attente d'activation. Veuillez finaliser votre paiement." 
     });
   }
   const isMatch = await bcrypt.compare(password, user.password);

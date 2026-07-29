@@ -18,7 +18,6 @@ const plansList = [
 
 const Register = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
-  const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [error, setError] = useState('');
@@ -43,9 +42,6 @@ const Register = () => {
         extraEmployees: extraEmployees
       });
       
-      // 2. Connexion automatique
-      login(response.data.user, response.data.company);
-      
       // Suivi de conversion Meta Pixel avec coordonnées du gérant
       trackMetaEvent('CompleteRegistration', {
         plan: selectedPlan,
@@ -58,7 +54,7 @@ const Register = () => {
         phone: data.phone,
       });
 
-      // 3. Redirection vers le paiement
+      // 2. Redirection vers le paiement sans session active avant paiement
       navigate('/payment', { 
         state: { 
           plan: { ...planDetails, finalPrice: totalAmount },

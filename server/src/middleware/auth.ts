@@ -37,11 +37,11 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
         select: { isActive: true, isLocked: true, trialEndsAt: true } as any,
       });
 
-      // Blocage strict : Si l'entreprise est inactive, on refuse tout accès 
-      // SAUF pour la route /auth/me qui permet au frontend de vérifier si le paiement est validé.
+      // Blocage strict : Si l'entreprise est inactive, on refuse tout accès
+      // SAUF pour la route /auth/me qui permet au frontend de vérifier le statut.
       if (!company || !company.isActive) {
         const isAuthMe = req.path === '/me' || req.originalUrl.includes('/auth/me');
-        if (!isAuthMe || req.user.role !== "COMPANY_ADMIN") {
+        if (!isAuthMe) {
           return res.status(403).json({ message: "Compte en attente d'activation. Veuillez finaliser votre paiement." });
         }
       }

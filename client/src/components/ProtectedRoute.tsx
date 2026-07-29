@@ -1,4 +1,4 @@
-import { Navigate, Outlet } from 'react-router-dom';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 interface ProtectedRouteProps {
@@ -6,10 +6,15 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
-  const { user, isLoading } = useAuth();
+  const { user, company, isLoading } = useAuth();
+  const location = useLocation();
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#1a0f0a]">
+        <div className="w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
   }
 
   if (!user) {
@@ -18,6 +23,16 @@ const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
 
   if (allowedRoles && !allowedRoles.includes(user.role)) {
     return <Navigate to="/unauthorized" replace />;
+  }
+
+  // Sécurité renforcée : Si l'entreprise n'est pas activée ou est verrouillée (sauf SUPER_ADMIN)
+  if (user.role !== 'SUPER_ADMIN' && company) {
+    const isInactiveOrLocked = company.isActive === false || company.isLocked === true || company.subscriptionStatus === 'PENDING';
+    const allowedUnpaidPaths = ['/locked', '/payment', '/payment-success', '/payment-cancelled'];
+
+    if (isInactiveOrLocked && !allowedUnpaidPaths.includes(location.pathname)) {
+      return <Navigate to="/locked" replace />;
+    }
   }
 
   return <Outlet />;

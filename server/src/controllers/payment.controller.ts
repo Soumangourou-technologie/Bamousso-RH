@@ -72,8 +72,8 @@ export const initiatePayment = async (req: Request, res: Response) => {
         extraEmployees: req.body.extraEmployees || 0,
         isAddOn: req.body.isAddOn || false
       },
-      success_url: `${process.env.FRONTEND_URL}/payment-success?companyId=${companyId}`,
-      error_url: `${process.env.FRONTEND_URL}/payment-cancelled`,
+      success_url: `${(process.env.FRONTEND_URL || 'https://bamoussorh.com').replace(/\/+$/, '').replace(/^http:\/\/localhost:\d+$/, 'https://bamoussorh.com')}/payment-success?companyId=${companyId}`,
+      error_url: `${(process.env.FRONTEND_URL || 'https://bamoussorh.com').replace(/\/+$/, '').replace(/^http:\/\/localhost:\d+$/, 'https://bamoussorh.com')}/payment-cancelled`,
     }, {
       headers: {
         'X-API-Key': apiKey,
