@@ -233,7 +233,7 @@ export const getMetaPixelAnalytics = async (_req: Request, res: Response) => {
       prisma.metaPixelEvent.count({ where: { eventName: 'CompleteRegistration' } }),
       prisma.metaPixelEvent.count({ where: { eventName: 'Subscribe' } }),
       prisma.metaPixelEvent.findMany({
-        take: 100,
+        take: 2000,
         orderBy: { createdAt: 'desc' },
       }),
       prisma.metaPixelEvent.findMany({

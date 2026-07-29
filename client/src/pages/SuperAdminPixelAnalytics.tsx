@@ -21,7 +21,9 @@ import {
   Phone,
   Mail,
   UserPlus,
-  Link2
+  Link2,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 
 interface PixelConfig {
@@ -110,9 +112,16 @@ export default function SuperAdminPixelAnalytics() {
   const [sendingTest, setSendingTest] = useState<boolean>(false);
   const [testResult, setTestResult] = useState<any>(null);
 
-  // Search & Filter state for Stream tab
+  // Search, Filter & Pagination state for Stream tab
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedEventFilter, setSelectedEventFilter] = useState<string>('ALL');
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [itemsPerPage, setItemsPerPage] = useState<number>(15);
+
+  // Re-initialiser la page quand un filtre change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, selectedEventFilter, itemsPerPage]);
 
   // Simulation Lead Ads state
   const [simLead, setSimLead] = useState({
@@ -218,20 +227,31 @@ fbq('track', 'PageView');
     setTimeout(() => setCopiedSnippet(false), 3000);
   };
 
-  // Filtrage du journal des événements
+  // Filtrage du journal des événements (inclut la recherche dans les coordonnées contact)
   const filteredEvents = (analytics?.recentEvents || []).filter((ev) => {
+    const cData = ev.customData || {};
+    const q = searchQuery.toLowerCase();
     const matchesSearch =
       searchQuery === '' ||
-      ev.eventName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (ev.url && ev.url.toLowerCase().includes(searchQuery.toLowerCase())) ||
-      (ev.utmCampaign && ev.utmCampaign.toLowerCase().includes(searchQuery.toLowerCase())) ||
-      (ev.utmSource && ev.utmSource.toLowerCase().includes(searchQuery.toLowerCase()));
+      ev.eventName.toLowerCase().includes(q) ||
+      (ev.url && ev.url.toLowerCase().includes(q)) ||
+      (ev.utmCampaign && ev.utmCampaign.toLowerCase().includes(q)) ||
+      (ev.utmSource && ev.utmSource.toLowerCase().includes(q)) ||
+      (cData.name && String(cData.name).toLowerCase().includes(q)) ||
+      (cData.email && String(cData.email).toLowerCase().includes(q)) ||
+      (cData.phone && String(cData.phone).toLowerCase().includes(q)) ||
+      (cData.companyName && String(cData.companyName).toLowerCase().includes(q));
 
     const matchesEventFilter =
       selectedEventFilter === 'ALL' || ev.eventName === selectedEventFilter;
 
     return matchesSearch && matchesEventFilter;
   });
+
+  // Calculs de pagination
+  const totalPages = Math.max(1, Math.ceil(filteredEvents.length / itemsPerPage));
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedEvents = filteredEvents.slice(startIndex, startIndex + itemsPerPage);
 
   return (
     <div className="space-y-8 p-6 max-w-7xl mx-auto pb-16">
@@ -540,7 +560,7 @@ fbq('track', 'PageView');
                 <Activity className="w-5 h-5 text-brand-primary" />
                 Journal des Événements Meta en Temps Réel
               </h3>
-              <p className="text-xs text-gray-400">Stream des 100 derniers événements reçus (Client & CAPI)</p>
+              <p className="text-xs text-gray-400">Journal en temps réel des événements capturés ({filteredEvents.length} événements au total)</p>
             </div>
 
             <div className="flex items-center gap-3">
@@ -549,7 +569,7 @@ fbq('track', 'PageView');
                 <Search className="w-4 h-4 text-gray-400 absolute left-3 top-3" />
                 <input
                   type="text"
-                  placeholder="Rechercher URL, UTM..."
+                  placeholder="Rechercher Nom, Tél, Email, UTM..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="bg-white/5 border border-white/10 rounded-xl pl-9 pr-4 py-2 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-brand-primary w-48 md:w-64"
@@ -586,14 +606,14 @@ fbq('track', 'PageView');
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5 font-mono">
-                {filteredEvents.length === 0 ? (
+                {paginatedEvents.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="py-8 text-center text-gray-500 italic">
                       Aucun événement correspondant aux critères.
                     </td>
                   </tr>
                 ) : (
-                  filteredEvents.map((ev) => {
+                  paginatedEvents.map((ev) => {
                     const cData = ev.customData || {};
                     const hasContact = cData.name || cData.email || cData.phone || cData.companyName;
 
@@ -655,6 +675,48 @@ fbq('track', 'PageView');
                 )}
               </tbody>
             </table>
+          </div>
+
+          {/* Controls de pagination */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-white/10 text-xs text-gray-400">
+            <div className="flex items-center gap-2">
+              <span>Afficher</span>
+              <select
+                value={itemsPerPage}
+                onChange={(e) => setItemsPerPage(Number(e.target.value))}
+                className="bg-[#2A1B16] border border-white/10 rounded-lg px-2 py-1 text-xs text-white focus:outline-none focus:border-brand-primary"
+              >
+                <option value={15}>15 par page</option>
+                <option value={30}>30 par page</option>
+                <option value={50}>50 par page</option>
+                <option value={100}>100 par page</option>
+              </select>
+              <span>sur {filteredEvents.length} résultats</span>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="flex items-center gap-1 bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl text-white font-bold disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white/10 transition-all cursor-pointer"
+              >
+                <ChevronLeft className="w-4 h-4" />
+                Précédent
+              </button>
+
+              <span className="font-bold text-white px-2">
+                Page {currentPage} sur {totalPages}
+              </span>
+
+              <button
+                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                disabled={currentPage >= totalPages}
+                className="flex items-center gap-1 bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl text-white font-bold disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white/10 transition-all cursor-pointer"
+              >
+                Suivant
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         </div>
       )}
