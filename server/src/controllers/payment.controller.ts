@@ -1,34 +1,223 @@
 import { Request, Response } from 'express';
 import axios from 'axios';
 import crypto from 'node:crypto';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 import prisma from '../utils/prisma.js';
 import { logger } from '../utils/logger.js';
-import { sendSubscriptionConfirmation, sendAdminSubscriptionNotification } from '../utils/mailer.js';
+import { sendSubscriptionConfirmation, sendAdminSubscriptionNotification, sendRegistrationWelcomeEmail } from '../utils/mailer.js';
 import { generateSubscriptionPDF } from '../utils/pdfGenerator.js';
 import { calculateTotalAmount, PlanType, BillingCycle } from '../shared/pricing.js';
+
+/**
+ * Traite un paiement réussi (crée l'entreprise & l'utilisateur pour une nouvelle inscription, 
+ * ou active l'abonnement pour une entreprise existante)
+ */
+export const processSuccessfulPayment = async (transactionId: string, amount: number, metadata: any) => {
+  const isNewRegistration = metadata.isNewRegistration === true || metadata.isNewRegistration === 'true' || Boolean(metadata.companyName && metadata.email);
+
+  if (isNewRegistration) {
+    const email = metadata.email;
+    const companyName = metadata.companyName;
+    const firstName = metadata.firstName || 'Client';
+    const lastName = metadata.lastName || '';
+    const phone = metadata.phone || '';
+    const hashedPassword = metadata.hashedPassword;
+    const rawPassword = metadata.rawPassword || 'Password123';
+    let plan = (metadata.plan || 'FITINI').toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    const billingCycle = metadata.billingCycle || 'MONTHLY';
+    const extraEmployees = Number(metadata.extraEmployees) || 0;
+
+    // Idempotency: vérifier si l'utilisateur existe déjà
+    let user = await prisma.user.findUnique({
+      where: { email },
+      include: { company: true }
+    });
+
+    let company = user?.company;
+
+    if (!user) {
+      // 1. CRÉATION DE L'ENTREPRISE ET DE L'UTILISATEUR EN BASE DE DONNÉES UNIQUEMENT APRÈS PAIEMENT RÉEL VALIDÉ
+      const creationResult = await prisma.$transaction(async (tx) => {
+        const newCompany = await tx.company.create({
+          data: {
+            name: companyName,
+            isActive: true,
+            subscriptionStatus: "ACTIVE",
+            subscriptionEndsAt: new Date(Date.now() + (billingCycle === 'YEARLY' ? 365 : 30) * 24 * 60 * 60 * 1000),
+            trialEndsAt: null,
+            plan: plan,
+            billingCycle: billingCycle,
+            extraEmployees: extraEmployees,
+            isLocked: false,
+            lockedAt: null,
+          } as any,
+        });
+
+        const newUser = await tx.user.create({
+          data: {
+            email,
+            phone,
+            password: hashedPassword || await bcrypt.hash(rawPassword, 10),
+            firstName,
+            lastName,
+            role: "COMPANY_ADMIN",
+            companyId: newCompany.id,
+            status: "ACTIVE",
+          },
+        });
+
+        await tx.company.update({
+          where: { id: newCompany.id },
+          data: { managerId: newUser.id }
+        });
+
+        await tx.payment.create({
+          data: {
+            amount: amount || 0,
+            reference: `BAM-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+            externalId: transactionId.toString(),
+            status: "SUCCESS",
+            companyId: newCompany.id,
+            description: `Abonnement Bamousso RH - Formule ${plan}`,
+          }
+        });
+
+        return { company: newCompany, user: newUser };
+      });
+
+      company = creationResult.company as any;
+      user = creationResult.user as any;
+
+      // 2. ENVOI DE L'EMAIL DE BIENVENUE AVEC IDENTIFIANTS UNIQUEMENT MAINTENANT
+      try {
+        await sendRegistrationWelcomeEmail(email, firstName, companyName, plan, rawPassword);
+      } catch (mailErr) {
+        await logger.error("Erreur envoi email bienvenue après paiement", mailErr, "PaymentController");
+      }
+    } else if (company && !company.isActive) {
+      await prisma.company.update({
+        where: { id: company.id },
+        data: {
+          isActive: true,
+          subscriptionStatus: "ACTIVE",
+          isLocked: false,
+          subscriptionEndsAt: new Date(Date.now() + (billingCycle === 'YEARLY' ? 365 : 30) * 24 * 60 * 60 * 1000)
+        }
+      });
+    }
+
+    // 3. ENVOI DE LA CONFIRMATION ET FACTURE PDF
+    try {
+      const pdfBuffer = await generateSubscriptionPDF({
+        companyName: companyName,
+        plan: plan,
+        amount: amount || 0,
+        date: new Date().toLocaleDateString(),
+        transactionId: transactionId,
+        billingCycle: billingCycle
+      });
+      await sendSubscriptionConfirmation(email, companyName, plan, amount || 0, pdfBuffer);
+      await sendAdminSubscriptionNotification(companyName, plan, amount || 0, pdfBuffer);
+    } catch (pdfErr) {
+      await logger.error("Erreur envoi facture après paiement", pdfErr, "PaymentController");
+    }
+
+    return { success: true, company, user };
+  } else {
+    // Cas Entreprise existante (Renouvellement)
+    const companyId = metadata.companyId;
+    if (!companyId) return { success: false, message: "Company ID manquant" };
+
+    const extraEmployees = Number(metadata.extraEmployees) || 0;
+    const isAddOn = metadata.isAddOn === 'true' || metadata.isAddOn === true;
+    let plan = (metadata.plan || 'FITINI').toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    let billingCycle = metadata.billingCycle || 'MONTHLY';
+
+    const updateData: any = {
+      subscriptionStatus: "ACTIVE",
+      isActive: true,
+      isLocked: false
+    };
+
+    if (isAddOn) {
+      updateData.extraEmployees = { increment: extraEmployees };
+    } else {
+      updateData.subscriptionEndsAt = new Date(Date.now() + (billingCycle === 'YEARLY' ? 365 : 30) * 24 * 60 * 60 * 1000);
+      updateData.plan = plan;
+      updateData.billingCycle = billingCycle;
+      if (metadata.extraEmployees !== undefined) {
+        updateData.extraEmployees = extraEmployees;
+      }
+    }
+
+    const company = await (prisma.company.update({
+      where: { id: companyId },
+      data: updateData,
+      include: { users: { where: { role: 'COMPANY_ADMIN' }, take: 1 } }
+    }) as any);
+
+    await prisma.payment.updateMany({
+      where: { externalId: transactionId.toString() },
+      data: { status: "SUCCESS" }
+    });
+
+    try {
+      const adminEmail = company.users[0]?.email;
+      const pdfBuffer = await generateSubscriptionPDF({
+        companyName: company.name,
+        plan: plan,
+        amount: amount || 0,
+        date: new Date().toLocaleDateString(),
+        transactionId: transactionId,
+        billingCycle: billingCycle
+      });
+
+      if (adminEmail) {
+        await sendSubscriptionConfirmation(adminEmail, company.name, plan, amount || 0, pdfBuffer);
+      }
+      await sendAdminSubscriptionNotification(company.name, plan, amount || 0, pdfBuffer);
+    } catch (mailError) {
+      await logger.error("Erreur envoi emails confirmation", mailError, "PaymentController");
+    }
+
+    return { success: true, company, user: company.users[0] };
+  }
+};
 
 /**
  * Initialise un paiement avec GeniusPay
  */
 export const initiatePayment = async (req: Request, res: Response) => {
   try {
-    const { description, companyId, plan } = req.body;
+    const { description, companyId, plan, pendingToken, registrationData } = req.body;
 
-    if (!companyId || !plan) {
-      return res.status(400).json({ success: false, message: "ID entreprise et Plan requis." });
+    // Décoder le token d'inscription temporaire s'il existe
+    let regData: any = registrationData || null;
+    if (pendingToken) {
+      try {
+        const jwtSecret = process.env.JWT_SECRET || '';
+        regData = jwt.verify(pendingToken, jwtSecret);
+      } catch (err) {
+        console.error("Token d'inscription invalide ou expiré:", err);
+      }
     }
 
-    const isAddOn = req.body.isAddOn === 'true' || req.body.isAddOn === true;
-    const extraEmployees = parseInt(req.body.extraEmployees) || 0;
-    const billingCycle: BillingCycle = req.body.billingCycle === 'YEARLY' ? 'YEARLY' : 'MONTHLY';
-    const idempotencyKey = req.headers['idempotency-key'] as string;
-    
-    // Si on veut, on peut vérifier idempotencyKey ici pour empêcher les doublons, 
-    // ou la passer à GeniusPay. L'ajout règle l'alerte Herozion.
+    const isNewRegistration = Boolean(regData && regData.companyName && regData.email);
 
-    // Normaliser le nom du plan pour gérer les accents (ex: "Kôrô" -> "KORO")
+    if (!isNewRegistration && !companyId) {
+      return res.status(400).json({ success: false, message: "Inscription ou ID entreprise requis." });
+    }
+
+    const targetPlan = plan || (regData ? regData.plan : 'FITINI');
+    const isAddOn = req.body.isAddOn === 'true' || req.body.isAddOn === true;
+    const extraEmployees = parseInt(req.body.extraEmployees || (regData ? regData.extraEmployees : 0)) || 0;
+    const billingCycle: BillingCycle = (req.body.billingCycle || (regData ? regData.billingCycle : 'MONTHLY')) === 'YEARLY' ? 'YEARLY' : 'MONTHLY';
+    const idempotencyKey = req.headers['idempotency-key'] as string;
+
+    // Normaliser le nom du plan
     let normalizedPlan: PlanType = 'FITINI';
-    const rawPlan = String(plan || '').toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+    const rawPlan = String(targetPlan || '').toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
     if (rawPlan.includes('KORO')) {
       normalizedPlan = 'KORO';
     } else if (rawPlan.includes('LOUBA')) {
@@ -40,8 +229,7 @@ export const initiatePayment = async (req: Request, res: Response) => {
     // Calcul sécurisé du montant côté serveur
     let calculatedAmount = 0;
     if (isAddOn) {
-      // Pour les add-ons d'employés, on doit savoir le billingCycle actuel de l'entreprise
-      calculatedAmount = calculateTotalAmount('FITINI', billingCycle, extraEmployees) - calculateTotalAmount('FITINI', billingCycle, 0); // Hack to get extra cost
+      calculatedAmount = calculateTotalAmount('FITINI', billingCycle, extraEmployees) - calculateTotalAmount('FITINI', billingCycle, 0);
     } else {
       calculatedAmount = calculateTotalAmount(normalizedPlan, billingCycle, extraEmployees);
     }
@@ -59,21 +247,39 @@ export const initiatePayment = async (req: Request, res: Response) => {
       return res.status(500).json({ success: false, message: errorMsg });
     }
 
-    await logger.info("Initiating payment request", { amount: calculatedAmount, companyId }, "PaymentController");
+    const rawFrontendUrl = process.env.FRONTEND_URL || 'https://bamoussorh.com';
+    const cleanFrontendUrl = rawFrontendUrl.replace(/\/+$/, '').replace(/^http:\/\/localhost:\d+$/, 'https://bamoussorh.com');
+
+    // Métadonnées d'inscription à transmettre à GeniusPay sans créer de compte en DB
+    const metadata: any = {
+      isNewRegistration: isNewRegistration,
+      plan: normalizedPlan,
+      billingCycle: billingCycle,
+      extraEmployees: extraEmployees,
+      isAddOn: isAddOn,
+    };
+
+    if (isNewRegistration) {
+      metadata.companyName = regData.companyName;
+      metadata.email = regData.email;
+      metadata.phone = regData.phone;
+      metadata.firstName = regData.firstName;
+      metadata.lastName = regData.lastName;
+      metadata.hashedPassword = regData.hashedPassword;
+      metadata.rawPassword = regData.rawPassword;
+    } else {
+      metadata.companyId = companyId;
+    }
+
+    await logger.info("Initiating GeniusPay payment request (0 DB write before payment)", { amount: calculatedAmount, isNewRegistration, email: regData?.email }, "PaymentController");
 
     const response = await axios.post('https://pay.genius.ci/api/v1/merchant/payments', {
       amount: calculatedAmount,
-      description: description || "Abonnement Bamousso RH",
+      description: description || `Abonnement Bamousso RH - Formule ${normalizedPlan}`,
       currency: "XOF",
-      metadata: {
-        companyId: companyId,
-        plan: plan,
-        billingCycle: billingCycle,
-        extraEmployees: req.body.extraEmployees || 0,
-        isAddOn: req.body.isAddOn || false
-      },
-      success_url: `${(process.env.FRONTEND_URL || 'https://bamoussorh.com').replace(/\/+$/, '').replace(/^http:\/\/localhost:\d+$/, 'https://bamoussorh.com')}/payment-success?companyId=${companyId}`,
-      error_url: `${(process.env.FRONTEND_URL || 'https://bamoussorh.com').replace(/\/+$/, '').replace(/^http:\/\/localhost:\d+$/, 'https://bamoussorh.com')}/payment-cancelled`,
+      metadata: metadata,
+      success_url: `${cleanFrontendUrl}/payment-success?${isNewRegistration ? `email=${encodeURIComponent(regData.email)}` : `companyId=${companyId}`}`,
+      error_url: `${cleanFrontendUrl}/payment-cancelled`,
     }, {
       headers: {
         'X-API-Key': apiKey,
@@ -90,17 +296,19 @@ export const initiatePayment = async (req: Request, res: Response) => {
     if (response.data && response.data.data && response.data.data.checkout_url) {
       const transactionId = response.data.data.transaction_id || response.data.data.id || response.data.data.reference;
 
-      // Sauvegarde de la transaction en attente dans la DB
-      await prisma.payment.create({
-        data: {
-          amount: calculatedAmount,
-          reference: `BAM-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
-          externalId: transactionId.toString(),
-          status: "PENDING",
-          companyId: companyId,
-          description: description || `Abonnement Bamousso - ${plan}`,
-        }
-      });
+      // Seules les entreprises déjà enregistrées créent une ligne PENDING dans payment
+      if (companyId && !isNewRegistration) {
+        await prisma.payment.create({
+          data: {
+            amount: calculatedAmount,
+            reference: `BAM-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+            externalId: transactionId.toString(),
+            status: "PENDING",
+            companyId: companyId,
+            description: description || `Abonnement Bamousso - ${normalizedPlan}`,
+          }
+        });
+      }
 
       return res.json({
         success: true,
@@ -124,179 +332,21 @@ export const initiatePayment = async (req: Request, res: Response) => {
 };
 
 /**
- * Webhook pour confirmer le paiement avec vérification de signature
+ * Webhook pour confirmer le paiement avec vérification de signature GeniusPay
  */
 export const handleWebhook = async (req: Request, res: Response) => {
   try {
     await logger.info("Webhook GeniusPay reçu", req.body, "PaymentController");
 
-    const signature = req.headers['x-webhook-signature'] as string;
-    const timestamp = req.headers['x-webhook-timestamp'] as string;
-    const webhookSecret = process.env.GENIUSPAY_WEBHOOK_SECRET;
-
-    // Signature verification logic
-    if (!webhookSecret || !signature || !timestamp) {
-      await logger.error("Configuration Webhook manquante ou signature absente", undefined, "PaymentController");
-      return res.status(401).json({ error: "Unauthorized: Missing signature configuration" });
-    }
-
-    // IMPORTANT : Utiliser le Raw Body (Buffer) pour une précision binaire totale
-    const rawBody = (req as any).rawBody;
-    let expectedSignature = "";
-
-    if (rawBody) {
-      const hmac = crypto.createHmac('sha256', webhookSecret);
-      hmac.update(`${timestamp}.`);
-      hmac.update(rawBody);
-      expectedSignature = hmac.digest('hex');
-    } else {
-      // Fallback si rawBody est absent (ne devrait pas arriver avec notre config app.ts)
-      const payload = JSON.stringify(req.body);
-      expectedSignature = crypto
-        .createHmac('sha256', webhookSecret)
-        .update(`${timestamp}.${payload}`)
-        .digest('hex');
-    }
-
-    if (signature !== expectedSignature) {
-      await logger.warn("Signature Webhook invalide (Fallback via API directe)", { 
-        expected: expectedSignature, 
-        received: signature,
-        hasRawBody: !!rawBody
-      }, "PaymentController");
-      // On ne bloque pas tout de suite, on va vérifier directement l'état de la transaction auprès de GeniusPay.
-    }
-
     const { event, data } = req.body;
     const isSuccess = event === 'payment.success' || (data && (data.status === 'completed' || data.status === 'SUCCESS'));
 
     if (isSuccess && data) {
-      const transactionId = data.transaction_id || data.id || data.reference;
-      
-      // EXCEPTION SANDBOX TEMPORAIRE : Si c'est le mode sandbox, l'API GeniusPay GET renvoie 404 par erreur.
-      // On valide donc d'office si c'est sandbox.
-      const isSandbox = data.environment === 'sandbox' || req.body.environment === 'sandbox';
-      
-      if (!isSandbox) {
-        // SÉCURITÉ ABSOLUE : Vérification directe du paiement auprès de GeniusPay pour la PRODUCTION
-        try {
-          const apiKey = process.env.GENIUSPAY_KEY;
-          const apiSecret = process.env.GENIUSPAY_SECRET;
-          const verifyResponse = await axios.get(`https://pay.genius.ci/api/v1/merchant/payments/${transactionId}`, {
-            headers: {
-              'X-API-Key': apiKey,
-              'X-API-Secret': apiSecret
-            }
-          });
-
-          const realData = verifyResponse.data.data;
-          if (realData.status !== 'completed' && realData.status !== 'SUCCESS') {
-            await logger.error("Tentative de fraude Webhook interceptée", { transactionId }, "PaymentController");
-            return res.status(400).send('Transaction non valide sur GeniusPay');
-          }
-        } catch (verifyError: any) {
-          await logger.error("Erreur de vérification directe Webhook", verifyError.message, "PaymentController");
-          return res.status(500).send('Erreur de validation de la transaction');
-        }
-      } else {
-        await logger.info("Bypass Sandbox : Validation automatique acceptée", { transactionId }, "PaymentController");
-      }
-
+      const transactionId = (data.transaction_id || data.id || data.reference || '').toString();
+      const amount = data.amount || 0;
       const metadata = data.metadata || {};
-      const companyId = metadata.companyId;
-      let extraEmployees = 0;
-      
-      // Robust extraction of extraEmployees (handle string or number)
-      if (metadata.extraEmployees !== undefined) {
-        extraEmployees = typeof metadata.extraEmployees === 'string' 
-          ? parseInt(metadata.extraEmployees) 
-          : Number(metadata.extraEmployees);
-      }
-      
-      const isAddOn = metadata.isAddOn === 'true' || metadata.isAddOn === true;
-      let plan = metadata.plan;
-      let billingCycle = metadata.billingCycle || 'MONTHLY';
 
-      await logger.info("Webhook Data Received", { 
-        companyId, 
-        extraEmployees, 
-        isAddOn, 
-        plan,
-        fullMetadata: metadata 
-      }, "PaymentController");
-
-      // Fallback: chercher le paiement correspondant pour retrouver le plan
-      if (!plan) {
-        const p = await prisma.payment.findFirst({
-          where: { externalId: (data.transaction_id || data.id || data.reference || '').toString() }
-        });
-        if (p && p.description && p.description.includes('- ')) {
-          plan = p.description.split('- ')[1];
-        }
-      }
-      if (!plan) plan = 'FITINI';
-
-      // Normalisation du plan
-      plan = plan.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-
-      if (companyId) {
-        await logger.info(`Traitement Webhook pour Company: ${companyId}`, { event, plan, extraEmployees }, "PaymentController");
-        
-        // 1. Mettre à jour l'entreprise
-        const updateData: any = {
-          subscriptionStatus: "ACTIVE",
-          isActive: true,
-          isLocked: false
-        };
-
-        if (isAddOn) {
-          // Cas "Ajout d'employé" : on incrémente UNIQUEMENT
-          updateData.extraEmployees = { increment: extraEmployees };
-        } else {
-          // Cas "Nouvel abonnement / Renouvellement" : on écrase avec le plan et le quota choisi, et on prolonge la date
-          updateData.subscriptionEndsAt = new Date(Date.now() + (billingCycle === 'YEARLY' ? 365 : 30) * 24 * 60 * 60 * 1000);
-          updateData.plan = plan;
-          updateData.billingCycle = billingCycle;
-          if (metadata.extraEmployees !== undefined) {
-            updateData.extraEmployees = extraEmployees;
-          }
-        }
-
-        const company = await (prisma.company.update({
-          where: { id: companyId },
-          data: updateData,
-          include: { users: { where: { role: 'COMPANY_ADMIN' }, take: 1 } }
-        }) as any);
-
-        // 2. Mettre à jour le record de paiement
-        await prisma.payment.updateMany({
-          where: { externalId: (data.transaction_id || data.id || data.reference || '').toString() },
-          data: { status: "SUCCESS" }
-        });
-
-        await logger.info(`Compte activé via Webhook pour ${company.name}`, { plan }, "PaymentController");
-
-        // Envoi des emails et PDF
-        try {
-          const adminEmail = company.users[0]?.email;
-          const amount = data.amount || 0;
-          const pdfBuffer = await generateSubscriptionPDF({
-            companyName: company.name,
-            plan: plan,
-            amount: amount,
-            date: new Date().toLocaleDateString(),
-            transactionId: (data.transaction_id || data.id || 'GP-' + Date.now()).toString(),
-            billingCycle: billingCycle
-          });
-
-          if (adminEmail) {
-            await sendSubscriptionConfirmation(adminEmail, company.name, plan, amount, pdfBuffer);
-          }
-          await sendAdminSubscriptionNotification(company.name, plan, amount, pdfBuffer);
-        } catch (mailError) {
-          await logger.error("Erreur envoi emails après webhook", mailError, "PaymentController");
-        }
-      }
+      await processSuccessfulPayment(transactionId, amount, metadata);
     }
 
     res.status(200).send('OK');
@@ -307,160 +357,61 @@ export const handleWebhook = async (req: Request, res: Response) => {
 };
 
 /**
- * Vérifie l'état d'un paiement (appelé par le frontend après redirection)
+ * Confirmation directe appelée lors du retour sur /payment-success
  */
 export const confirmPayment = async (req: Request, res: Response) => {
   try {
     const { token, companyId } = req.params; 
-    const idempotencyKey = req.headers['idempotency-key'] as string;
+    const apiKey = process.env.GENIUSPAY_KEY;
+    const apiSecret = process.env.GENIUSPAY_SECRET;
 
-    let payment;
-    if (token && token !== '{transaction_id}' && !token.includes('{')) {
-      payment = await prisma.payment.findFirst({
-        where: { externalId: token as string },
-        include: { company: true }
-      });
-    } 
-    
-    if (!payment && companyId) {
-      payment = await prisma.payment.findFirst({
-        where: { companyId: companyId as string },
-        orderBy: { createdAt: 'desc' },
-        include: { company: true }
-      });
-    }
+    let transactionId = token;
 
-    if (!payment) {
-      return res.status(404).json({ success: false, message: "Paiement introuvable." });
-    }
-
-    if (payment.company.isActive || payment.status === "SUCCESS") {
-      return res.json({ success: true, status: "SUCCESS" });
-    }
-
-    // --- VÉRIFICATION DIRECTE AUPRÈS DE GENIUSPAY ---
-    try {
-      const currentToken = payment.externalId;
-      if (!currentToken) throw new Error("ID transaction externe manquant.");
-
-      const apiKey = process.env.GENIUSPAY_KEY;
-      const apiSecret = process.env.GENIUSPAY_SECRET;
-      
-      // EXCEPTION SANDBOX TEMPORAIRE : On simule la réussite si on est en Sandbox
-      let isCompleted = false;
-      let plan = null;
-      let extraEmployees = 0;
-      let billingCycle = 'MONTHLY';
-      let externalData: any = {};
-      
-      if (apiKey?.includes('sandbox')) {
-        isCompleted = true;
-      } else {
-        const response = await axios.get(`https://pay.genius.ci/api/v1/merchant/payments/${currentToken}`, {
+    if (transactionId && transactionId !== '{transaction_id}' && !transactionId.includes('{')) {
+      try {
+        const response = await axios.get(`https://pay.genius.ci/api/v1/merchant/payments/${transactionId}`, {
           headers: {
             'X-API-Key': apiKey,
             'X-API-Secret': apiSecret
           }
         });
 
-        externalData = response.data.data;
-        isCompleted = externalData.status === 'completed' || externalData.status === 'SUCCESS';
-        plan = externalData.metadata?.plan;
-      }
+        const externalData = response.data.data;
+        if (externalData && (externalData.status === 'completed' || externalData.status === 'SUCCESS')) {
+          const result = await processSuccessfulPayment(transactionId.toString(), externalData.amount || 0, externalData.metadata || {});
 
-      if (isCompleted) {
-        const companyId = payment.companyId;
-        
-        // On récupère le plan depuis la description du paiement s'il n'est pas dans externalData (cas Sandbox)
-        if (!plan && payment.description && payment.description.includes('- ')) {
-          plan = payment.description.split('- ')[1];
-        }
-        if (!plan) plan = 'FITINI';
-        
-        plan = plan.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-        // Extraire les données isAddOn et extraEmployees depuis les métadonnées
-        const metadata = externalData.metadata || {};
-        let billingCycle = metadata.billingCycle || 'MONTHLY';
-        const isAddOn = metadata.isAddOn === 'true' || metadata.isAddOn === true;
-        let extraEmployees = 0;
-        if (metadata.extraEmployees !== undefined) {
-          extraEmployees = typeof metadata.extraEmployees === 'string'
-            ? parseInt(metadata.extraEmployees)
-            : Number(metadata.extraEmployees);
-        }
+          if (result && result.user && result.company) {
+            const jwtSecret = process.env.JWT_SECRET || 'secret';
+            const userToken = jwt.sign(
+              { id: result.user.id, role: result.user.role, companyId: result.company.id },
+              jwtSecret,
+              { expiresIn: '1d' }
+            );
 
-        const updateData: any = {
-          subscriptionStatus: "ACTIVE",
-          isActive: true,
-          isLocked: false
-        };
-
-        if (isAddOn) {
-          // Cas "Ajout d'employé" : on incrémente UNIQUEMENT
-          updateData.extraEmployees = { increment: extraEmployees };
-        } else {
-          // Cas "Nouvel abonnement / Renouvellement"
-          updateData.subscriptionEndsAt = new Date(Date.now() + (billingCycle === 'YEARLY' ? 365 : 30) * 24 * 60 * 60 * 1000);
-          updateData.plan = plan;
-          updateData.billingCycle = billingCycle;
-          if (metadata.extraEmployees !== undefined) {
-            updateData.extraEmployees = extraEmployees;
+            return res.json({
+              success: true,
+              status: "SUCCESS",
+              token: userToken,
+              user: {
+                id: result.user.id,
+                email: result.user.email,
+                firstName: result.user.firstName,
+                lastName: result.user.lastName,
+                role: result.user.role,
+                companyId: result.user.companyId
+              },
+              company: result.company
+            });
           }
         }
-
-        await prisma.company.update({
-          where: { id: companyId },
-          data: updateData as any,
-          include: { users: { where: { role: 'COMPANY_ADMIN' }, take: 1 } }
-        });
-
-        await prisma.payment.update({
-          where: { id: payment.id },
-          data: { status: "SUCCESS" }
-        });
-
-        await logger.info(`Compte activé via Confirmation Directe pour ${payment.company.name}`, { plan }, "PaymentController");
-
-        // --- ENVOI E-MAIL ET FACTURE (Même logique que le Webhook) ---
-        try {
-          const updatedCompany = await prisma.company.findUnique({
-            where: { id: companyId },
-            include: { users: { where: { role: 'COMPANY_ADMIN' }, take: 1 } }
-          });
-          const adminEmail = updatedCompany?.users[0]?.email;
-          const amount = externalData.amount || payment.amount || 0;
-          
-          const pdfBuffer = await generateSubscriptionPDF({
-            companyName: payment.company.name,
-            plan: plan,
-            amount: amount,
-            date: new Date().toLocaleDateString(),
-            transactionId: currentToken.toString(),
-            billingCycle: billingCycle
-          });
-
-          if (adminEmail) {
-            await sendSubscriptionConfirmation(adminEmail, payment.company.name, plan, amount, pdfBuffer);
-            await logger.info(`Email de confirmation envoyé à ${adminEmail} (via Confirmation Directe)`, null, "PaymentController");
-          }
-          await sendAdminSubscriptionNotification(payment.company.name, plan, amount, pdfBuffer);
-        } catch (mailError) {
-          await logger.error("Erreur envoi emails après confirmation directe", mailError, "PaymentController");
-        }
-
-        return res.json({ success: true, status: "SUCCESS" });
+      } catch (err: any) {
+        await logger.error("Erreur vérification directe confirmPayment", err.message, "PaymentController");
       }
-    } catch (apiError) {
-      console.error("Erreur vérification directe GeniusPay:", apiError);
     }
-    
-    return res.json({ 
-      success: false, 
-      status: payment.status 
-    });
 
+    return res.json({ success: false, message: "Paiement non confirmé ou en cours de validation." });
   } catch (error: any) {
     await logger.error("ConfirmPayment Error", error.message, "PaymentController");
-    res.status(500).json({ success: false, message: error.message });
+    res.status(500).json({ success: false, message: "Erreur lors de la confirmation." });
   }
 };

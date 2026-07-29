@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CheckCircle, Loader2, AlertCircle } from 'lucide-react';
 import { trackMetaEvent } from '../utils/metaPixel';
+import { useAuth } from '../context/AuthContext';
 
 const PaymentSuccess = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [status, setStatus] = useState<'verifying' | 'success' | 'error'>('verifying');
+  const { login } = useAuth();
 
   useEffect(() => {
     let isMounted = true;
@@ -48,6 +50,9 @@ const PaymentSuccess = () => {
           const data = await response.json();
           if (data.success && isMounted) {
             setStatus('success');
+            if (data.user && data.company) {
+              login(data.user, data.company);
+            }
             trackMetaEvent('Subscribe', { status: 'SUCCESS', method: 'API_VERIFY' });
           } else if (retryCount < maxRetries) {
             retryCount++;
@@ -75,14 +80,14 @@ const PaymentSuccess = () => {
     return () => { isMounted = false; };
   }, [searchParams]);
 
-  // Redirection automatique vers LOGIN après 2 secondes si succès
+  // Redirection automatique après 2 secondes si succès
   useEffect(() => {
     if (status === 'success') {
       const timer = setTimeout(() => {
         try {
-          navigate('/login?success=true');
+          navigate('/dashboard/admin');
         } catch (e) {
-          window.location.assign('/login?success=true');
+          window.location.assign('/dashboard/admin');
         }
       }, 2000);
       return () => clearTimeout(timer);

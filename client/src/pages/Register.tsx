@@ -54,14 +54,15 @@ const Register = () => {
         phone: data.phone,
       });
 
-      // 2. Redirection vers le paiement sans session active avant paiement
+      // 2. Redirection vers le paiement sans enregistrement préalable en DB
       navigate('/payment', { 
         state: { 
           plan: { ...planDetails, finalPrice: totalAmount },
           billingCycle,
           extraEmployees,
           companyName: data.companyName,
-          companyId: response.data.company?.id || response.data.user?.companyId
+          pendingToken: response.data.pendingRegistrationToken,
+          registrationData: response.data.registrationData
         } 
       });
     } catch (err: any) {

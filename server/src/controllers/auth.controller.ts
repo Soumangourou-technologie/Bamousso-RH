@@ -90,97 +90,42 @@ export const registerCompany = catchAsync(async (req: Request, res: Response) =>
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const registrationResult = await prisma.$transaction(async (tx) => {
-      const company = await tx.company.create({
-        data: {
-          name: companyName,
-          isActive: false,
-          subscriptionStatus: "PENDING", 
-          subscriptionEndsAt: null,
-          trialEndsAt: null,
-          plan: plan || "FITINI",
-          billingCycle: billingCycle || "MONTHLY",
-          extraEmployees: extraEmployees || 0,
-          isLocked: false,
-          lockedAt: null,
-        } as any,
-      });
-
-      const user = await tx.user.create({
-        data: {
-          email,
-          phone,
-          password: hashedPassword,
-          firstName,
-          lastName,
-          role: "COMPANY_ADMIN",
-          companyId: company.id,
-          status: "ACTIVE",
-        },
-      });
-
-      // Mettre à jour le managerId de l'entreprise
-      await tx.company.update({
-        where: { id: company.id },
-        data: { managerId: user.id }
-      });
-
-      return { company, user };
-    });
-
-    // Envoi de l'email de bienvenue avec les identifiants d'accès
-    await sendRegistrationWelcomeEmail(
-      registrationResult.user.email,
-      registrationResult.user.firstName,
-      registrationResult.company.name,
-      registrationResult.company.plan,
-      password
-    );
-
-    // Générer le token JWT pour permettre la connexion immédiate
     const jwtSecret = process.env.JWT_SECRET;
     if (!jwtSecret) {
       throw new Error("JWT_SECRET is not defined in environment variables");
     }
 
-    const token = jwt.sign(
+    // Générer un token d'inscription temporaire (aucune insertion DB ni envoi d'email avant paiement réel)
+    const pendingRegistrationToken = jwt.sign(
       { 
-        id: registrationResult.user.id, 
-        role: registrationResult.user.role, 
-        companyId: registrationResult.company.id, 
-        permissions: [] 
+        companyName,
+        email,
+        phone,
+        hashedPassword,
+        rawPassword: password,
+        firstName,
+        lastName,
+        plan: plan || "FITINI",
+        billingCycle: billingCycle || "MONTHLY",
+        extraEmployees: extraEmployees || 0
       },
       jwtSecret,
-      { expiresIn: "1d" }
+      { expiresIn: "7d" }
     );
 
-    const cookieOptions = {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' as const : 'lax' as const,
-      maxAge: 24 * 60 * 60 * 1000 // 1 jour
-    };
-
-    res.cookie('token', token, cookieOptions);
-
-    res.status(201).json({
-      message: "Entreprise créée. Veuillez procéder au paiement pour activer votre compte.",
-      user: {
-        id: registrationResult.user.id,
-        email: registrationResult.user.email,
-        role: registrationResult.user.role,
-        firstName: registrationResult.user.firstName,
-        lastName: registrationResult.user.lastName,
-        companyId: registrationResult.user.companyId,
-      },
-      company: { 
-        id: registrationResult.company.id, 
-        name: registrationResult.company.name,
-        plan: registrationResult.company.plan,
-        billingCycle: registrationResult.company.billingCycle,
-        extraEmployees: registrationResult.company.extraEmployees,
-        isActive: registrationResult.company.isActive,
-        subscriptionStatus: registrationResult.company.subscriptionStatus
+    return res.status(200).json({
+      success: true,
+      message: "Inscription initialisée. Veuillez procéder au paiement pour créer votre espace.",
+      pendingRegistrationToken,
+      registrationData: {
+        companyName,
+        email,
+        phone,
+        firstName,
+        lastName,
+        plan: plan || "FITINI",
+        billingCycle: billingCycle || "MONTHLY",
+        extraEmployees: extraEmployees || 0
       }
     });
   } catch (error: any) {
