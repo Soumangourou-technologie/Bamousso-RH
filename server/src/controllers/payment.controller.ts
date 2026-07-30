@@ -13,7 +13,8 @@ import { calculateTotalAmount, PlanType, BillingCycle } from '../shared/pricing.
  * Traite un paiement réussi (crée l'entreprise & l'utilisateur pour une nouvelle inscription, 
  * ou active l'abonnement pour une entreprise existante)
  */
-export const processSuccessfulPayment = async (transactionId: string, amount: number, metadata: any) => {
+export const processSuccessfulPayment = async (transactionId: string, amount: number | string, metadata: any) => {
+  const numericAmount = typeof amount === 'string' ? parseFloat(amount) : (Number(amount) || 0);
   const isNewRegistration = metadata.isNewRegistration === true || metadata.isNewRegistration === 'true' || Boolean(metadata.companyName && metadata.email);
 
   if (isNewRegistration) {
@@ -74,7 +75,7 @@ export const processSuccessfulPayment = async (transactionId: string, amount: nu
 
         await tx.payment.create({
           data: {
-            amount: amount || 0,
+            amount: numericAmount,
             reference: `BAM-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
             externalId: transactionId.toString(),
             status: "SUCCESS",
@@ -112,13 +113,13 @@ export const processSuccessfulPayment = async (transactionId: string, amount: nu
       const pdfBuffer = await generateSubscriptionPDF({
         companyName: companyName,
         plan: plan,
-        amount: amount || 0,
+        amount: numericAmount,
         date: new Date().toLocaleDateString(),
         transactionId: transactionId,
         billingCycle: billingCycle
       });
-      await sendSubscriptionConfirmation(email, companyName, plan, amount || 0, pdfBuffer);
-      await sendAdminSubscriptionNotification(companyName, plan, amount || 0, pdfBuffer);
+      await sendSubscriptionConfirmation(email, companyName, plan, numericAmount, pdfBuffer);
+      await sendAdminSubscriptionNotification(companyName, plan, numericAmount, pdfBuffer);
     } catch (pdfErr) {
       await logger.error("Erreur envoi facture après paiement", pdfErr, "PaymentController");
     }
@@ -167,16 +168,16 @@ export const processSuccessfulPayment = async (transactionId: string, amount: nu
       const pdfBuffer = await generateSubscriptionPDF({
         companyName: company.name,
         plan: plan,
-        amount: amount || 0,
+        amount: numericAmount,
         date: new Date().toLocaleDateString(),
         transactionId: transactionId,
         billingCycle: billingCycle
       });
 
       if (adminEmail) {
-        await sendSubscriptionConfirmation(adminEmail, company.name, plan, amount || 0, pdfBuffer);
+        await sendSubscriptionConfirmation(adminEmail, company.name, plan, numericAmount, pdfBuffer);
       }
-      await sendAdminSubscriptionNotification(company.name, plan, amount || 0, pdfBuffer);
+      await sendAdminSubscriptionNotification(company.name, plan, numericAmount, pdfBuffer);
     } catch (mailError) {
       await logger.error("Erreur envoi emails confirmation", mailError, "PaymentController");
     }
@@ -343,7 +344,7 @@ export const handleWebhook = async (req: Request, res: Response) => {
 
     if (isSuccess && data) {
       const transactionId = (data.transaction_id || data.id || data.reference || '').toString();
-      const amount = data.amount || 0;
+      const amount = typeof data.amount === 'string' ? parseFloat(data.amount) : (data.amount || 0);
       const metadata = data.metadata || {};
 
       await processSuccessfulPayment(transactionId, amount, metadata);
