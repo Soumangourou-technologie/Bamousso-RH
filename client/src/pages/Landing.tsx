@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Building2, CheckCircle, Users, Clock, Calendar, ArrowRight, Loader2, MessageCircle, X, PlayCircle } from 'lucide-react';
+import { Building2, CheckCircle, Users, Clock, Calendar, ArrowRight, Loader2, MessageCircle, X } from 'lucide-react';
 import { PricingToggle } from '../components/PricingToggle';
 import { FAQSection } from '../components/FAQSection';
 import { BillingCycle, PlanType, PRICING_PLANS } from '@shared/pricing';
@@ -164,9 +164,9 @@ const Landing = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
             {[
-              { id: "_9RB5Dp9qR4", title: "Présentation Générale & Configuration" },
-              { id: "eY4lkXjIKNs", title: "Gestion des Départements & Postes" },
-              { id: "hCf7WPoeRKY", title: "Ajout et Suivi des Employés" }
+              { id: "_9RB5Dp9qR4", title: "Comment créer le compte de son employé dans l'application Bamousso ?" },
+              { id: "eY4lkXjIKNs", title: "Comment un employé pointe son arrivée dans l'application Bamousso ?" },
+              { id: "hCf7WPoeRKY", title: "Comment attribuer une tâche à son employé dans l'application Bamousso ?" }
             ].map((video, idx) => (
               <motion.div 
                 key={idx}
@@ -193,9 +193,9 @@ const Landing = () => {
           </div>
           
           <div className="flex justify-center">
-             <Link to="/register" className="bg-brand-primary text-white px-10 py-5 rounded-full font-black text-lg hover:scale-105 transition-all flex items-center gap-3 shadow-2xl shadow-brand-primary/30 premium-glow">
-                Commencer gratuitement <PlayCircle className="w-6 h-6" />
-             </Link>
+             <a href="https://wa.me/2250706045256" target="_blank" rel="noopener noreferrer" className="bg-brand-primary text-white px-10 py-5 rounded-full font-black text-lg hover:scale-105 transition-all flex items-center gap-3 shadow-2xl shadow-brand-primary/30 premium-glow">
+                Contactez-nous maintenant <MessageCircle className="w-6 h-6" />
+             </a>
           </div>
         </div>
       </div>
