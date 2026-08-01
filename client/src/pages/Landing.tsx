@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Building2, CheckCircle, Users, Clock, Calendar, ArrowRight, Loader2, MessageCircle, X } from 'lucide-react';
+import { Building2, CheckCircle, Users, Clock, Calendar, ArrowRight, Loader2, MessageCircle, X, PlayCircle } from 'lucide-react';
 import { PricingToggle } from '../components/PricingToggle';
 import { FAQSection } from '../components/FAQSection';
 import { BillingCycle, PlanType, PRICING_PLANS } from '@shared/pricing';
@@ -146,6 +146,56 @@ const Landing = () => {
                 </div>
               </motion.div>
             </motion.div>
+          </div>
+        </div>
+      </div>
+
+      {/* Video Tutorials Section */}
+      <div id="tutorials" className="py-24 bg-surface-panel/30 relative border-y border-white/5">
+        <div className="container mx-auto px-6 relative z-10">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tighter">
+              Découvrez <span className="text-brand-primary">Bamousso RH</span> en action
+            </h2>
+            <p className="text-gray-400 text-lg max-w-2xl mx-auto font-medium">
+              Regardez ces courtes vidéos pour voir à quel point il est facile de centraliser et simplifier votre gestion RH.
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+            {[
+              { id: "_9RB5Dp9qR4", title: "Présentation Générale & Configuration" },
+              { id: "eY4lkXjIKNs", title: "Gestion des Départements & Postes" },
+              { id: "hCf7WPoeRKY", title: "Ajout et Suivi des Employés" }
+            ].map((video, idx) => (
+              <motion.div 
+                key={idx}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: idx * 0.2 }}
+                className="glass-card rounded-4xl overflow-hidden shadow-2xl border border-white/10 group flex flex-col"
+              >
+                <div className="relative aspect-video w-full bg-black">
+                  <iframe 
+                    src={`https://www.youtube.com/embed/${video.id}?rel=0`} 
+                    title={video.title}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowFullScreen
+                    className="absolute top-0 left-0 w-full h-full border-0"
+                  ></iframe>
+                </div>
+                <div className="p-6">
+                  <h3 className="text-lg font-bold text-white group-hover:text-brand-primary transition-colors">{video.title}</h3>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+          
+          <div className="flex justify-center">
+             <Link to="/register" className="bg-brand-primary text-white px-10 py-5 rounded-full font-black text-lg hover:scale-105 transition-all flex items-center gap-3 shadow-2xl shadow-brand-primary/30 premium-glow">
+                Commencer gratuitement <PlayCircle className="w-6 h-6" />
+             </Link>
           </div>
         </div>
       </div>

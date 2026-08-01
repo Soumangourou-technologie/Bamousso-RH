@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+
 import api from '../utils/api';
 import { Eye, EyeOff, Building2, CheckCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
