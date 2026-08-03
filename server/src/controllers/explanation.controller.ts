@@ -91,10 +91,13 @@ export const respondExplanation = async (req: any, res: Response) => {
       }
     });
 
+    const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
+    const fullName = dbUser ? `${dbUser.firstName} ${dbUser.lastName}` : 'Un employé';
+
     // Notifier le créateur (Admin/RH)
     await createNotification({
       title: "Réponse à demande d'explication",
-      message: `${user.firstName} ${user.lastName} a répondu à votre demande d'explication.`,
+      message: `${fullName} a répondu à votre demande d'explication.`,
       type: "EXPLANATION",
       resourceId: updated.id,
       userId: updated.createdBy,

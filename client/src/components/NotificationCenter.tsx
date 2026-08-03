@@ -54,27 +54,27 @@ const NotificationCenter = () => {
                 {notifications.map((notification) => (
                   <li 
                     key={notification.id} 
-                    className={`p-6 hover:bg-white dark:bg-[#1f1f1f]/5 transition cursor-pointer relative group ${!notification.read ? 'bg-white dark:bg-[#1f1f1f]/5' : ''}`}
+                    className={`p-6 transition cursor-pointer relative group ${!notification.read ? 'bg-orange-50/50 dark:bg-brand-primary/10' : 'hover:bg-gray-50 dark:hover:bg-white/5'}`}
                     onClick={() => !notification.read && markAsRead(notification.id)}
                   >
                     {!notification.read && (
                       <div className="absolute left-0 top-0 bottom-0 w-1 bg-brand-primary shadow-[0_0_8px_rgba(255,87,34,0.8)]" />
                     )}
                     <div className="flex justify-between items-start mb-2">
-                        <span className={`font-black text-sm tracking-tight ${!notification.read ? 'text-white' : 'text-gray-200 group-hover:text-white transition-colors'}`}>
+                        <span className={`font-black text-sm tracking-tight ${!notification.read ? 'text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors'}`}>
                             {notification.title}
                         </span>
                         <div className="flex items-center gap-2">
                             <button 
                                 onClick={(e) => handleDelete(notification.id, e)}
-                                className="text-gray-500 dark:text-gray-400 hover:text-rose-500 p-1 opacity-0 group-hover:opacity-100 transition-all"
+                                className="text-gray-400 dark:text-gray-500 hover:text-rose-500 p-1 opacity-0 group-hover:opacity-100 transition-all"
                                 title="Supprimer"
                             >
                                 <Trash2 className="w-4 h-4" />
                             </button>
                         </div>
                     </div>
-                    <p className="text-xs text-gray-300 mb-3 line-clamp-2 font-medium leading-relaxed">{notification.message}</p>
+                    <p className={`text-xs mb-3 line-clamp-2 font-medium leading-relaxed ${!notification.read ? 'text-gray-700 dark:text-gray-200' : 'text-gray-500 dark:text-gray-400'}`}>{notification.message}</p>
                     <p className="text-[10px] text-brand-primary font-black uppercase tracking-wider">
                         {new Date(notification.createdAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })} • {new Date(notification.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                     </p>

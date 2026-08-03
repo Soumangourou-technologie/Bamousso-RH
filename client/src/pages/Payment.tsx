@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { CheckCircle, Lock, Phone, Loader2 } from 'lucide-react';
+import { Capacitor } from '@capacitor/core';
+import { Browser } from '@capacitor/browser';
 import api from '../utils/api';
-
 const Payment = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -45,10 +46,21 @@ const Payment = () => {
         setCheckoutUrl(url);
         
         // Redirection vers GeniusPay
-        try {
-          window.location.assign(url);
-        } catch {
-          window.location.href = url;
+        if (Capacitor.isNativePlatform()) {
+          await Browser.open({ url });
+          // Optionnel: On peut écouter la fermeture du navigateur si besoin
+          Browser.addListener('browserFinished', () => {
+            // L'utilisateur a fermé le navigateur de paiement.
+            // S'il a réussi, son dashboard se mettra à jour lors du prochain appel API,
+            // ou bien on peut le rediriger manuellement vers une vérification.
+            navigate('/dashboard/admin', { replace: true });
+          });
+        } else {
+          try {
+            window.location.assign(url);
+          } catch {
+            window.location.href = url;
+          }
         }
       } else {
         setErrorMsg(response.data.message || "Impossible d'initier le paiement.");
