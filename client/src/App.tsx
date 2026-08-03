@@ -146,9 +146,13 @@ function App() {
                   </Route>
 
                   {/* Module Ventes (POS) */}
-                  <Route element={<ProtectedRoute allowedRoles={['COMPANY_ADMIN', 'COMMERCIAL', 'VENDEUR']} />}>
+                  <Route element={<ProtectedRoute allowedRoles={['COMPANY_ADMIN', 'COMMERCIAL', 'VENDEUR']} allowedPermissions={['manage_products']} />}>
                     <Route path="/sales/products" element={<ProductsManager />} />
+                  </Route>
+                  <Route element={<ProtectedRoute allowedRoles={['COMPANY_ADMIN', 'COMMERCIAL', 'VENDEUR']} allowedPermissions={['use_pos']} />}>
                     <Route path="/sales/pos" element={<PointOfSale />} />
+                  </Route>
+                  <Route element={<ProtectedRoute allowedRoles={['COMPANY_ADMIN', 'COMMERCIAL', 'VENDEUR']} allowedPermissions={['view_sales']} />}>
                     <Route path="/sales/history" element={<SalesHistory />} />
                   </Route>
 

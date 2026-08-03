@@ -3,9 +3,10 @@ import { useAuth } from '../context/AuthContext';
 
 interface ProtectedRouteProps {
   allowedRoles?: string[];
+  allowedPermissions?: string[];
 }
 
-const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
+const ProtectedRoute = ({ allowedRoles, allowedPermissions }: ProtectedRouteProps) => {
   const { user, company, isLoading } = useAuth();
   const location = useLocation();
 
@@ -21,8 +22,13 @@ const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
     return <Navigate to="/login" replace />;
   }
 
-  if (allowedRoles && !allowedRoles.includes(user.role)) {
-    return <Navigate to="/unauthorized" replace />;
+  if (allowedRoles || allowedPermissions) {
+    const hasRole = allowedRoles ? allowedRoles.includes(user.role) : false;
+    const hasPermission = allowedPermissions && user.permissions ? allowedPermissions.some(p => user.permissions.includes(p)) : false;
+    
+    if (!hasRole && !hasPermission) {
+      return <Navigate to="/unauthorized" replace />;
+    }
   }
 
   // Sécurité renforcée : Si l'entreprise n'est pas activée ou est verrouillée (sauf SUPER_ADMIN)

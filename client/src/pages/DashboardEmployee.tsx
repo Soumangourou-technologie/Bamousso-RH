@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Calendar, Clock, FileText, Megaphone, UserCircle, Building2, Wallet, Briefcase } from 'lucide-react';
+import { Calendar, Clock, FileText, Megaphone, UserCircle, Building2, Wallet, Briefcase, Package, ShoppingCart, History } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const DashboardEmployee = () => {
@@ -31,6 +31,9 @@ const DashboardEmployee = () => {
   const roleSpecificModules = [
     { name: 'Comptabilité', desc: 'Suivi & Rapports', icon: Wallet, path: '/accounting', color: 'bg-blue-500', requiredPermission: 'view_accounting' },
     { name: 'CRM Commercial', desc: 'Clients & RDV', icon: Briefcase, path: '/crm', color: 'bg-rose-500', requiredPermission: 'manage_crm' },
+    { name: 'Catalogue',     desc: 'Gestion des produits', icon: Package, path: '/sales/products', color: 'bg-indigo-500', requiredPermission: 'manage_products' },
+    { name: 'Caisse (POS)',  desc: 'Point de vente',       icon: ShoppingCart, path: '/sales/pos', color: 'bg-green-600', requiredPermission: 'use_pos' },
+    { name: 'Ventes',        desc: 'Historique & Factures',icon: History, path: '/sales/history', color: 'bg-blue-600', requiredPermission: 'view_sales' },
   ];
 
   const visibleModules = [

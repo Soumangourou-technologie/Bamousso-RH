@@ -24,7 +24,10 @@ const allPermissions = [
   { id: 'view_crm', label: 'Voir les clients (CRM)' },
   { id: 'manage_crm', label: 'Gérer le CRM (Ajout/Modif clients)' },
   { id: 'manage_tasks', label: 'Gérer les tâches et missions' },
-  { id: 'manage_expenses', label: 'Valider les notes de frais' }
+  { id: 'manage_expenses', label: 'Valider les notes de frais' },
+  { id: 'manage_products', label: 'Gérer le catalogue (Produits)' },
+  { id: 'use_pos', label: 'Utiliser la Caisse (Point de Vente)' },
+  { id: 'view_sales', label: 'Voir l\'historique des ventes (Lecture seule)' }
 ];
 
 const RolesPage = () => {

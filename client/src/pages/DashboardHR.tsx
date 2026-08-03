@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Users, Layers, Calendar, Clock, FileText, Megaphone, TrendingUp, Briefcase } from 'lucide-react';
+import { Users, Layers, Calendar, Clock, FileText, Megaphone, TrendingUp, Briefcase, Wallet, Package, ShoppingCart, History } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import SubscriptionCountdown from '../components/TrialCountdown';
@@ -100,13 +100,26 @@ const DashboardHR = () => {
     show: { opacity: 1, y: 0 }
   };
 
-  const modules = [
+  const baseModules = [
     { name: 'Annuaire', desc: 'Gestion des talents', icon: Users, path: '/employees', color: 'bg-blue-500' },
     { name: 'Organisation', desc: 'Départements', icon: Layers, path: '/departments', color: 'bg-indigo-500' },
     { name: 'Temps & Présences', desc: 'Validation des pointages', icon: Clock, path: '/attendance', color: 'bg-green-500' },
     { name: 'Absences', desc: 'Validation des congés', icon: Calendar, path: '/leaves', color: 'bg-yellow-500' },
     { name: 'Coffre-fort RH', desc: 'Partage de documents', icon: FileText, path: '/documents', color: 'bg-purple-500' },
     { name: 'Communication', desc: 'Publier une annonce', icon: Megaphone, path: '/announcements', color: 'bg-orange-500' },
+  ];
+
+  const roleSpecificModules = [
+    { name: 'Comptabilité', desc: 'Suivi & Rapports', icon: Wallet, path: '/accounting', color: 'bg-blue-500', requiredPermission: 'view_accounting' },
+    { name: 'CRM Commercial', desc: 'Clients & RDV', icon: Briefcase, path: '/crm', color: 'bg-rose-500', requiredPermission: 'manage_crm' },
+    { name: 'Catalogue',     desc: 'Gestion des produits', icon: Package, path: '/sales/products', color: 'bg-indigo-500', requiredPermission: 'manage_products' },
+    { name: 'Caisse (POS)',  desc: 'Point de vente',       icon: ShoppingCart, path: '/sales/pos', color: 'bg-green-600', requiredPermission: 'use_pos' },
+    { name: 'Ventes',        desc: 'Historique & Factures',icon: History, path: '/sales/history', color: 'bg-blue-600', requiredPermission: 'view_sales' },
+  ];
+
+  const visibleModules = [
+    ...baseModules,
+    ...roleSpecificModules.filter(m => (user?.permissions || []).includes(m.requiredPermission))
   ];
 
   return (
@@ -167,7 +180,7 @@ const DashboardHR = () => {
         animate="show"
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
       >
-        {modules.map((mod, index) => (
+        {visibleModules.map((mod, index) => (
           <motion.div key={index} variants={item}>
             <Link
               to={mod.path}
