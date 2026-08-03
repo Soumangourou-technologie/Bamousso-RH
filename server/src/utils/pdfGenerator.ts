@@ -1,5 +1,6 @@
 import PDFDocument from 'pdfkit';
 import { Buffer } from 'node:buffer';
+import axios from 'axios';
 
 export const generateSubscriptionPDF = (data: {
   companyName: string;
@@ -76,6 +77,7 @@ export const generateSubscriptionPDF = (data: {
 
 export const generateSaleInvoicePDF = (data: {
   companyName: string;
+  companyLogo?: string | null;
   invoiceNumber: string;
   clientName: string;
   clientPhone?: string;
@@ -85,7 +87,7 @@ export const generateSaleInvoicePDF = (data: {
   totalVAT: number;
   totalTTC: number;
 }): Promise<any> => {
-  return new Promise((resolve) => {
+  return new Promise(async (resolve) => {
     const doc = new PDFDocument({ margin: 50 });
     const buffers: Buffer[] = [];
 
@@ -99,8 +101,28 @@ export const generateSaleInvoicePDF = (data: {
     doc.on('data', onData);
     doc.on('end', onEnd);
 
-    // Header
-    doc.fillColor('#2c3e50').fontSize(25).text(data.companyName, { align: 'center' });
+    // Fetch Logo if present
+    let logoBuffer = null;
+    if (data.companyLogo) {
+      try {
+        const response = await axios.get(data.companyLogo, { responseType: 'arraybuffer' });
+        logoBuffer = Buffer.from(response.data, 'binary');
+      } catch (err) {
+        console.error("Error fetching logo for PDF:", err);
+      }
+    }
+
+    if (logoBuffer) {
+      try {
+        doc.image(logoBuffer, 50, 40, { fit: [100, 50], align: 'center' });
+        doc.fillColor('#2c3e50').fontSize(25).text(data.companyName, 160, 50);
+      } catch (err) {
+        doc.fillColor('#2c3e50').fontSize(25).text(data.companyName, { align: 'center' });
+      }
+    } else {
+      doc.fillColor('#2c3e50').fontSize(25).text(data.companyName, { align: 'center' });
+    }
+    
     doc.moveDown();
     doc.strokeColor('#eeeeee').lineWidth(1).moveTo(50, 100).lineTo(550, 100).stroke();
 

@@ -172,6 +172,21 @@ export const checkout = async (req: Request, res: Response): Promise<any> => {
       data: { transactionRef: transaction.id }
     });
 
+    // Mettre à jour le stock des produits
+    for (const item of items) {
+      if (item.productId) {
+        await prisma.product.updateMany({
+          where: { 
+            id: item.productId,
+            stock: { not: null } 
+          },
+          data: {
+            stock: { decrement: Number(item.quantity) }
+          }
+        });
+      }
+    }
+
     // 5. Générer le PDF
     const pdfData = {
       companyName: company.name,
@@ -187,7 +202,8 @@ export const checkout = async (req: Request, res: Response): Promise<any> => {
       })),
       totalHT,
       totalVAT,
-      totalTTC
+      totalTTC,
+      companyLogo: company.logoUrl
     };
 
     const pdfBuffer = await generateSaleInvoicePDF(pdfData);
