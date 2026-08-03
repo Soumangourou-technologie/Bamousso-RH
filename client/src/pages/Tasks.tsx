@@ -224,16 +224,16 @@ const Tasks = () => {
               <form onSubmit={handleCreateTask} className="space-y-6">
                 <div>
                   <label className="block text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-2">Titre de la tâche</label>
-                  <input required value={newTask.title} onChange={e => setNewTask({...newTask, title: e.target.value})} className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 p-4 rounded-2xl text-white font-bold outline-none focus:ring-2 focus:ring-brand-primary" placeholder="ex: Préparer les contrats" />
+                  <input required value={newTask.title} onChange={e => setNewTask({...newTask, title: e.target.value})} className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 p-4 rounded-2xl text-gray-900 dark:text-white font-bold outline-none focus:ring-2 focus:ring-brand-primary" placeholder="ex: Préparer les contrats" />
                 </div>
                 <div>
                   <label className="block text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-2">Description</label>
-                  <textarea value={newTask.description} onChange={e => setNewTask({...newTask, description: e.target.value})} className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 p-4 rounded-2xl text-white font-medium outline-none focus:ring-2 focus:ring-brand-primary h-24 resize-none" placeholder="Détails supplémentaires..." />
+                  <textarea value={newTask.description} onChange={e => setNewTask({...newTask, description: e.target.value})} className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 p-4 rounded-2xl text-gray-900 dark:text-white font-medium outline-none focus:ring-2 focus:ring-brand-primary h-24 resize-none" placeholder="Détails supplémentaires..." />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-2">Assigner à</label>
-                    <select required value={newTask.assignedToId} onChange={e => setNewTask({...newTask, assignedToId: e.target.value})} className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 p-4 rounded-2xl text-white font-bold outline-none focus:ring-2 focus:ring-brand-primary appearance-none">
+                    <select required value={newTask.assignedToId} onChange={e => setNewTask({...newTask, assignedToId: e.target.value})} className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 p-4 rounded-2xl text-gray-900 dark:text-white font-bold outline-none focus:ring-2 focus:ring-brand-primary appearance-none">
                       <option value="" className="bg-brand-900">Choisir...</option>
                       {employees.map(emp => (
                         <option key={emp.id} value={emp.id} className="bg-brand-900">{emp.firstName} {emp.lastName}</option>
@@ -242,7 +242,7 @@ const Tasks = () => {
                   </div>
                   <div>
                     <label className="block text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-2">Échéance</label>
-                    <input type="date" required value={newTask.dueDate} onChange={e => setNewTask({...newTask, dueDate: e.target.value})} className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 p-4 rounded-2xl text-white font-bold outline-none focus:ring-2 focus:ring-brand-primary" />
+                    <input type="date" required value={newTask.dueDate} onChange={e => setNewTask({...newTask, dueDate: e.target.value})} className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 p-4 rounded-2xl text-gray-900 dark:text-white font-bold outline-none focus:ring-2 focus:ring-brand-primary" />
                   </div>
                 </div>
                 <button type="submit" className="w-full bg-brand-primary text-white py-5 rounded-2xl font-black text-lg uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-brand-primary/20">
@@ -266,7 +266,7 @@ const Tasks = () => {
               <h3 className="text-xl font-black text-white mb-2">Terminer la tâche ?</h3>
               <p className="text-gray-400 text-sm mb-8">Une fois marquée comme terminée, vous ne pourrez plus revenir en arrière. L'administrateur sera notifié.</p>
               <div className="flex gap-4">
-                <button onClick={() => setIsConfirmOpen(false)} className="flex-1 px-6 py-3 rounded-xl font-bold text-gray-400 hover:bg-white dark:bg-[#1f1f1f]/5 transition-colors">Annuler</button>
+                <button onClick={() => setIsConfirmOpen(false)} className="flex-1 px-6 py-3 rounded-xl font-bold text-gray-600 dark:text-gray-400 hover:bg-white dark:bg-[#1f1f1f]/5 transition-colors">Annuler</button>
                 <button onClick={handleComplete} className="flex-1 px-6 py-3 bg-brand-primary text-white rounded-xl font-bold shadow-lg shadow-brand-primary/20">Confirmer</button>
               </div>
             </motion.div>
@@ -295,7 +295,7 @@ const TaskCard = ({ task, isAdmin, onDelete, onMove, moveLabel, isCompleted }: {
     {!isCompleted && !isAdmin && onMove && (
       <button 
         onClick={onMove}
-        className="mt-6 w-full py-2.5 bg-white dark:bg-[#1f1f1f]/5 hover:bg-brand-primary text-[10px] font-black text-white uppercase tracking-[0.2em] rounded-xl border border-white/10 hover:border-brand-primary transition-all"
+        className="mt-6 w-full py-2.5 bg-white dark:bg-[#1f1f1f]/5 hover:bg-brand-primary text-[10px] font-black text-gray-900 dark:text-white uppercase tracking-[0.2em] rounded-xl border border-white/10 hover:border-brand-primary transition-all"
       >
         {moveLabel} →
       </button>

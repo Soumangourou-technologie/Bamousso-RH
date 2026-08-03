@@ -323,7 +323,7 @@ function FitiniTicketsDashboard() {
               </div>
               <button
                 onClick={() => setSelectedTicket(null)}
-                className="p-2 bg-white dark:bg-[#1f1f1f]/5 hover:bg-white dark:bg-[#1f1f1f]/10 hover:text-white rounded-xl transition-colors text-gray-400"
+                className="p-2 bg-white dark:bg-[#1f1f1f]/5 hover:bg-white dark:bg-[#1f1f1f]/10 hover:text-gray-900 dark:text-white rounded-xl transition-colors text-gray-600 dark:text-gray-400"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -444,7 +444,7 @@ function FitiniTicketsDashboard() {
                     value={newTitle}
                     onChange={(e) => setNewTitle(e.target.value)}
                     placeholder="Ex: Erreur de calcul sur la paie de Mars..."
-                    className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-2xl px-4 py-3 text-white focus:border-brand-primary focus:bg-white dark:bg-[#1f1f1f]/10 outline-none transition-all text-sm font-medium"
+                    className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-2xl px-4 py-3 text-gray-900 dark:text-white focus:border-brand-primary focus:bg-white dark:bg-[#1f1f1f]/10 outline-none transition-all text-sm font-medium"
                   />
                 </div>
 
@@ -476,7 +476,7 @@ function FitiniTicketsDashboard() {
                     onChange={(e) => setNewMessage(e.target.value)}
                     placeholder="Décrivez votre problème avec le plus de détails possible afin que nous puissions vous aider rapidement..."
                     rows={4}
-                    className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-2xl px-4 py-3 text-white focus:border-brand-primary focus:bg-white dark:bg-[#1f1f1f]/10 outline-none transition-all text-sm font-medium resize-none leading-relaxed"
+                    className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-2xl px-4 py-3 text-gray-900 dark:text-white focus:border-brand-primary focus:bg-white dark:bg-[#1f1f1f]/10 outline-none transition-all text-sm font-medium resize-none leading-relaxed"
                   />
                 </div>
 
@@ -607,8 +607,8 @@ function PremiumChatDashboard() {
               <div className="w-16 h-16 rounded-2xl bg-brand-primary/10 flex items-center justify-center text-brand-primary border border-brand-primary/20 shadow-lg">
                 <LifeBuoy className="w-8 h-8" />
               </div>
-              <h3 className="text-xl font-black text-white">Comment pouvons-nous vous aider ?</h3>
-              <p className="text-sm text-gray-400 font-medium">C'est votre canal direct avec l'équipe Super-Admin de BAMOUSSO. Envoyez un message ci-dessous pour démarrer une conversation instantanée.</p>
+              <h3 className="text-xl font-black text-gray-900 dark:text-white">Comment pouvons-nous vous aider ?</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">C'est votre canal direct avec l'équipe Super-Admin de BAMOUSSO. Envoyez un message ci-dessous pour démarrer une conversation instantanée.</p>
             </div>
           ) : (
             <>
@@ -629,8 +629,8 @@ function PremiumChatDashboard() {
                         isMe 
                           ? 'bg-brand-primary text-white rounded-br-none border-brand-primary/50' 
                           : isSupport
-                            ? 'bg-brand-accent/25 text-white border-brand-accent/40 rounded-bl-none'
-                            : 'bg-white dark:bg-[#1f1f1f]/5 text-gray-200 border-white/5 rounded-bl-none'
+                            ? 'bg-brand-accent/25 text-gray-900 dark:text-white border-brand-accent/40 rounded-bl-none'
+                            : 'bg-white dark:bg-[#1f1f1f]/5 text-gray-900 dark:text-gray-200 border-white/5 rounded-bl-none'
                       }`}>
                         <p className="whitespace-pre-wrap wrap-break-word leading-relaxed">{msg.content}</p>
                       </div>
@@ -663,7 +663,7 @@ function PremiumChatDashboard() {
               placeholder="Tapez votre message..."
               disabled={sending || !room}
               required
-              className="flex-1 bg-transparent border-none outline-none ring-0 text-white text-sm placeholder-gray-500 py-3"
+              className="flex-1 bg-transparent border-none outline-none ring-0 text-gray-900 dark:text-white text-sm placeholder-gray-500 py-3"
             />
             <button
               type="submit"
@@ -1081,7 +1081,7 @@ function SuperAdminDashboard() {
                         </button>
                       )}
                       {selectedTicket.status !== 'CLOSED' && (
-                        <button onClick={() => handleUpdateStatus('CLOSED')} className="px-2.5 py-1.5 text-[9px] font-black tracking-wider uppercase bg-white dark:bg-[#1f1f1f]/5 border border-white/10 hover:bg-white dark:bg-[#1f1f1f]/20 transition-all rounded-lg text-gray-400">
+                        <button onClick={() => handleUpdateStatus('CLOSED')} className="px-2.5 py-1.5 text-[9px] font-black tracking-wider uppercase bg-white dark:bg-[#1f1f1f]/5 border border-white/10 hover:bg-white dark:bg-[#1f1f1f]/20 transition-all rounded-lg text-gray-600 dark:text-gray-400">
                           CLOTURER
                         </button>
                       )}

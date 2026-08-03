@@ -221,7 +221,7 @@ const SuperAdminOfflineClients = () => {
               <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 w-5 h-5" />
               <select 
                 value={filterPlan} onChange={e => setFilterPlan(e.target.value)}
-                className="pl-12 pr-10 py-4 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-2xl focus:ring-2 focus:ring-brand-primary appearance-none font-bold text-white cursor-pointer"
+                className="pl-12 pr-10 py-4 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-2xl focus:ring-2 focus:ring-brand-primary appearance-none font-bold text-gray-900 dark:text-white cursor-pointer"
               >
                 <option value="ALL" className="bg-brand-900">Tous les plans</option>
                 <option value="FITINI" className="bg-brand-900">Fitini</option>
@@ -317,12 +317,12 @@ const SuperAdminOfflineClients = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-brand-accent uppercase tracking-widest">Nom de l'entreprise</label>
-                    <input required placeholder="Ex: Soumangourou Tech" className="p-4 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-brand-primary w-full text-white font-bold"
+                    <input required placeholder="Ex: Soumangourou Tech" className="p-4 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-brand-primary w-full text-gray-900 dark:text-white font-bold"
                       value={formData.companyName} onChange={e => setFormData({...formData, companyName: e.target.value})} />
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-brand-accent uppercase tracking-widest">Téléphone</label>
-                    <input required placeholder="+225 0102030405" className="p-4 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-brand-primary w-full text-white font-bold"
+                    <input required placeholder="+225 0102030405" className="p-4 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-brand-primary w-full text-gray-900 dark:text-white font-bold"
                       value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} />
                   </div>
                 </div>
@@ -330,12 +330,12 @@ const SuperAdminOfflineClients = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-brand-accent uppercase tracking-widest">Prénom Admin</label>
-                    <input required placeholder="Prénom" className="p-4 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-brand-primary w-full text-white font-bold"
+                    <input required placeholder="Prénom" className="p-4 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-brand-primary w-full text-gray-900 dark:text-white font-bold"
                       value={formData.firstName} onChange={e => setFormData({...formData, firstName: e.target.value})} />
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-brand-accent uppercase tracking-widest">Nom Admin</label>
-                    <input required placeholder="Nom" className="p-4 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-brand-primary w-full text-white font-bold"
+                    <input required placeholder="Nom" className="p-4 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-brand-primary w-full text-gray-900 dark:text-white font-bold"
                       value={formData.lastName} onChange={e => setFormData({...formData, lastName: e.target.value})} />
                   </div>
                 </div>
@@ -343,12 +343,12 @@ const SuperAdminOfflineClients = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-brand-accent uppercase tracking-widest">Email Admin</label>
-                    <input required type="email" placeholder="admin@entreprise.com" className="p-4 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-brand-primary w-full text-white font-bold"
+                    <input required type="email" placeholder="admin@entreprise.com" className="p-4 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-brand-primary w-full text-gray-900 dark:text-white font-bold"
                       value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} />
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-brand-accent uppercase tracking-widest">Mot de passe provisoire</label>
-                    <input required type="text" placeholder="Mot de passe" className="p-4 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-brand-primary w-full text-white font-bold"
+                    <input required type="text" placeholder="Mot de passe" className="p-4 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-brand-primary w-full text-gray-900 dark:text-white font-bold"
                       value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} />
                   </div>
                 </div>
@@ -356,7 +356,7 @@ const SuperAdminOfflineClients = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-brand-accent uppercase tracking-widest">Forfait Choisi</label>
-                    <select value={formData.plan} onChange={e => setFormData({...formData, plan: e.target.value})} className="p-4 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-brand-primary w-full text-white font-bold appearance-none">
+                    <select value={formData.plan} onChange={e => setFormData({...formData, plan: e.target.value})} className="p-4 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-brand-primary w-full text-gray-900 dark:text-white font-bold appearance-none">
                       <option value="FITINI" className="bg-brand-900">FITINI</option>
                       <option value="LOUBA" className="bg-brand-900">LOUBA</option>
                       <option value="KORO" className="bg-brand-900">KÔRÔ</option>
@@ -364,7 +364,7 @@ const SuperAdminOfflineClients = () => {
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-brand-accent uppercase tracking-widest">Cycle</label>
-                    <select value={formData.billingCycle} onChange={e => setFormData({...formData, billingCycle: e.target.value})} className="p-4 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-brand-primary w-full text-white font-bold appearance-none">
+                    <select value={formData.billingCycle} onChange={e => setFormData({...formData, billingCycle: e.target.value})} className="p-4 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-brand-primary w-full text-gray-900 dark:text-white font-bold appearance-none">
                       <option value="MONTHLY" className="bg-brand-900">Mensuel</option>
                       <option value="YEARLY" className="bg-brand-900">Annuel</option>
                     </select>
@@ -393,7 +393,7 @@ const SuperAdminOfflineClients = () => {
                   <select 
                     id="planSelect"
                     defaultValue={selectedCompany.plan}
-                    className="p-4 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-brand-primary w-full text-white font-bold appearance-none"
+                    className="p-4 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-brand-primary w-full text-gray-900 dark:text-white font-bold appearance-none"
                   >
                     <option value="FITINI" className="bg-brand-900">FITINI</option>
                     <option value="LOUBA" className="bg-brand-900">LOUBA</option>
@@ -406,7 +406,7 @@ const SuperAdminOfflineClients = () => {
                   <select 
                     id="cycleSelect"
                     defaultValue={selectedCompany.billingCycle}
-                    className="p-4 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-brand-primary w-full text-white font-bold appearance-none"
+                    className="p-4 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-brand-primary w-full text-gray-900 dark:text-white font-bold appearance-none"
                   >
                     <option value="MONTHLY" className="bg-brand-900">Mensuel</option>
                     <option value="YEARLY" className="bg-brand-900">Annuel</option>

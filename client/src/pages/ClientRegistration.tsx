@@ -383,7 +383,7 @@ const ClientRegistration = () => {
               <InputField label="Prénom(s)" name="firstName" placeholder="Entrez le prénom" required />
               <div className="flex flex-col gap-1.5">
                 <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Sexe</label>
-                <select name="gender" className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500/50 transition-all">
+                <select name="gender" className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white text-sm focus:outline-none focus:border-orange-500/50 transition-all">
                   <option value="HOMME" className="bg-gray-900">Homme</option>
                   <option value="FEMME" className="bg-gray-900">Femme</option>
                 </select>
@@ -411,7 +411,7 @@ const ClientRegistration = () => {
                   <InputField label="Nom de l'entreprise" name="companyName" placeholder="Entrez le nom de l'entreprise" icon={Building2} />
                   <div className="flex flex-col gap-1.5">
                     <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Statut juridique</label>
-                    <select name="legalStatus" className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500/50 transition-all">
+                    <select name="legalStatus" className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white text-sm focus:outline-none focus:border-orange-500/50 transition-all">
                       <option value="" className="bg-gray-900">Sélectionnez le statut</option>
                       <option value="SARL" className="bg-gray-900">SARL</option>
                       <option value="SA" className="bg-gray-900">SA</option>
@@ -427,7 +427,7 @@ const ClientRegistration = () => {
                   <div className="flex flex-col gap-1.5">
                     <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Description de l'entreprise</label>
                     <textarea name="companyDescription" rows={3} maxLength={500} placeholder="Décrivez brièvement l'entreprise..."
-                      className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-orange-500/50 transition-all resize-none" />
+                      className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-sm focus:outline-none focus:border-orange-500/50 transition-all resize-none" />
                   </div>
                 </div>
               </motion.div>
@@ -442,7 +442,7 @@ const ClientRegistration = () => {
               <InputField label="Commune / Quartier" name="commune" placeholder="Entrez la commune ou le quartier" />
               <div className="flex flex-col gap-1.5">
                 <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Pays</label>
-                <select name="country" className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500/50 transition-all">
+                <select name="country" className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white text-sm focus:outline-none focus:border-orange-500/50 transition-all">
                   <option value="Mali" className="bg-gray-900">🇲🇱 Mali</option>
                   <option value="Sénégal" className="bg-gray-900">🇸🇳 Sénégal</option>
                   <option value="Côte d'Ivoire" className="bg-gray-900">🇨🇮 Côte d'Ivoire</option>
@@ -585,7 +585,7 @@ const ClientRegistration = () => {
               {docFiles.length > 0 && (
                 <div className="flex flex-wrap gap-2 mt-2">
                   {docFiles.map((f, i) => (
-                    <span key={i} className="bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-lg px-3 py-1.5 text-xs text-gray-300 flex items-center gap-2">
+                    <span key={i} className="bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-lg px-3 py-1.5 text-xs text-gray-700 dark:text-gray-300 flex items-center gap-2">
                       {f.name}
                       <button type="button" onClick={() => setDocFiles(prev => prev.filter((_, idx) => idx !== i))}><X className="w-3 h-3 text-red-400" /></button>
                     </span>
@@ -603,7 +603,7 @@ const ClientRegistration = () => {
               <div className="flex flex-col gap-1.5">
                 <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Description / Notes commerciales</label>
                 <textarea value={rdvDesc} onChange={e => setRdvDesc(e.target.value)} rows={3} maxLength={1000} placeholder="Ajoutez des notes ou des informations complémentaires..."
-                  className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-orange-500/50 transition-all resize-none" />
+                  className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-sm focus:outline-none focus:border-orange-500/50 transition-all resize-none" />
                 <span className="text-right text-xs text-gray-600 dark:text-gray-400">{rdvDesc.length}/1000</span>
               </div>
             </div>
@@ -727,7 +727,7 @@ const ClientRegistration = () => {
                   {/* Bouton consultation uniquement */}
                   <button
                     onClick={() => setSelectedReg(reg)}
-                    className="w-full py-2.5 bg-white dark:bg-[#1f1f1f]/5 hover:bg-white dark:bg-[#1f1f1f]/10 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2"
+                    className="w-full py-2.5 bg-white dark:bg-[#1f1f1f]/5 hover:bg-white dark:bg-[#1f1f1f]/10 text-gray-900 dark:text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2"
                   >
                     <Eye className="w-4 h-4 text-orange-400" /> Consulter le détail
                   </button>
@@ -793,7 +793,7 @@ const ClientRegistration = () => {
                   type="button"
                   onClick={() => setShowConfirmModal(false)}
                   disabled={isSubmitting}
-                  className="flex-1 py-3 bg-white dark:bg-[#1f1f1f]/5 hover:bg-white dark:bg-[#1f1f1f]/10 text-gray-300 font-bold text-sm rounded-xl transition-all"
+                  className="flex-1 py-3 bg-white dark:bg-[#1f1f1f]/5 hover:bg-white dark:bg-[#1f1f1f]/10 text-gray-700 dark:text-gray-300 font-bold text-sm rounded-xl transition-all"
                 >
                   Modifier
                 </button>
@@ -827,7 +827,7 @@ const ClientRegistration = () => {
                   <h2 className="text-xl font-bold text-white mt-1">{selectedReg.firstName} {selectedReg.lastName}</h2>
                   {selectedReg.companyName && <p className="text-xs text-gray-400">{selectedReg.companyName}</p>}
                 </div>
-                <button onClick={() => setSelectedReg(null)} className="p-2 rounded-xl bg-white dark:bg-[#1f1f1f]/5 hover:bg-white dark:bg-[#1f1f1f]/10 text-gray-400 hover:text-white transition-all">
+                <button onClick={() => setSelectedReg(null)} className="p-2 rounded-xl bg-white dark:bg-[#1f1f1f]/5 hover:bg-white dark:bg-[#1f1f1f]/10 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-white transition-all">
                   <X className="w-5 h-5" />
                 </button>
               </div>
@@ -890,7 +890,7 @@ const ClientRegistration = () => {
               </div>
 
               <div className="pt-2 text-right">
-                <button onClick={() => setSelectedReg(null)} className="px-6 py-2.5 bg-white dark:bg-[#1f1f1f]/10 hover:bg-white dark:bg-[#1f1f1f]/20 text-white text-xs font-bold rounded-xl transition-all">
+                <button onClick={() => setSelectedReg(null)} className="px-6 py-2.5 bg-white dark:bg-[#1f1f1f]/10 hover:bg-white dark:bg-[#1f1f1f]/20 text-gray-900 dark:text-white text-xs font-bold rounded-xl transition-all">
                   Fermer
                 </button>
               </div>

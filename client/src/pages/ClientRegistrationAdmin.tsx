@@ -309,7 +309,7 @@ const ClientRegistrationAdmin = () => {
               <InfoRow icon={Building2} label="Nom" value={r.companyName} />
               <InfoRow icon={Briefcase} label="Statut juridique" value={r.legalStatus} />
               <InfoRow icon={Briefcase} label="Secteur" value={r.sector} />
-              {r.companyDescription && <p className="text-xs text-gray-400 mt-2 bg-white dark:bg-[#1f1f1f]/5 rounded-lg p-3">{r.companyDescription}</p>}
+              {r.companyDescription && <p className="text-xs text-gray-600 dark:text-gray-400 mt-2 bg-white dark:bg-[#1f1f1f]/5 rounded-lg p-3">{r.companyDescription}</p>}
             </div>
           )}
 
@@ -321,7 +321,7 @@ const ClientRegistrationAdmin = () => {
               <InfoRow icon={Calendar} label="Date" value={r.rdvDate ? new Date(r.rdvDate).toLocaleDateString('fr-FR') : null} />
               <InfoRow icon={Clock} label="Heure" value={r.rdvTime} />
               <InfoRow icon={Briefcase} label="Mode" value={r.rdvMode} />
-              {r.rdvDescription && <p className="text-xs text-gray-400 mt-2 bg-white dark:bg-[#1f1f1f]/5 rounded-lg p-3">{r.rdvDescription}</p>}
+              {r.rdvDescription && <p className="text-xs text-gray-600 dark:text-gray-400 mt-2 bg-white dark:bg-[#1f1f1f]/5 rounded-lg p-3">{r.rdvDescription}</p>}
             </div>
           )}
         </div>

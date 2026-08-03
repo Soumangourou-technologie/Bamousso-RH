@@ -232,7 +232,7 @@ const Salaries = () => {
       <div className="glass-card p-10 rounded-[2.5rem] border border-white/5">
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-2xl font-black text-white">Historique des Paies</h2>
-          <button className="px-4 py-2 bg-white dark:bg-[#1f1f1f]/5 rounded-xl text-sm font-bold text-gray-300 hover:text-white transition-all flex items-center gap-2">
+          <button className="px-4 py-2 bg-white dark:bg-[#1f1f1f]/5 rounded-xl text-sm font-bold text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:text-white transition-all flex items-center gap-2">
             <Download className="w-4 h-4" /> Exporter tout (PDF)
           </button>
         </div>

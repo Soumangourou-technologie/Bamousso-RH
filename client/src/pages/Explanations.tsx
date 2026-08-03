@@ -170,7 +170,7 @@ const Explanations = () => {
                 
                 <button 
                   onClick={() => setSelectedExplanation(exp)}
-                  className="p-3 bg-white dark:bg-[#1f1f1f]/5 hover:bg-white dark:bg-[#1f1f1f]/10 text-white rounded-xl transition-all"
+                  className="p-3 bg-white dark:bg-[#1f1f1f]/5 hover:bg-white dark:bg-[#1f1f1f]/10 text-gray-900 dark:text-white rounded-xl transition-all"
                 >
                   <MessageSquare className="w-5 h-5" />
                 </button>
@@ -206,7 +206,7 @@ const Explanations = () => {
               <form onSubmit={handleCreate} className="space-y-6">
                 <div>
                   <label className="block text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-2">Employé concerné</label>
-                  <select required value={newRequest.employeeId} onChange={e => setNewRequest({...newRequest, employeeId: e.target.value})} className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 p-4 rounded-2xl text-white font-bold outline-none focus:ring-2 focus:ring-brand-primary appearance-none">
+                  <select required value={newRequest.employeeId} onChange={e => setNewRequest({...newRequest, employeeId: e.target.value})} className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 p-4 rounded-2xl text-gray-900 dark:text-white font-bold outline-none focus:ring-2 focus:ring-brand-primary appearance-none">
                     <option value="" className="bg-brand-900">Choisir...</option>
                     {employees.map(emp => (
                       <option key={emp.id} value={emp.id} className="bg-brand-900">{emp.firstName} {emp.lastName}</option>
@@ -215,11 +215,11 @@ const Explanations = () => {
                 </div>
                 <div>
                   <label className="block text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-2">Objet du manquement</label>
-                  <input required value={newRequest.title} onChange={e => setNewRequest({...newRequest, title: e.target.value})} className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 p-4 rounded-2xl text-white font-bold outline-none focus:ring-2 focus:ring-brand-primary" placeholder="ex: Absence injustifiée du 25/04" />
+                  <input required value={newRequest.title} onChange={e => setNewRequest({...newRequest, title: e.target.value})} className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 p-4 rounded-2xl text-gray-900 dark:text-white font-bold outline-none focus:ring-2 focus:ring-brand-primary" placeholder="ex: Absence injustifiée du 25/04" />
                 </div>
                 <div>
                   <label className="block text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-2">Description détaillée</label>
-                  <textarea required value={newRequest.description} onChange={e => setNewRequest({...newRequest, description: e.target.value})} className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 p-4 rounded-2xl text-white font-medium outline-none focus:ring-2 focus:ring-brand-primary h-32 resize-none" placeholder="Veuillez expliquer les faits..." />
+                  <textarea required value={newRequest.description} onChange={e => setNewRequest({...newRequest, description: e.target.value})} className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 p-4 rounded-2xl text-gray-900 dark:text-white font-medium outline-none focus:ring-2 focus:ring-brand-primary h-32 resize-none" placeholder="Veuillez expliquer les faits..." />
                 </div>
                 <button type="submit" className="w-full bg-brand-primary text-white py-5 rounded-2xl font-black text-lg uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-brand-primary/20">
                   Envoyer la demande
@@ -260,7 +260,7 @@ const Explanations = () => {
                       required 
                       value={responseText} 
                       onChange={e => setResponseText(e.target.value)} 
-                      className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 p-4 rounded-2xl text-white font-medium outline-none focus:ring-2 focus:ring-brand-primary h-32 resize-none" 
+                      className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 p-4 rounded-2xl text-gray-900 dark:text-white font-medium outline-none focus:ring-2 focus:ring-brand-primary h-32 resize-none" 
                       placeholder="Tapez votre réponse ici..." 
                     />
                     <button type="submit" className="w-full bg-brand-primary text-white py-4 rounded-2xl font-black text-sm uppercase tracking-widest">

@@ -156,10 +156,10 @@ const RolesPage = () => {
               className="glass-card p-8 rounded-[2.5rem] border border-white/5 relative group hover:border-white/20 transition-all"
             >
               <div className="absolute top-6 right-6 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button onClick={() => handleOpenModal(role)} className="p-2 text-gray-400 hover:text-white bg-white dark:bg-[#1f1f1f]/5 rounded-xl transition-colors">
+                <button onClick={() => handleOpenModal(role)} className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:text-white bg-white dark:bg-[#1f1f1f]/5 rounded-xl transition-colors">
                   <Edit size={16} />
                 </button>
-                <button onClick={() => handleDeleteRole(role.id)} className="p-2 text-gray-400 hover:text-rose-500 bg-white dark:bg-[#1f1f1f]/5 rounded-xl transition-colors">
+                <button onClick={() => handleDeleteRole(role.id)} className="p-2 text-gray-600 dark:text-gray-400 hover:text-rose-500 bg-white dark:bg-[#1f1f1f]/5 rounded-xl transition-colors">
                   <Trash2 size={16} />
                 </button>
               </div>
@@ -224,7 +224,7 @@ const RolesPage = () => {
                     value={formData.name}
                     onChange={e => setFormData({ ...formData, name: e.target.value })}
                     required
-                    className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 p-4 rounded-2xl text-white font-bold outline-none focus:ring-2 focus:ring-brand-primary transition-all"
+                    className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 p-4 rounded-2xl text-gray-900 dark:text-white font-bold outline-none focus:ring-2 focus:ring-brand-primary transition-all"
                   />
                 </div>
 

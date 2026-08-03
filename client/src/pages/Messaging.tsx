@@ -295,7 +295,7 @@ const Messaging = () => {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <button className="p-3 hover:bg-white dark:bg-[#1f1f1f]/10 rounded-xl text-gray-400 transition-colors"><MoreVertical className="w-5 h-5" /></button>
+                <button className="p-3 hover:bg-white dark:bg-[#1f1f1f]/10 rounded-xl text-gray-600 dark:text-gray-400 transition-colors"><MoreVertical className="w-5 h-5" /></button>
               </div>
             </div>
 
@@ -357,7 +357,7 @@ const Messaging = () => {
                     value={newMessage}
                     onChange={e => setNewMessage(e.target.value)}
                     placeholder="Votre message..."
-                    className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 p-3 md:p-4 rounded-xl md:rounded-2xl text-white text-sm md:text-base font-medium outline-none focus:ring-2 focus:ring-brand-primary transition-all"
+                    className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 p-3 md:p-4 rounded-xl md:rounded-2xl text-gray-900 dark:text-white text-sm md:text-base font-medium outline-none focus:ring-2 focus:ring-brand-primary transition-all"
                   />
                 </div>
                 <button 

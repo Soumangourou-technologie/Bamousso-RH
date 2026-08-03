@@ -78,7 +78,7 @@ const Login = () => {
                 {...register('email', { required: 'Email requis' })}
                 type="email"
                 placeholder="nom@entreprise.com"
-                className="w-full bg-white/5 border border-white/10 rounded-2xl pl-14 pr-6 py-5 text-white placeholder-gray-600 focus:outline-none focus:border-brand-primary/50 focus:ring-1 focus:ring-brand-primary/20 transition-all font-bold"
+                className="w-full bg-white/5 border border-white/10 rounded-2xl pl-14 pr-6 py-5 text-gray-900 dark:text-white placeholder-gray-600 focus:outline-none focus:border-brand-primary/50 focus:ring-1 focus:ring-brand-primary/20 transition-all font-bold"
               />
             </div>
             {errors.email && <span className="text-red-500 text-xs font-bold ml-2">{errors.email.message as string}</span>}
@@ -92,7 +92,7 @@ const Login = () => {
                 {...register('password', { required: 'Mot de passe requis' })}
                 type={showPassword ? "text" : "password"}
                 placeholder="••••••••"
-                className="w-full bg-white/5 border border-white/10 rounded-2xl pl-14 pr-14 py-5 text-white placeholder-gray-600 focus:outline-none focus:border-brand-primary/50 focus:ring-1 focus:ring-brand-primary/20 transition-all font-bold"
+                className="w-full bg-white/5 border border-white/10 rounded-2xl pl-14 pr-14 py-5 text-gray-900 dark:text-white placeholder-gray-600 focus:outline-none focus:border-brand-primary/50 focus:ring-1 focus:ring-brand-primary/20 transition-all font-bold"
               />
               <button
                 type="button"

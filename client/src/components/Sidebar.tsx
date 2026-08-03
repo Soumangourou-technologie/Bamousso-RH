@@ -343,7 +343,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
         <div className="p-4 border-t border-white/5 space-y-4">
           <button
               onClick={toggleTheme}
-              className="w-full flex items-center justify-center gap-2 p-3 bg-white/5 hover:bg-white/10 text-white rounded-2xl transition-all duration-300 text-sm font-bold"
+              className="w-full flex items-center justify-center gap-2 p-3 bg-white/5 hover:bg-white/10 text-gray-900 dark:text-white rounded-2xl transition-all duration-300 text-sm font-bold"
           >
               {theme === 'light' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
               {theme === 'light' ? 'Mode Nuit' : 'Mode Jour'}

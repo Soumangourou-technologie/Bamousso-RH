@@ -71,26 +71,26 @@ const TransactionList = ({ refreshTrigger }: { refreshTrigger?: number }) => {
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-bold text-gray-400 mb-1">Type</label>
-              <select value={formData.type} onChange={e => setFormData({...formData, type: e.target.value as any})} className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-lg p-2 text-white">
+              <select value={formData.type} onChange={e => setFormData({...formData, type: e.target.value as any})} className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-lg p-2 text-gray-900 dark:text-white">
                 <option value="INCOME">Entrée (Revenu)</option>
                 <option value="EXPENSE">Sortie (Dépense)</option>
               </select>
             </div>
             <div>
               <label className="block text-sm font-bold text-gray-400 mb-1">Motif</label>
-              <input type="text" required value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-lg p-2 text-white" />
+              <input type="text" required value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-lg p-2 text-gray-900 dark:text-white" />
             </div>
             <div>
               <label className="block text-sm font-bold text-gray-400 mb-1">Montant (FCFA)</label>
-              <input type="number" required value={formData.amount} onChange={e => setFormData({...formData, amount: e.target.value})} className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-lg p-2 text-white" />
+              <input type="number" required value={formData.amount} onChange={e => setFormData({...formData, amount: e.target.value})} className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-lg p-2 text-gray-900 dark:text-white" />
             </div>
             <div>
               <label className="block text-sm font-bold text-gray-400 mb-1">Catégorie</label>
-              <input type="text" required value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} placeholder="ex: Loyer, Vente, Achat matériel" className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-lg p-2 text-white" />
+              <input type="text" required value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} placeholder="ex: Loyer, Vente, Achat matériel" className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-lg p-2 text-gray-900 dark:text-white" />
             </div>
             <div>
               <label className="block text-sm font-bold text-gray-400 mb-1">Référence (Optionnel)</label>
-              <input type="text" value={formData.reference} onChange={e => setFormData({...formData, reference: e.target.value})} placeholder="N° Facture" className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-lg p-2 text-white" />
+              <input type="text" value={formData.reference} onChange={e => setFormData({...formData, reference: e.target.value})} placeholder="N° Facture" className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-lg p-2 text-gray-900 dark:text-white" />
             </div>
           </div>
           <button type="submit" className="bg-emerald-500 text-white px-4 py-2 rounded-xl font-bold">Enregistrer</button>

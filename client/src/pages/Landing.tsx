@@ -57,7 +57,7 @@ const Landing = () => {
           <a href="#pricing" className="hidden md:inline-block font-bold text-gray-300 hover:text-brand-primary transition-colors text-sm uppercase tracking-wider">
             Tarifs
           </a>
-          <Link to="/register" className="bg-white/10 hover:bg-brand-primary text-white border border-white/20 hover:border-brand-primary px-5 py-2.5 rounded-full font-bold transition-all text-sm shadow-md hover:shadow-brand-primary/30">
+          <Link to="/register" className="bg-white/10 hover:bg-brand-primary text-gray-900 dark:text-white border border-white/20 hover:border-brand-primary px-5 py-2.5 rounded-full font-bold transition-all text-sm shadow-md hover:shadow-brand-primary/30">
             S'inscrire
           </Link>
           <Link to="/login" className="bg-brand-primary hover:bg-brand-800 text-white px-6 py-2.5 rounded-full font-bold shadow-lg shadow-brand-primary/30 transition-all hover:-translate-y-0.5">

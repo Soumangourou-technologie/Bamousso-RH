@@ -287,7 +287,7 @@ const SuperAdminBroadcast = () => {
                       placeholder="Rechercher une entreprise ou un gérant..."
                       value={searchCompany}
                       onChange={e => setSearchCompany(e.target.value)}
-                      className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-white text-xs placeholder-gray-500 focus:outline-none focus:border-orange-500/50"
+                      className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-gray-900 dark:text-white text-xs placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-orange-500/50"
                     />
                   </div>
                   <button
@@ -352,7 +352,7 @@ const SuperAdminBroadcast = () => {
                 <select
                   value={targetRole}
                   onChange={e => setTargetRole(e.target.value)}
-                  className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500/50"
+                  className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white text-sm focus:outline-none focus:border-orange-500/50"
                 >
                   <option value="ALL" className="bg-gray-900">Tous les rôles (Ensemble du personnel)</option>
                   <option value="COMPANY_ADMIN" className="bg-gray-900">Administrateurs / Dirigeants d'Entreprise uniquement</option>
@@ -432,7 +432,7 @@ const SuperAdminBroadcast = () => {
                   placeholder="Ex: 🚀 Mise à jour Bamousso RH : Nouvelle fonctionnalité de Messagerie"
                   value={subject}
                   onChange={e => setSubject(e.target.value)}
-                  className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-orange-500/50"
+                  className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-sm focus:outline-none focus:border-orange-500/50"
                   required
                 />
               </div>
@@ -445,7 +445,7 @@ const SuperAdminBroadcast = () => {
                   placeholder="Bonjour,\n\nNous avons le plaisir de vous informer qu'une nouvelle mise à jour est disponible..."
                   value={message}
                   onChange={e => setMessage(e.target.value)}
-                  className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl p-4 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-orange-500/50 resize-y"
+                  className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl p-4 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-sm focus:outline-none focus:border-orange-500/50 resize-y"
                   required
                 />
               </div>
@@ -525,7 +525,7 @@ const SuperAdminBroadcast = () => {
                     </span>
                   </div>
 
-                  <p className="text-sm text-gray-300 whitespace-pre-line leading-relaxed bg-white dark:bg-[#1f1f1f]/5 p-4 rounded-xl">
+                  <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-line leading-relaxed bg-white dark:bg-[#1f1f1f]/5 p-4 rounded-xl">
                     {item.message}
                   </p>
 
@@ -613,7 +613,7 @@ const SuperAdminBroadcast = () => {
                   type="button"
                   onClick={() => setShowConfirmModal(false)}
                   disabled={isSubmitting}
-                  className="flex-1 py-3 bg-white dark:bg-[#1f1f1f]/5 hover:bg-white dark:bg-[#1f1f1f]/10 text-gray-300 font-bold text-sm rounded-xl transition-all"
+                  className="flex-1 py-3 bg-white dark:bg-[#1f1f1f]/5 hover:bg-white dark:bg-[#1f1f1f]/10 text-gray-700 dark:text-gray-300 font-bold text-sm rounded-xl transition-all"
                 >
                   Annuler / Editer
                 </button>

@@ -316,13 +316,13 @@ const DashboardSuperAdmin = () => {
             <button 
               onClick={fetchLogs}
               disabled={logsLoading}
-              className="bg-white dark:bg-[#1f1f1f]/10 hover:bg-white dark:bg-[#1f1f1f]/20 text-white px-6 py-3.5 rounded-2xl font-black flex items-center gap-2.5 border border-white/10 transition-all active:scale-95 text-sm"
+              className="bg-white dark:bg-[#1f1f1f]/10 hover:bg-white dark:bg-[#1f1f1f]/20 text-gray-900 dark:text-white px-6 py-3.5 rounded-2xl font-black flex items-center gap-2.5 border border-white/10 transition-all active:scale-95 text-sm"
             >
               <Terminal className={`w-5 h-5 ${logsLoading ? 'animate-spin' : 'text-brand-accent'}`} /> {logsLoading ? 'Chargement...' : 'Logs Système'}
             </button>
             <button 
               onClick={exportToPDF}
-              className="bg-white dark:bg-[#1f1f1f]/10 hover:bg-white dark:bg-[#1f1f1f]/20 text-white px-6 py-3.5 rounded-2xl font-black flex items-center gap-2.5 border border-white/10 transition-all active:scale-95 text-sm"
+              className="bg-white dark:bg-[#1f1f1f]/10 hover:bg-white dark:bg-[#1f1f1f]/20 text-gray-900 dark:text-white px-6 py-3.5 rounded-2xl font-black flex items-center gap-2.5 border border-white/10 transition-all active:scale-95 text-sm"
             >
               <FileText className="w-5 h-5 text-brand-accent" /> Exporter PDF
             </button>
@@ -425,7 +425,7 @@ const DashboardSuperAdmin = () => {
                   <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 w-5 h-5" />
                   <select 
                     value={filterPlan} onChange={e => setFilterPlan(e.target.value)}
-                    className="pl-12 pr-10 py-4 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-2xl focus:ring-2 focus:ring-brand-primary appearance-none font-bold text-white cursor-pointer"
+                    className="pl-12 pr-10 py-4 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-2xl focus:ring-2 focus:ring-brand-primary appearance-none font-bold text-gray-900 dark:text-white cursor-pointer"
                   >
                     <option value="ALL" className="bg-brand-900">Tous les plans</option>
                     <option value="FITINI" className="bg-brand-900">Fitini</option>
@@ -622,14 +622,14 @@ const DashboardSuperAdmin = () => {
               </div>
               <form onSubmit={handleCreateAdmin} className="space-y-6">
                 <div className="grid grid-cols-2 gap-4">
-                  <input required placeholder="Prénom" className="p-5 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-2xl focus:ring-2 focus:ring-brand-primary w-full text-white font-bold"
+                  <input required placeholder="Prénom" className="p-5 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-2xl focus:ring-2 focus:ring-brand-primary w-full text-gray-900 dark:text-white font-bold"
                     value={newAdmin.firstName} onChange={e => setNewAdmin({...newAdmin, firstName: e.target.value})} />
-                  <input required placeholder="Nom" className="p-5 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-2xl focus:ring-2 focus:ring-brand-primary w-full text-white font-bold"
+                  <input required placeholder="Nom" className="p-5 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-2xl focus:ring-2 focus:ring-brand-primary w-full text-gray-900 dark:text-white font-bold"
                     value={newAdmin.lastName} onChange={e => setNewAdmin({...newAdmin, lastName: e.target.value})} />
                 </div>
-                <input required type="email" placeholder="Email professionnel" className="p-5 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-2xl focus:ring-2 focus:ring-brand-primary w-full text-white font-bold"
+                <input required type="email" placeholder="Email professionnel" className="p-5 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-2xl focus:ring-2 focus:ring-brand-primary w-full text-gray-900 dark:text-white font-bold"
                   value={newAdmin.email} onChange={e => setNewAdmin({...newAdmin, email: e.target.value})} />
-                <input required type="password" placeholder="Mot de passe" className="p-5 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-2xl focus:ring-2 focus:ring-brand-primary w-full text-white font-bold"
+                <input required type="password" placeholder="Mot de passe" className="p-5 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-2xl focus:ring-2 focus:ring-brand-primary w-full text-gray-900 dark:text-white font-bold"
                   value={newAdmin.password} onChange={e => setNewAdmin({...newAdmin, password: e.target.value})} />
                 <button disabled={adminLoading} className="w-full py-5 bg-brand-primary hover:bg-orange-600 text-white rounded-2xl font-black shadow-xl shadow-brand-primary/20 active:scale-95 transition-all premium-glow uppercase tracking-widest">
                   {adminLoading ? 'Création...' : 'Créer le compte'}

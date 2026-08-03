@@ -122,7 +122,7 @@ const Suggestions = () => {
                   <select 
                     value={nature}
                     onChange={e => setNature(e.target.value)}
-                    className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 p-4 rounded-2xl text-white font-bold outline-none focus:ring-2 focus:ring-brand-primary appearance-none"
+                    className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 p-4 rounded-2xl text-gray-900 dark:text-white font-bold outline-none focus:ring-2 focus:ring-brand-primary appearance-none"
                   >
                     <option className="bg-gray-800 text-white">Amélioration du cadre de travail</option>
                     <option className="bg-gray-800 text-white">Processus interne</option>
@@ -136,7 +136,7 @@ const Suggestions = () => {
                   <select 
                     value={targetAudience}
                     onChange={e => setTargetAudience(e.target.value)}
-                    className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 p-4 rounded-2xl text-white font-bold outline-none focus:ring-2 focus:ring-brand-primary appearance-none"
+                    className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 p-4 rounded-2xl text-gray-900 dark:text-white font-bold outline-none focus:ring-2 focus:ring-brand-primary appearance-none"
                   >
                     <option value="ALL" className="bg-gray-800 text-white">Direction & Ressources Humaines (Tous)</option>
                     <option value="COMPANY_ADMIN" className="bg-gray-800 text-white">Direction uniquement (Patron)</option>
@@ -150,7 +150,7 @@ const Suggestions = () => {
                     required
                     value={description}
                     onChange={e => setDescription(e.target.value)}
-                    className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 p-6 rounded-2xl text-white font-medium outline-none focus:ring-2 focus:ring-brand-primary h-40 resize-none placeholder-gray-500"
+                    className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 p-6 rounded-2xl text-gray-900 dark:text-white font-medium outline-none focus:ring-2 focus:ring-brand-primary h-40 resize-none placeholder-gray-400 dark:placeholder-gray-500"
                     placeholder="Comment pourrions-nous améliorer les choses ?..."
                   />
                 </div>
@@ -213,7 +213,7 @@ const Suggestions = () => {
                       {suggestion.status !== 'RESOLVED' && (
                         <button 
                           onClick={() => updateStatus(suggestion.id, suggestion.status === 'OPEN' ? 'IN_PROGRESS' : 'RESOLVED')}
-                          className="px-4 py-2 bg-white dark:bg-[#1f1f1f]/5 hover:bg-white dark:bg-[#1f1f1f]/10 text-[10px] font-black text-white uppercase tracking-widest rounded-xl transition-all"
+                          className="px-4 py-2 bg-white dark:bg-[#1f1f1f]/5 hover:bg-white dark:bg-[#1f1f1f]/10 text-[10px] font-black text-gray-900 dark:text-white uppercase tracking-widest rounded-xl transition-all"
                         >
                           {suggestion.status === 'OPEN' ? 'Examiner' : 'Marquer comme traité'}
                         </button>
