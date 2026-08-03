@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Users, Layers, Calendar, Clock, FileText, Megaphone, TrendingUp, Building2, MessageSquare, Lock, Zap, Wallet, Shield } from 'lucide-react';
+import { Users, Layers, Calendar, Clock, FileText, Megaphone, TrendingUp, Building2, MessageSquare, Lock, Zap, Wallet, Shield, ShoppingCart, Package, History } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import api from '../utils/api';
@@ -144,6 +144,9 @@ const DashboardAdmin = () => {
     { name: 'Salaires',      desc: 'Gestion des paies',            icon: Wallet,        path: '/salaries',     color: 'bg-emerald-500', feature: 'salaries',    locked: !canUse('salaries'),  minPlan: 'LOUBA' },
     { name: 'Comptabilité',  desc: 'Suivi & Rapports',             icon: Wallet,        path: '/accounting',   color: 'bg-blue-500',   feature: 'accounting',  locked: !canUse('salaries'),  minPlan: 'LOUBA' },
     { name: 'Analytique RH', desc: 'Graphiques & Indicateurs',    icon: TrendingUp,    path: '/analytics',    color: 'bg-pink-500',   feature: 'analytics',   locked: !canUse('analytics'),  minPlan: 'LOUBA' },
+    { name: 'Catalogue',     desc: 'Gestion des produits',         icon: Package,       path: '/sales/products',color: 'bg-indigo-500', feature: 'products' },
+    { name: 'Caisse (POS)',  desc: 'Point de vente',               icon: ShoppingCart,  path: '/sales/pos',    color: 'bg-green-600',  feature: 'pos' },
+    { name: 'Ventes',        desc: 'Historique & Factures',        icon: History,       path: '/sales/history',color: 'bg-blue-600',   feature: 'sales_history' },
   ];
 
   const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.08 } } };
