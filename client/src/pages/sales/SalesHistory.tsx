@@ -57,9 +57,14 @@ const SalesHistory = () => {
   );
 
   const getWhatsappLink = (phone: string, pdfUrl: string) => {
-    // Format local to international basic (assumes 225 for CI if not specified, adjust as needed)
-    // Here we just remove spaces and '+'
-    const cleanPhone = phone.replace(/\D/g, "");
+    // Nettoyage : on garde uniquement les chiffres
+    let cleanPhone = phone.replace(/\D/g, "");
+    
+    // Si c'est un numéro local ivoirien de 10 chiffres (ex: 0777620864), on ajoute l'indicatif 225
+    if (cleanPhone.length === 10 && cleanPhone.startsWith("0")) {
+      cleanPhone = `225${cleanPhone}`;
+    }
+
     const message = encodeURIComponent(`Bonjour, voici votre reçu d'achat : ${pdfUrl}`);
     return `https://wa.me/${cleanPhone}?text=${message}`;
   };
