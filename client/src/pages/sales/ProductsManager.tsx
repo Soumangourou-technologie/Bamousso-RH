@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Plus, Edit2, Trash2, Tag, Percent, Box, RefreshCw } from "lucide-react";
 import { getProducts, createProduct, updateProduct, deleteProduct } from "../../services/sales.service";
+import toast from "react-hot-toast";
 
 interface Product {
   id: string;
@@ -68,8 +69,10 @@ const ProductsManager = () => {
       }
       setIsModalOpen(false);
       fetchProducts();
-    } catch (error) {
+      toast.success("Produit enregistré avec succès");
+    } catch (error: any) {
       console.error("Erreur lors de l'enregistrement", error);
+      toast.error(error.response?.data?.message || "Erreur lors de l'enregistrement du produit");
     }
   };
 
@@ -77,9 +80,11 @@ const ProductsManager = () => {
     if (window.confirm("Voulez-vous vraiment supprimer ce produit ?")) {
       try {
         await deleteProduct(id);
+        toast.success("Produit supprimé");
         fetchProducts();
-      } catch (error) {
+      } catch (error: any) {
         console.error("Erreur lors de la suppression", error);
+        toast.error(error.response?.data?.message || "Erreur lors de la suppression du produit");
       }
     }
   };
