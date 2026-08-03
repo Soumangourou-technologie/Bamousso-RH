@@ -105,10 +105,10 @@ export const requirePermission = (permission: string) => {
       }
 
       // Fallback for basic roles if they don't have a custom role (legacy support)
-      // e.g. HR_MANAGER can do almost everything
-      if (req.user.role === "HR_MANAGER" || req.user.role === "COMMERCIAL") {
-        // Here you can define default permissions for HR roles if needed.
-        // For strict RBAC, you might want to return 403.
+      if (req.user.role === "COMMERCIAL" || req.user.role === "VENDEUR") {
+        if (permission === "use_pos" || permission === "view_sales") {
+          return next();
+        }
       }
 
       return res.status(403).json({ message: "Access denied. Missing permission: " + permission });
