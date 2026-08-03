@@ -210,18 +210,18 @@ const SuperAdminOfflineClients = () => {
           <h2 className="text-3xl font-black text-white tracking-tight">Liste des entreprises</h2>
           <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
             <div className="relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 w-5 h-5" />
               <input 
                 type="text" placeholder="Rechercher..."
                 value={searchTerm} onChange={e => setSearchTerm(e.target.value)}
-                className="pl-12 pr-6 py-4 bg-white/5 border border-white/10 rounded-2xl w-full md:w-72 focus:ring-2 focus:ring-brand-primary text-white font-bold placeholder:text-gray-600"
+                className="pl-12 pr-6 py-4 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-2xl w-full md:w-72 focus:ring-2 focus:ring-brand-primary text-white font-bold placeholder:text-gray-600 dark:text-gray-400"
               />
             </div>
             <div className="relative">
-              <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
+              <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 w-5 h-5" />
               <select 
                 value={filterPlan} onChange={e => setFilterPlan(e.target.value)}
-                className="pl-12 pr-10 py-4 bg-white/5 border border-white/10 rounded-2xl focus:ring-2 focus:ring-brand-primary appearance-none font-bold text-white cursor-pointer"
+                className="pl-12 pr-10 py-4 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-2xl focus:ring-2 focus:ring-brand-primary appearance-none font-bold text-white cursor-pointer"
               >
                 <option value="ALL" className="bg-brand-900">Tous les plans</option>
                 <option value="FITINI" className="bg-brand-900">Fitini</option>
@@ -237,7 +237,7 @@ const SuperAdminOfflineClients = () => {
             {filteredCompanies.map(company => (
               <motion.div 
                 layout initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-                key={company.id} className={`p-8 rounded-4xl border transition-all duration-300 group hover:shadow-2xl min-w-[320px] md:min-w-0 snap-center ${company.isLocked ? 'bg-rose-500/10 border-rose-500/20' : 'bg-white/5 border-white/10 hover:border-brand-primary/30'}`}
+                key={company.id} className={`p-8 rounded-4xl border transition-all duration-300 group hover:shadow-2xl min-w-[320px] md:min-w-0 snap-center ${company.isLocked ? 'bg-rose-500/10 border-rose-500/20' : 'bg-white dark:bg-[#1f1f1f]/5 border-white/10 hover:border-brand-primary/30'}`}
               >
                 <div className="flex justify-between items-start mb-6">
                   <div className="min-w-0">
@@ -247,25 +247,25 @@ const SuperAdminOfflineClients = () => {
                       <span className="text-[10px] font-black text-brand-accent uppercase tracking-[0.2em]">{PLAN_LABELS[company.plan]} ({company.billingCycle === 'YEARLY' ? 'Annuel' : 'Mensuel'})</span>
                     </div>
                   </div>
-                  <button onClick={() => { setSelectedCompany(company); setIsPlanModalOpen(true); }} className="p-3 hover:bg-white/10 rounded-2xl transition-colors shrink-0">
-                    <MoreVertical className="w-5 h-5 text-gray-500" />
+                  <button onClick={() => { setSelectedCompany(company); setIsPlanModalOpen(true); }} className="p-3 hover:bg-white dark:bg-[#1f1f1f]/10 rounded-2xl transition-colors shrink-0">
+                    <MoreVertical className="w-5 h-5 text-gray-500 dark:text-gray-400" />
                   </button>
                 </div>
 
                 <div className="space-y-4 mb-8">
-                  <div className="flex justify-between text-[10px] font-black text-gray-500 uppercase tracking-widest gap-2">
+                  <div className="flex justify-between text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest gap-2">
                     <span className="shrink-0">Administrateur</span>
                     <span className="text-gray-300 truncate">{company.manager?.firstName} {company.manager?.lastName}</span>
                   </div>
-                  <div className="flex justify-between text-[10px] font-black text-gray-500 uppercase tracking-widest gap-2">
+                  <div className="flex justify-between text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest gap-2">
                     <span className="shrink-0">Contact / Email</span>
                     <span className="text-brand-accent font-bold truncate">{company.manager?.email || 'N/A'}</span>
                   </div>
-                  <div className="flex justify-between text-[10px] font-black text-gray-500 uppercase tracking-widest gap-2">
+                  <div className="flex justify-between text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest gap-2">
                     <span className="shrink-0">Effectif</span>
                     <span className="text-gray-300 font-black">{company._count?.users || 0} membres</span>
                   </div>
-                  <div className="flex justify-between text-[10px] font-black text-gray-500 uppercase tracking-widest gap-2">
+                  <div className="flex justify-between text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest gap-2">
                     <span className="shrink-0">Échéance</span>
                     <div className="text-right min-w-0">
                       <div className="text-brand-accent truncate">{formatDate(company.subscriptionEndsAt)}</div>
@@ -291,7 +291,7 @@ const SuperAdminOfflineClients = () => {
                   </button>
                   <button 
                     onClick={() => handleDelete(company)}
-                    className="p-3 bg-white/5 border border-white/10 text-gray-500 hover:text-rose-500 hover:border-rose-500/30 rounded-xl transition-all flex items-center justify-center"
+                    className="p-3 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 text-gray-500 dark:text-gray-400 hover:text-rose-500 hover:border-rose-500/30 rounded-xl transition-all flex items-center justify-center"
                     title="Supprimer définitivement"
                   >
                     <X className="w-5 h-5" />
@@ -310,19 +310,19 @@ const SuperAdminOfflineClients = () => {
             <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="glass-card rounded-[3rem] p-10 max-w-2xl w-full shadow-2xl border-white/20 max-h-[90vh] overflow-y-auto custom-scrollbar">
               <div className="flex justify-between items-center mb-8">
                 <h3 className="text-3xl font-black text-white tracking-tight">Ajouter un Client (Espèces)</h3>
-                <button onClick={() => setIsCreateModalOpen(false)} className="p-2 hover:bg-white/10 rounded-full transition-colors"><X className="w-6 h-6 text-gray-500" /></button>
+                <button onClick={() => setIsCreateModalOpen(false)} className="p-2 hover:bg-white dark:bg-[#1f1f1f]/10 rounded-full transition-colors"><X className="w-6 h-6 text-gray-500 dark:text-gray-400" /></button>
               </div>
               <form onSubmit={handleCreateOfflineCompany} className="space-y-6">
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-brand-accent uppercase tracking-widest">Nom de l'entreprise</label>
-                    <input required placeholder="Ex: Soumangourou Tech" className="p-4 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-brand-primary w-full text-white font-bold"
+                    <input required placeholder="Ex: Soumangourou Tech" className="p-4 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-brand-primary w-full text-white font-bold"
                       value={formData.companyName} onChange={e => setFormData({...formData, companyName: e.target.value})} />
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-brand-accent uppercase tracking-widest">Téléphone</label>
-                    <input required placeholder="+225 0102030405" className="p-4 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-brand-primary w-full text-white font-bold"
+                    <input required placeholder="+225 0102030405" className="p-4 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-brand-primary w-full text-white font-bold"
                       value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} />
                   </div>
                 </div>
@@ -330,12 +330,12 @@ const SuperAdminOfflineClients = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-brand-accent uppercase tracking-widest">Prénom Admin</label>
-                    <input required placeholder="Prénom" className="p-4 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-brand-primary w-full text-white font-bold"
+                    <input required placeholder="Prénom" className="p-4 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-brand-primary w-full text-white font-bold"
                       value={formData.firstName} onChange={e => setFormData({...formData, firstName: e.target.value})} />
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-brand-accent uppercase tracking-widest">Nom Admin</label>
-                    <input required placeholder="Nom" className="p-4 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-brand-primary w-full text-white font-bold"
+                    <input required placeholder="Nom" className="p-4 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-brand-primary w-full text-white font-bold"
                       value={formData.lastName} onChange={e => setFormData({...formData, lastName: e.target.value})} />
                   </div>
                 </div>
@@ -343,12 +343,12 @@ const SuperAdminOfflineClients = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-brand-accent uppercase tracking-widest">Email Admin</label>
-                    <input required type="email" placeholder="admin@entreprise.com" className="p-4 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-brand-primary w-full text-white font-bold"
+                    <input required type="email" placeholder="admin@entreprise.com" className="p-4 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-brand-primary w-full text-white font-bold"
                       value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} />
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-brand-accent uppercase tracking-widest">Mot de passe provisoire</label>
-                    <input required type="text" placeholder="Mot de passe" className="p-4 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-brand-primary w-full text-white font-bold"
+                    <input required type="text" placeholder="Mot de passe" className="p-4 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-brand-primary w-full text-white font-bold"
                       value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} />
                   </div>
                 </div>
@@ -356,7 +356,7 @@ const SuperAdminOfflineClients = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-brand-accent uppercase tracking-widest">Forfait Choisi</label>
-                    <select value={formData.plan} onChange={e => setFormData({...formData, plan: e.target.value})} className="p-4 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-brand-primary w-full text-white font-bold appearance-none">
+                    <select value={formData.plan} onChange={e => setFormData({...formData, plan: e.target.value})} className="p-4 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-brand-primary w-full text-white font-bold appearance-none">
                       <option value="FITINI" className="bg-brand-900">FITINI</option>
                       <option value="LOUBA" className="bg-brand-900">LOUBA</option>
                       <option value="KORO" className="bg-brand-900">KÔRÔ</option>
@@ -364,7 +364,7 @@ const SuperAdminOfflineClients = () => {
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-brand-accent uppercase tracking-widest">Cycle</label>
-                    <select value={formData.billingCycle} onChange={e => setFormData({...formData, billingCycle: e.target.value})} className="p-4 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-brand-primary w-full text-white font-bold appearance-none">
+                    <select value={formData.billingCycle} onChange={e => setFormData({...formData, billingCycle: e.target.value})} className="p-4 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-brand-primary w-full text-white font-bold appearance-none">
                       <option value="MONTHLY" className="bg-brand-900">Mensuel</option>
                       <option value="YEARLY" className="bg-brand-900">Annuel</option>
                     </select>
@@ -389,11 +389,11 @@ const SuperAdminOfflineClients = () => {
               
               <div className="space-y-4">
                 <div className="space-y-2 mb-4">
-                  <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Nouveau Forfait</label>
+                  <label className="text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest">Nouveau Forfait</label>
                   <select 
                     id="planSelect"
                     defaultValue={selectedCompany.plan}
-                    className="p-4 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-brand-primary w-full text-white font-bold appearance-none"
+                    className="p-4 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-brand-primary w-full text-white font-bold appearance-none"
                   >
                     <option value="FITINI" className="bg-brand-900">FITINI</option>
                     <option value="LOUBA" className="bg-brand-900">LOUBA</option>
@@ -402,11 +402,11 @@ const SuperAdminOfflineClients = () => {
                 </div>
                 
                 <div className="space-y-2 mb-8">
-                  <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Nouveau Cycle</label>
+                  <label className="text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest">Nouveau Cycle</label>
                   <select 
                     id="cycleSelect"
                     defaultValue={selectedCompany.billingCycle}
-                    className="p-4 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-brand-primary w-full text-white font-bold appearance-none"
+                    className="p-4 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-brand-primary w-full text-white font-bold appearance-none"
                   >
                     <option value="MONTHLY" className="bg-brand-900">Mensuel</option>
                     <option value="YEARLY" className="bg-brand-900">Annuel</option>
@@ -423,7 +423,7 @@ const SuperAdminOfflineClients = () => {
                 >
                   Valider
                 </button>
-                <button onClick={() => setIsPlanModalOpen(false)} className="w-full mt-4 py-4 text-gray-500 font-black hover:text-white transition-colors uppercase tracking-widest text-xs">Annuler</button>
+                <button onClick={() => setIsPlanModalOpen(false)} className="w-full mt-4 py-4 text-gray-500 dark:text-gray-400 font-black hover:text-white transition-colors uppercase tracking-widest text-xs">Annuler</button>
               </div>
             </motion.div>
           </div>

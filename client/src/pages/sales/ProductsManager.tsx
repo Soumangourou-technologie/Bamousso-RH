@@ -91,15 +91,15 @@ const ProductsManager = () => {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-8 animate-fade-in pb-24">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white dark:bg-[#1f1f1f] p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Catalogue des Produits</h1>
-          <p className="text-gray-500 mt-1">Gérez vos articles et services pour la facturation.</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Catalogue des Produits</h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-1">Gérez vos articles et services pour la facturation.</p>
         </div>
         <div className="flex gap-2 w-full sm:w-auto">
           <button
             onClick={fetchProducts}
-            className="p-3 text-gray-600 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors"
+            className="p-3 text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/50 rounded-xl hover:bg-gray-100 dark:bg-gray-800 transition-colors"
             title="Actualiser"
           >
             <RefreshCw className={`w-5 h-5 ${loading ? "animate-spin" : ""}`} />
@@ -114,22 +114,22 @@ const ProductsManager = () => {
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="bg-white dark:bg-[#1f1f1f] rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-gray-50 border-b border-gray-100">
-                <th className="p-4 text-sm font-semibold text-gray-600">Désignation</th>
-                <th className="p-4 text-sm font-semibold text-gray-600 text-right">Prix Unitaire (HT)</th>
-                <th className="p-4 text-sm font-semibold text-gray-600 text-center">TVA (%)</th>
-                <th className="p-4 text-sm font-semibold text-gray-600 text-center">Stock</th>
-                <th className="p-4 text-sm font-semibold text-gray-600 text-right">Actions</th>
+              <tr className="bg-gray-50 dark:bg-gray-800/50 border-b border-gray-100 dark:border-gray-800">
+                <th className="p-4 text-sm font-semibold text-gray-600 dark:text-gray-400">Désignation</th>
+                <th className="p-4 text-sm font-semibold text-gray-600 dark:text-gray-400 text-right">Prix Unitaire (HT)</th>
+                <th className="p-4 text-sm font-semibold text-gray-600 dark:text-gray-400 text-center">TVA (%)</th>
+                <th className="p-4 text-sm font-semibold text-gray-600 dark:text-gray-400 text-center">Stock</th>
+                <th className="p-4 text-sm font-semibold text-gray-600 dark:text-gray-400 text-right">Actions</th>
               </tr>
             </thead>
             <tbody>
               {products.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="p-8 text-center text-gray-500">
+                  <td colSpan={5} className="p-8 text-center text-gray-500 dark:text-gray-400">
                     Aucun produit dans le catalogue. Cliquez sur "Nouveau Produit" pour en ajouter un.
                   </td>
                 </tr>
@@ -137,16 +137,16 @@ const ProductsManager = () => {
                 products.map((product) => (
                   <tr key={product.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors group">
                     <td className="p-4">
-                      <div className="font-medium text-gray-900">{product.name}</div>
-                      {product.description && <div className="text-sm text-gray-500 truncate max-w-xs">{product.description}</div>}
+                      <div className="font-medium text-gray-900 dark:text-white">{product.name}</div>
+                      {product.description && <div className="text-sm text-gray-500 dark:text-gray-400 truncate max-w-xs">{product.description}</div>}
                     </td>
-                    <td className="p-4 text-right font-medium text-gray-900">
+                    <td className="p-4 text-right font-medium text-gray-900 dark:text-white">
                       {product.price.toLocaleString()} F
                     </td>
-                    <td className="p-4 text-center text-gray-600">
+                    <td className="p-4 text-center text-gray-600 dark:text-gray-400">
                       {product.vatRate}%
                     </td>
-                    <td className="p-4 text-center text-gray-600">
+                    <td className="p-4 text-center text-gray-600 dark:text-gray-400">
                       {product.stock !== null ? product.stock : "-"}
                     </td>
                     <td className="p-4 text-right">
@@ -160,7 +160,7 @@ const ProductsManager = () => {
                         </button>
                         <button
                           onClick={() => handleDelete(product.id)}
-                          className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                          className="p-2 text-red-600 hover:bg-red-50 dark:bg-red-500/10 rounded-lg transition-colors"
                           title="Supprimer"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -177,14 +177,14 @@ const ProductsManager = () => {
 
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-slide-up">
-            <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-              <h2 className="text-xl font-bold text-gray-900">
+          <div className="bg-white dark:bg-[#1f1f1f] rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-slide-up">
+            <div className="p-6 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-gray-50/50">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">
                 {editingProduct ? "Modifier Produit" : "Ajouter Produit"}
               </h2>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
+                className="text-gray-400 hover:text-gray-600 dark:text-gray-400 transition-colors"
               >
                 ✕
               </button>
@@ -192,7 +192,7 @@ const ProductsManager = () => {
 
             <form onSubmit={handleSubmit} className="p-6 space-y-5">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Désignation *
                 </label>
                 <div className="relative">
@@ -204,14 +204,14 @@ const ProductsManager = () => {
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full pl-10 pr-4 py-3 bg-gray-50 text-gray-900 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#ff5722] focus:border-transparent transition-all outline-none"
+                    className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-800/50 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-[#ff5722] focus:border-transparent transition-all outline-none"
                     placeholder="Ex: Clavier Sans Fil"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Prix Unitaire (HT) *
                 </label>
                 <div className="relative">
@@ -221,7 +221,7 @@ const ProductsManager = () => {
                     min="0"
                     value={formData.price}
                     onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                    className="w-full pl-4 pr-12 py-3 bg-gray-50 text-gray-900 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#ff5722] focus:border-transparent transition-all outline-none"
+                    className="w-full pl-4 pr-12 py-3 bg-gray-50 dark:bg-gray-800/50 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-[#ff5722] focus:border-transparent transition-all outline-none"
                     placeholder="15000"
                   />
                   <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-gray-400 font-medium">
@@ -232,7 +232,7 @@ const ProductsManager = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     TVA (%)
                   </label>
                   <div className="relative">
@@ -245,13 +245,13 @@ const ProductsManager = () => {
                       max="100"
                       value={formData.vatRate}
                       onChange={(e) => setFormData({ ...formData, vatRate: e.target.value })}
-                      className="w-full pl-10 pr-4 py-3 bg-gray-50 text-gray-900 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#ff5722] focus:border-transparent transition-all outline-none"
+                      className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-800/50 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-[#ff5722] focus:border-transparent transition-all outline-none"
                     />
                   </div>
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Stock <span className="text-gray-400 font-normal">(Optionnel)</span>
                   </label>
                   <div className="relative">
@@ -263,7 +263,7 @@ const ProductsManager = () => {
                       min="0"
                       value={formData.stock}
                       onChange={(e) => setFormData({ ...formData, stock: e.target.value })}
-                      className="w-full pl-10 pr-4 py-3 bg-gray-50 text-gray-900 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#ff5722] focus:border-transparent transition-all outline-none"
+                      className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-800/50 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-[#ff5722] focus:border-transparent transition-all outline-none"
                       placeholder="Qté"
                     />
                   </div>
@@ -271,23 +271,23 @@ const ProductsManager = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Description <span className="text-gray-400 font-normal">(Optionnel)</span>
                 </label>
                 <textarea
                   rows={2}
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full p-4 bg-gray-50 text-gray-900 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#ff5722] focus:border-transparent transition-all outline-none resize-none"
+                  className="w-full p-4 bg-gray-50 dark:bg-gray-800/50 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-[#ff5722] focus:border-transparent transition-all outline-none resize-none"
                   placeholder="Détails supplémentaires..."
                 />
               </div>
 
-              <div className="flex gap-3 pt-4 border-t border-gray-100">
+              <div className="flex gap-3 pt-4 border-t border-gray-100 dark:border-gray-800">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="flex-1 px-4 py-3 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl font-medium transition-colors"
+                  className="flex-1 px-4 py-3 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 rounded-xl font-medium transition-colors"
                 >
                   Annuler
                 </button>

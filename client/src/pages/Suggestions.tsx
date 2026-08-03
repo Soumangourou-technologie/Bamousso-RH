@@ -118,11 +118,11 @@ const Suggestions = () => {
               
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <label className="block text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-3">Nature de la suggestion</label>
+                  <label className="block text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-[0.2em] mb-3">Nature de la suggestion</label>
                   <select 
                     value={nature}
                     onChange={e => setNature(e.target.value)}
-                    className="w-full bg-white/5 border border-white/10 p-4 rounded-2xl text-white font-bold outline-none focus:ring-2 focus:ring-brand-primary appearance-none"
+                    className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 p-4 rounded-2xl text-white font-bold outline-none focus:ring-2 focus:ring-brand-primary appearance-none"
                   >
                     <option className="bg-gray-800 text-white">Amélioration du cadre de travail</option>
                     <option className="bg-gray-800 text-white">Processus interne</option>
@@ -132,11 +132,11 @@ const Suggestions = () => {
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-3">À l'attention de</label>
+                  <label className="block text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-[0.2em] mb-3">À l'attention de</label>
                   <select 
                     value={targetAudience}
                     onChange={e => setTargetAudience(e.target.value)}
-                    className="w-full bg-white/5 border border-white/10 p-4 rounded-2xl text-white font-bold outline-none focus:ring-2 focus:ring-brand-primary appearance-none"
+                    className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 p-4 rounded-2xl text-white font-bold outline-none focus:ring-2 focus:ring-brand-primary appearance-none"
                   >
                     <option value="ALL" className="bg-gray-800 text-white">Direction & Ressources Humaines (Tous)</option>
                     <option value="COMPANY_ADMIN" className="bg-gray-800 text-white">Direction uniquement (Patron)</option>
@@ -145,24 +145,24 @@ const Suggestions = () => {
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-3">Détails de votre idée</label>
+                  <label className="block text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-[0.2em] mb-3">Détails de votre idée</label>
                   <textarea 
                     required
                     value={description}
                     onChange={e => setDescription(e.target.value)}
-                    className="w-full bg-white/5 border border-white/10 p-6 rounded-2xl text-white font-medium outline-none focus:ring-2 focus:ring-brand-primary h-40 resize-none placeholder-gray-500"
+                    className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 p-6 rounded-2xl text-white font-medium outline-none focus:ring-2 focus:ring-brand-primary h-40 resize-none placeholder-gray-500"
                     placeholder="Comment pourrions-nous améliorer les choses ?..."
                   />
                 </div>
 
-                <div className="flex items-center justify-between p-6 bg-white/5 rounded-2xl border border-dashed border-white/10">
+                <div className="flex items-center justify-between p-6 bg-white dark:bg-[#1f1f1f]/5 rounded-2xl border border-dashed border-white/10">
                   <div className="flex items-center gap-4">
                     <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${isAnonymous ? 'bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.3)]' : 'bg-gray-800'}`}>
-                      <UserX className={`w-6 h-6 ${isAnonymous ? 'text-white' : 'text-gray-500'}`} />
+                      <UserX className={`w-6 h-6 ${isAnonymous ? 'text-white' : 'text-gray-500 dark:text-gray-400'}`} />
                     </div>
                     <div>
                       <p className="text-white font-bold text-sm">Rester Anonyme</p>
-                      <p className="text-xs text-gray-500 font-medium">Votre identité ne sera pas révélée.</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">Votre identité ne sera pas révélée.</p>
                     </div>
                   </div>
                   <button 
@@ -170,7 +170,7 @@ const Suggestions = () => {
                     onClick={() => setIsAnonymous(!isAnonymous)}
                     className={`w-14 h-8 rounded-full relative transition-all ${isAnonymous ? 'bg-emerald-500' : 'bg-gray-700'}`}
                   >
-                    <div className={`absolute top-1 w-6 h-6 bg-white rounded-full transition-all ${isAnonymous ? 'left-7' : 'left-1'}`} />
+                    <div className={`absolute top-1 w-6 h-6 bg-white dark:bg-[#1f1f1f] rounded-full transition-all ${isAnonymous ? 'left-7' : 'left-1'}`} />
                   </button>
                 </div>
 
@@ -207,13 +207,13 @@ const Suggestions = () => {
                           RH (Confidentiel)
                         </div>
                       )}
-                      <span className="text-xs text-gray-500 font-bold">{new Date(suggestion.createdAt).toLocaleString('fr-FR')}</span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400 font-bold">{new Date(suggestion.createdAt).toLocaleString('fr-FR')}</span>
                     </div>
                     <div className="flex gap-2">
                       {suggestion.status !== 'RESOLVED' && (
                         <button 
                           onClick={() => updateStatus(suggestion.id, suggestion.status === 'OPEN' ? 'IN_PROGRESS' : 'RESOLVED')}
-                          className="px-4 py-2 bg-white/5 hover:bg-white/10 text-[10px] font-black text-white uppercase tracking-widest rounded-xl transition-all"
+                          className="px-4 py-2 bg-white dark:bg-[#1f1f1f]/5 hover:bg-white dark:bg-[#1f1f1f]/10 text-[10px] font-black text-white uppercase tracking-widest rounded-xl transition-all"
                         >
                           {suggestion.status === 'OPEN' ? 'Examiner' : 'Marquer comme traité'}
                         </button>
@@ -228,10 +228,10 @@ const Suggestions = () => {
                   
                   <div className="pt-4 border-t border-white/5 flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center">
-                        {suggestion.isAnonymous ? <UserX className="w-4 h-4 text-gray-500" /> : <ShieldCheck className="w-4 h-4 text-emerald-500" />}
+                      <div className="w-8 h-8 rounded-full bg-white dark:bg-[#1f1f1f]/5 flex items-center justify-center">
+                        {suggestion.isAnonymous ? <UserX className="w-4 h-4 text-gray-500 dark:text-gray-400" /> : <ShieldCheck className="w-4 h-4 text-emerald-500" />}
                       </div>
-                      <span className="text-xs font-bold text-gray-500">
+                      <span className="text-xs font-bold text-gray-500 dark:text-gray-400">
                         Suggéré par : {suggestion.isAnonymous ? 'Anonyme' : `${suggestion.reporter?.firstName} ${suggestion.reporter?.lastName}`}
                       </span>
                     </div>
@@ -243,8 +243,8 @@ const Suggestions = () => {
               ))}
               {suggestions.length === 0 && (
                 <div className="glass-card p-20 text-center rounded-[2.5rem] border border-dashed border-white/10">
-                  <Lightbulb className="w-16 h-16 text-gray-700 mx-auto mb-4" />
-                  <p className="text-gray-500 font-bold">Aucune suggestion pour le moment.</p>
+                  <Lightbulb className="w-16 h-16 text-gray-700 dark:text-gray-300 mx-auto mb-4" />
+                  <p className="text-gray-500 dark:text-gray-400 font-bold">Aucune suggestion pour le moment.</p>
                 </div>
               )}
             </div>
@@ -259,17 +259,17 @@ const Suggestions = () => {
             {!isAdmin ? (
               <div className="space-y-4">
                 {suggestions.map(s => (
-                  <div key={s.id} className="p-4 bg-white/5 rounded-2xl border border-white/5">
+                  <div key={s.id} className="p-4 bg-white dark:bg-[#1f1f1f]/5 rounded-2xl border border-white/5">
                     <p className="text-white font-bold text-sm line-clamp-1">{s.nature}</p>
                     <div className="flex justify-between items-center mt-2">
-                      <span className="text-[10px] text-gray-500 font-bold">{new Date(s.createdAt).toLocaleDateString()}</span>
+                      <span className="text-[10px] text-gray-500 dark:text-gray-400 font-bold">{new Date(s.createdAt).toLocaleDateString()}</span>
                       <span className={`text-[8px] font-black uppercase px-2 py-0.5 rounded-full ${
                         s.status === 'OPEN' ? 'text-rose-500' : 'text-emerald-500'
                       }`}>{s.status}</span>
                     </div>
                   </div>
                 ))}
-                {suggestions.length === 0 && <p className="text-gray-500 text-sm font-bold italic">Aucune suggestion envoyée.</p>}
+                {suggestions.length === 0 && <p className="text-gray-500 dark:text-gray-400 text-sm font-bold italic">Aucune suggestion envoyée.</p>}
               </div>
             ) : (
               <div className="space-y-4">

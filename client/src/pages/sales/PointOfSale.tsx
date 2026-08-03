@@ -131,12 +131,12 @@ const PointOfSale = () => {
 
   if (successData) {
     return (
-      <div className="p-8 max-w-3xl mx-auto flex flex-col items-center justify-center text-center space-y-6 mt-12 bg-white rounded-2xl shadow-sm border border-gray-100 animate-fade-in py-16">
+      <div className="p-8 max-w-3xl mx-auto flex flex-col items-center justify-center text-center space-y-6 mt-12 bg-white dark:bg-[#1f1f1f] rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 animate-fade-in py-16">
         <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center">
           <CheckCircle className="w-10 h-10" />
         </div>
-        <h2 className="text-2xl font-bold text-gray-900">Encaissement Réussi !</h2>
-        <p className="text-gray-500">La facture a été générée et la transaction ajoutée à la trésorerie.</p>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Encaissement Réussi !</h2>
+        <p className="text-gray-500 dark:text-gray-400">La facture a été générée et la transaction ajoutée à la trésorerie.</p>
         
         <div className="flex gap-4 mt-8 w-full max-w-sm">
           {successData.pdfUrl && (
@@ -161,13 +161,13 @@ const PointOfSale = () => {
   }
 
   return (
-    <div className="h-[calc(100vh-4rem)] flex flex-col lg:flex-row overflow-hidden animate-fade-in bg-gray-50">
+    <div className="h-[calc(100vh-4rem)] flex flex-col lg:flex-row overflow-hidden animate-fade-in bg-gray-50 dark:bg-gray-800/50">
       
       {/* SECTION CATALOGUE (GAUCHE) */}
-      <div className="flex-1 flex flex-col p-4 lg:p-6 lg:border-r border-gray-200 overflow-hidden">
+      <div className="flex-1 flex flex-col p-4 lg:p-6 lg:border-r border-gray-200 dark:border-gray-700 overflow-hidden">
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">Point de Vente</h1>
-          <p className="text-gray-500 mt-1">Sélectionnez les articles à facturer</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Point de Vente</h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-1">Sélectionnez les articles à facturer</p>
         </div>
 
         <div className="relative mb-6">
@@ -179,7 +179,7 @@ const PointOfSale = () => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Rechercher un produit..."
-            className="w-full pl-11 pr-4 py-3 bg-white text-gray-900 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#ff5722] focus:border-transparent outline-none transition-all shadow-sm"
+            className="w-full pl-11 pr-4 py-3 bg-white dark:bg-[#1f1f1f] text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-[#ff5722] focus:border-transparent outline-none transition-all shadow-sm"
           />
         </div>
 
@@ -189,9 +189,9 @@ const PointOfSale = () => {
               <button
                 key={product.id}
                 onClick={() => addToCart(product)}
-                className="flex flex-col items-center justify-center p-4 bg-white border border-gray-100 rounded-2xl hover:border-[#ff5722] hover:shadow-md transition-all active:scale-95 group text-center h-32"
+                className="flex flex-col items-center justify-center p-4 bg-white dark:bg-[#1f1f1f] border border-gray-100 dark:border-gray-800 rounded-2xl hover:border-[#ff5722] hover:shadow-md transition-all active:scale-95 group text-center h-32"
               >
-                <span className="font-semibold text-gray-800 line-clamp-2 group-hover:text-[#ff5722] transition-colors">
+                <span className="font-semibold text-gray-800 dark:text-gray-200 line-clamp-2 group-hover:text-[#ff5722] transition-colors">
                   {product.name}
                 </span>
                 <span className="mt-2 text-[#ff5722] font-bold">
@@ -200,7 +200,7 @@ const PointOfSale = () => {
               </button>
             ))}
             {filteredProducts.length === 0 && (
-              <div className="col-span-full p-8 text-center text-gray-500">
+              <div className="col-span-full p-8 text-center text-gray-500 dark:text-gray-400">
                 Aucun produit trouvé.
               </div>
             )}
@@ -209,18 +209,18 @@ const PointOfSale = () => {
       </div>
 
       {/* SECTION PANIER (DROITE) */}
-      <div className="w-full lg:w-96 bg-white flex flex-col shadow-[-10px_0_20px_-10px_rgba(0,0,0,0.05)] z-10">
+      <div className="w-full lg:w-96 bg-white dark:bg-[#1f1f1f] flex flex-col shadow-[-10px_0_20px_-10px_rgba(0,0,0,0.05)] z-10">
         
-        <div className="p-4 border-b border-gray-100 flex items-center gap-3">
-          <ShoppingCart className="w-5 h-5 text-gray-500" />
-          <h2 className="text-lg font-bold text-gray-900">Panier Courant</h2>
-          <span className="ml-auto bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs font-bold">
+        <div className="p-4 border-b border-gray-100 dark:border-gray-800 flex items-center gap-3">
+          <ShoppingCart className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+          <h2 className="text-lg font-bold text-gray-900 dark:text-white">Panier Courant</h2>
+          <span className="ml-auto bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 px-2 py-1 rounded-full text-xs font-bold">
             {cart.length}
           </span>
         </div>
 
         {/* Client Info */}
-        <div className="p-4 border-b border-gray-100 space-y-3 bg-gray-50/50">
+        <div className="p-4 border-b border-gray-100 dark:border-gray-800 space-y-3 bg-gray-50/50">
           <div className="relative">
             <User className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
             <input 
@@ -228,7 +228,7 @@ const PointOfSale = () => {
               placeholder="Nom du Client (Optionnel)"
               value={clientName}
               onChange={e => setClientName(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 text-sm bg-white text-gray-900 border border-gray-200 rounded-lg outline-none focus:border-[#ff5722]"
+              className="w-full pl-9 pr-3 py-2 text-sm bg-white dark:bg-[#1f1f1f] text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 rounded-lg outline-none focus:border-[#ff5722]"
             />
           </div>
           <div className="relative">
@@ -238,7 +238,7 @@ const PointOfSale = () => {
               placeholder="Téléphone WhatsApp (Optionnel)"
               value={clientPhone}
               onChange={e => setClientPhone(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 text-sm bg-white text-gray-900 border border-gray-200 rounded-lg outline-none focus:border-[#ff5722]"
+              className="w-full pl-9 pr-3 py-2 text-sm bg-white dark:bg-[#1f1f1f] text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 rounded-lg outline-none focus:border-[#ff5722]"
             />
           </div>
         </div>
@@ -252,9 +252,9 @@ const PointOfSale = () => {
             </div>
           ) : (
             cart.map(item => (
-              <div key={item.id} className="flex flex-col p-3 border border-gray-100 rounded-xl hover:border-gray-200 transition-colors group">
+              <div key={item.id} className="flex flex-col p-3 border border-gray-100 dark:border-gray-800 rounded-xl hover:border-gray-200 dark:border-gray-700 transition-colors group">
                 <div className="flex justify-between items-start mb-2">
-                  <span className="font-medium text-gray-800 text-sm">{item.name}</span>
+                  <span className="font-medium text-gray-800 dark:text-gray-200 text-sm">{item.name}</span>
                   <button 
                     onClick={() => removeFromCart(item.id)}
                     className="text-gray-300 hover:text-red-500 transition-colors p-1"
@@ -264,17 +264,17 @@ const PointOfSale = () => {
                 </div>
                 
                 <div className="flex justify-between items-end">
-                  <div className="flex items-center gap-3 bg-gray-50 rounded-lg p-1 border border-gray-100">
+                  <div className="flex items-center gap-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg p-1 border border-gray-100 dark:border-gray-800">
                     <button 
                       onClick={() => updateQuantity(item.id, -1)}
-                      className="w-6 h-6 flex items-center justify-center bg-white rounded shadow-sm text-gray-600 hover:text-[#ff5722]"
+                      className="w-6 h-6 flex items-center justify-center bg-white dark:bg-[#1f1f1f] rounded shadow-sm text-gray-600 dark:text-gray-400 hover:text-[#ff5722]"
                     >
                       <Minus className="w-3 h-3" />
                     </button>
                     <span className="text-sm font-semibold w-4 text-center">{item.quantity}</span>
                     <button 
                       onClick={() => updateQuantity(item.id, 1)}
-                      className="w-6 h-6 flex items-center justify-center bg-white rounded shadow-sm text-gray-600 hover:text-[#ff5722]"
+                      className="w-6 h-6 flex items-center justify-center bg-white dark:bg-[#1f1f1f] rounded shadow-sm text-gray-600 dark:text-gray-400 hover:text-[#ff5722]"
                     >
                       <Plus className="w-3 h-3" />
                     </button>
@@ -289,17 +289,17 @@ const PointOfSale = () => {
         </div>
 
         {/* Footer (Total & Bouton) */}
-        <div className="p-4 border-t border-gray-200 bg-white shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.05)]">
+        <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1f1f1f] shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.05)]">
           <div className="flex justify-between items-center mb-4">
-            <span className="text-gray-500 font-medium">Total TTC</span>
-            <span className="text-2xl font-black text-gray-900">{totalCart.toLocaleString()} FCFA</span>
+            <span className="text-gray-500 dark:text-gray-400 font-medium">Total TTC</span>
+            <span className="text-2xl font-black text-gray-900 dark:text-white">{totalCart.toLocaleString()} FCFA</span>
           </div>
           
           <div className="mb-4">
             <select 
               value={paymentMethod}
               onChange={e => setPaymentMethod(e.target.value)}
-              className="w-full p-2.5 text-sm bg-gray-50 text-gray-900 border border-gray-200 rounded-lg outline-none focus:border-[#ff5722]"
+              className="w-full p-2.5 text-sm bg-gray-50 dark:bg-gray-800/50 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 rounded-lg outline-none focus:border-[#ff5722]"
             >
               <option value="CASH">Espèces (Cash)</option>
               <option value="MOBILE_MONEY">Mobile Money (Orange/Wave...)</option>
@@ -322,39 +322,39 @@ const PointOfSale = () => {
       {/* POP-UP DE VALIDATION */}
       {isValidationModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-slide-up">
-            <div className="p-6 border-b border-gray-100 flex items-center gap-3 bg-gray-50/50">
+          <div className="bg-white dark:bg-[#1f1f1f] rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-slide-up">
+            <div className="p-6 border-b border-gray-100 dark:border-gray-800 flex items-center gap-3 bg-gray-50/50">
               <CheckCircle className="w-6 h-6 text-[#ff5722]" />
-              <h2 className="text-xl font-bold text-gray-900">Validation de l'encaissement</h2>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">Validation de l'encaissement</h2>
             </div>
             
             <div className="p-6 space-y-4">
-              <p className="text-gray-600 text-sm">Veuillez vérifier les informations ci-dessous avant de générer la facture définitive.</p>
+              <p className="text-gray-600 dark:text-gray-400 text-sm">Veuillez vérifier les informations ci-dessous avant de générer la facture définitive.</p>
               
               <div className="bg-orange-50 border border-orange-100 rounded-xl p-4 space-y-2">
                 <div className="flex justify-between">
-                  <span className="text-gray-500 text-sm">Client :</span>
-                  <span className="font-semibold text-gray-900">{clientName || "Client de passage"}</span>
+                  <span className="text-gray-500 dark:text-gray-400 text-sm">Client :</span>
+                  <span className="font-semibold text-gray-900 dark:text-white">{clientName || "Client de passage"}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-500 text-sm">Téléphone :</span>
-                  <span className="font-semibold text-gray-900">{clientPhone || "-"}</span>
+                  <span className="text-gray-500 dark:text-gray-400 text-sm">Téléphone :</span>
+                  <span className="font-semibold text-gray-900 dark:text-white">{clientPhone || "-"}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-500 text-sm">Moyen de paiement :</span>
-                  <span className="font-semibold text-gray-900">{paymentMethod}</span>
+                  <span className="text-gray-500 dark:text-gray-400 text-sm">Moyen de paiement :</span>
+                  <span className="font-semibold text-gray-900 dark:text-white">{paymentMethod}</span>
                 </div>
               </div>
 
-              <div className="border border-gray-100 rounded-xl overflow-hidden">
-                <div className="bg-gray-50 px-4 py-2 border-b border-gray-100 text-xs font-semibold text-gray-500 uppercase">
+              <div className="border border-gray-100 dark:border-gray-800 rounded-xl overflow-hidden">
+                <div className="bg-gray-50 dark:bg-gray-800/50 px-4 py-2 border-b border-gray-100 dark:border-gray-800 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">
                   Résumé des articles ({cart.length})
                 </div>
                 <div className="max-h-40 overflow-y-auto p-4 space-y-2">
                   {cart.map(item => (
                     <div key={item.id} className="flex justify-between text-sm">
-                      <span className="text-gray-700">{item.quantity}x {item.name}</span>
-                      <span className="font-medium text-gray-900">{item.totalTTC.toLocaleString()} F</span>
+                      <span className="text-gray-700 dark:text-gray-300">{item.quantity}x {item.name}</span>
+                      <span className="font-medium text-gray-900 dark:text-white">{item.totalTTC.toLocaleString()} F</span>
                     </div>
                   ))}
                 </div>
@@ -365,11 +365,11 @@ const PointOfSale = () => {
               </div>
             </div>
 
-            <div className="p-6 border-t border-gray-100 flex gap-3 bg-gray-50/50">
+            <div className="p-6 border-t border-gray-100 dark:border-gray-800 flex gap-3 bg-gray-50/50">
               <button
                 onClick={() => setIsValidationModalOpen(false)}
                 disabled={isProcessing}
-                className="flex-1 py-3 px-4 text-gray-700 bg-white border border-gray-200 hover:bg-gray-50 rounded-xl font-medium transition-colors"
+                className="flex-1 py-3 px-4 text-gray-700 dark:text-gray-300 bg-white dark:bg-[#1f1f1f] border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:bg-gray-800/50 rounded-xl font-medium transition-colors"
               >
                 Retour
               </button>

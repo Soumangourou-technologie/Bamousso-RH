@@ -46,7 +46,7 @@ const MainLayout = () => {
           <div className="flex items-center gap-4">
             <button 
               onClick={handleGlobalRefresh}
-              className={`p-2.5 rounded-2xl hover:bg-white/10 transition-all duration-300 text-gray-400 hover:text-white ${isRefreshing ? 'animate-spin text-brand-primary' : ''}`}
+              className={`p-2.5 rounded-2xl hover:bg-white dark:bg-[#1f1f1f]/10 transition-all duration-300 text-gray-400 hover:text-white ${isRefreshing ? 'animate-spin text-brand-primary' : ''}`}
               title="Rafraîchir les données"
             >
               <RefreshCw className="w-5 h-5" />

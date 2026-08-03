@@ -158,7 +158,7 @@ const Tasks = () => {
               />
             ))}
             {tasksByStatus('A_FAIRE').length === 0 && (
-              <p className="text-gray-500 text-sm font-bold italic text-center py-10">Aucune tâche en attente.</p>
+              <p className="text-gray-500 dark:text-gray-400 text-sm font-bold italic text-center py-10">Aucune tâche en attente.</p>
             )}
           </div>
         </div>
@@ -183,7 +183,7 @@ const Tasks = () => {
               />
             ))}
             {tasksByStatus('EN_COURS').length === 0 && (
-              <p className="text-gray-500 text-sm font-bold italic text-center py-10">Aucune tâche en cours.</p>
+              <p className="text-gray-500 dark:text-gray-400 text-sm font-bold italic text-center py-10">Aucune tâche en cours.</p>
             )}
           </div>
         </div>
@@ -207,7 +207,7 @@ const Tasks = () => {
               />
             ))}
             {tasksByStatus('TERMINEE').length === 0 && (
-              <p className="text-gray-500 text-sm font-bold italic text-center py-10">Historique vide.</p>
+              <p className="text-gray-500 dark:text-gray-400 text-sm font-bold italic text-center py-10">Historique vide.</p>
             )}
           </div>
         </div>
@@ -219,21 +219,21 @@ const Tasks = () => {
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsModalOpen(false)} className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
             <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="relative bg-brand-900 border border-white/10 p-8 rounded-[2.5rem] max-w-lg w-full shadow-2xl">
-              <button onClick={() => setIsModalOpen(false)} className="absolute top-6 right-6 text-gray-500 hover:text-white transition-colors"><X className="w-6 h-6" /></button>
+              <button onClick={() => setIsModalOpen(false)} className="absolute top-6 right-6 text-gray-500 dark:text-gray-400 hover:text-white transition-colors"><X className="w-6 h-6" /></button>
               <h2 className="text-2xl font-black text-white mb-6">Nouvelle Tâche</h2>
               <form onSubmit={handleCreateTask} className="space-y-6">
                 <div>
-                  <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Titre de la tâche</label>
-                  <input required value={newTask.title} onChange={e => setNewTask({...newTask, title: e.target.value})} className="w-full bg-white/5 border border-white/10 p-4 rounded-2xl text-white font-bold outline-none focus:ring-2 focus:ring-brand-primary" placeholder="ex: Préparer les contrats" />
+                  <label className="block text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-2">Titre de la tâche</label>
+                  <input required value={newTask.title} onChange={e => setNewTask({...newTask, title: e.target.value})} className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 p-4 rounded-2xl text-white font-bold outline-none focus:ring-2 focus:ring-brand-primary" placeholder="ex: Préparer les contrats" />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Description</label>
-                  <textarea value={newTask.description} onChange={e => setNewTask({...newTask, description: e.target.value})} className="w-full bg-white/5 border border-white/10 p-4 rounded-2xl text-white font-medium outline-none focus:ring-2 focus:ring-brand-primary h-24 resize-none" placeholder="Détails supplémentaires..." />
+                  <label className="block text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-2">Description</label>
+                  <textarea value={newTask.description} onChange={e => setNewTask({...newTask, description: e.target.value})} className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 p-4 rounded-2xl text-white font-medium outline-none focus:ring-2 focus:ring-brand-primary h-24 resize-none" placeholder="Détails supplémentaires..." />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Assigner à</label>
-                    <select required value={newTask.assignedToId} onChange={e => setNewTask({...newTask, assignedToId: e.target.value})} className="w-full bg-white/5 border border-white/10 p-4 rounded-2xl text-white font-bold outline-none focus:ring-2 focus:ring-brand-primary appearance-none">
+                    <label className="block text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-2">Assigner à</label>
+                    <select required value={newTask.assignedToId} onChange={e => setNewTask({...newTask, assignedToId: e.target.value})} className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 p-4 rounded-2xl text-white font-bold outline-none focus:ring-2 focus:ring-brand-primary appearance-none">
                       <option value="" className="bg-brand-900">Choisir...</option>
                       {employees.map(emp => (
                         <option key={emp.id} value={emp.id} className="bg-brand-900">{emp.firstName} {emp.lastName}</option>
@@ -241,8 +241,8 @@ const Tasks = () => {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Échéance</label>
-                    <input type="date" required value={newTask.dueDate} onChange={e => setNewTask({...newTask, dueDate: e.target.value})} className="w-full bg-white/5 border border-white/10 p-4 rounded-2xl text-white font-bold outline-none focus:ring-2 focus:ring-brand-primary" />
+                    <label className="block text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-2">Échéance</label>
+                    <input type="date" required value={newTask.dueDate} onChange={e => setNewTask({...newTask, dueDate: e.target.value})} className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 p-4 rounded-2xl text-white font-bold outline-none focus:ring-2 focus:ring-brand-primary" />
                   </div>
                 </div>
                 <button type="submit" className="w-full bg-brand-primary text-white py-5 rounded-2xl font-black text-lg uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-brand-primary/20">
@@ -266,7 +266,7 @@ const Tasks = () => {
               <h3 className="text-xl font-black text-white mb-2">Terminer la tâche ?</h3>
               <p className="text-gray-400 text-sm mb-8">Une fois marquée comme terminée, vous ne pourrez plus revenir en arrière. L'administrateur sera notifié.</p>
               <div className="flex gap-4">
-                <button onClick={() => setIsConfirmOpen(false)} className="flex-1 px-6 py-3 rounded-xl font-bold text-gray-400 hover:bg-white/5 transition-colors">Annuler</button>
+                <button onClick={() => setIsConfirmOpen(false)} className="flex-1 px-6 py-3 rounded-xl font-bold text-gray-400 hover:bg-white dark:bg-[#1f1f1f]/5 transition-colors">Annuler</button>
                 <button onClick={handleComplete} className="flex-1 px-6 py-3 bg-brand-primary text-white rounded-xl font-bold shadow-lg shadow-brand-primary/20">Confirmer</button>
               </div>
             </motion.div>
@@ -278,12 +278,12 @@ const Tasks = () => {
 };
 
 const TaskCard = ({ task, isAdmin, onDelete, onMove, moveLabel, isCompleted }: { task: Task, isAdmin: boolean, onDelete: () => void, onMove?: () => void, moveLabel?: string, isCompleted?: boolean }) => (
-  <motion.div layout initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-6 bg-white/5 rounded-3xl border border-white/10 hover:border-white/20 transition-all group relative">
+  <motion.div layout initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-6 bg-white dark:bg-[#1f1f1f]/5 rounded-3xl border border-white/10 hover:border-white/20 transition-all group relative">
     {isAdmin && (
-      <button onClick={onDelete} className="absolute top-4 right-4 text-gray-600 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-all"><Trash2 className="w-4 h-4" /></button>
+      <button onClick={onDelete} className="absolute top-4 right-4 text-gray-600 dark:text-gray-400 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-all"><Trash2 className="w-4 h-4" /></button>
     )}
     <h3 className="text-white font-bold mb-2 pr-6 line-clamp-2">{task.title}</h3>
-    {task.description && <p className="text-gray-500 text-xs mb-4 line-clamp-2">{task.description}</p>}
+    {task.description && <p className="text-gray-500 dark:text-gray-400 text-xs mb-4 line-clamp-2">{task.description}</p>}
     <div className="flex flex-col gap-3">
       <div className="flex items-center gap-2 text-[10px] text-gray-400 font-bold uppercase tracking-widest">
         <User className="w-3 h-3 text-brand-primary" /> {task.assignedTo ? `${task.assignedTo.firstName} ${task.assignedTo.lastName}` : 'Non assigné'}
@@ -295,7 +295,7 @@ const TaskCard = ({ task, isAdmin, onDelete, onMove, moveLabel, isCompleted }: {
     {!isCompleted && !isAdmin && onMove && (
       <button 
         onClick={onMove}
-        className="mt-6 w-full py-2.5 bg-white/5 hover:bg-brand-primary text-[10px] font-black text-white uppercase tracking-[0.2em] rounded-xl border border-white/10 hover:border-brand-primary transition-all"
+        className="mt-6 w-full py-2.5 bg-white dark:bg-[#1f1f1f]/5 hover:bg-brand-primary text-[10px] font-black text-white uppercase tracking-[0.2em] rounded-xl border border-white/10 hover:border-brand-primary transition-all"
       >
         {moveLabel} →
       </button>

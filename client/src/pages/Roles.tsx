@@ -156,10 +156,10 @@ const RolesPage = () => {
               className="glass-card p-8 rounded-[2.5rem] border border-white/5 relative group hover:border-white/20 transition-all"
             >
               <div className="absolute top-6 right-6 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button onClick={() => handleOpenModal(role)} className="p-2 text-gray-400 hover:text-white bg-white/5 rounded-xl transition-colors">
+                <button onClick={() => handleOpenModal(role)} className="p-2 text-gray-400 hover:text-white bg-white dark:bg-[#1f1f1f]/5 rounded-xl transition-colors">
                   <Edit size={16} />
                 </button>
-                <button onClick={() => handleDeleteRole(role.id)} className="p-2 text-gray-400 hover:text-rose-500 bg-white/5 rounded-xl transition-colors">
+                <button onClick={() => handleDeleteRole(role.id)} className="p-2 text-gray-400 hover:text-rose-500 bg-white dark:bg-[#1f1f1f]/5 rounded-xl transition-colors">
                   <Trash2 size={16} />
                 </button>
               </div>
@@ -167,9 +167,9 @@ const RolesPage = () => {
               <h3 className="text-2xl font-black text-white mb-6 pr-16">{role.name}</h3>
               
               <div className="space-y-3">
-                <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Permissions Accordées</p>
+                <p className="text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-2">Permissions Accordées</p>
                 {role.permissions.length === 0 ? (
-                  <p className="text-sm text-gray-500 italic">Aucune permission spéciale.</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 italic">Aucune permission spéciale.</p>
                 ) : (
                   <ul className="space-y-2">
                     {role.permissions.map(p => (
@@ -185,7 +185,7 @@ const RolesPage = () => {
           ))}
           {roles.length === 0 && (
             <div className="col-span-full py-12 text-center">
-               <p className="text-gray-500 font-bold">Aucun rôle personnalisé défini.</p>
+               <p className="text-gray-500 dark:text-gray-400 font-bold">Aucun rôle personnalisé défini.</p>
             </div>
           )}
         </div>
@@ -208,7 +208,7 @@ const RolesPage = () => {
               exit={{ scale: 0.9, opacity: 0 }}
               className="relative bg-brand-900 border border-white/10 p-8 rounded-[2.5rem] max-w-2xl w-full shadow-2xl max-h-[90vh] overflow-y-auto"
             >
-              <button onClick={() => setIsModalOpen(false)} className="absolute top-6 right-6 text-gray-500 hover:text-white transition-colors">
+              <button onClick={() => setIsModalOpen(false)} className="absolute top-6 right-6 text-gray-500 dark:text-gray-400 hover:text-white transition-colors">
                 <X className="w-6 h-6" />
               </button>
 
@@ -216,7 +216,7 @@ const RolesPage = () => {
               
               <form onSubmit={handleSaveRole} className="space-y-8">
                 <div>
-                  <label htmlFor="roleName" className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Nom du rôle</label>
+                  <label htmlFor="roleName" className="block text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-2">Nom du rôle</label>
                   <input 
                     id="roleName"
                     type="text" 
@@ -224,12 +224,12 @@ const RolesPage = () => {
                     value={formData.name}
                     onChange={e => setFormData({ ...formData, name: e.target.value })}
                     required
-                    className="w-full bg-white/5 border border-white/10 p-4 rounded-2xl text-white font-bold outline-none focus:ring-2 focus:ring-brand-primary transition-all"
+                    className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 p-4 rounded-2xl text-white font-bold outline-none focus:ring-2 focus:ring-brand-primary transition-all"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-4">Permissions attribuées</label>
+                  <label className="block text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-4">Permissions attribuées</label>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {allPermissions.map(permission => {
                       const isSelected = formData.permissions.includes(permission.id);
@@ -239,7 +239,7 @@ const RolesPage = () => {
                           className={`flex items-center gap-3 p-4 rounded-2xl cursor-pointer border transition-all ${
                             isSelected 
                               ? 'bg-brand-primary/10 border-brand-primary/50' 
-                              : 'bg-white/5 border-white/5 hover:border-white/20'
+                              : 'bg-white dark:bg-[#1f1f1f]/5 border-white/5 hover:border-white/20'
                           }`}
                         >
                           <div className={`w-5 h-5 rounded flex items-center justify-center border transition-colors ${

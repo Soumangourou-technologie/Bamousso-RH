@@ -78,7 +78,7 @@ const StatusBadge = ({ status }: { status: SupportTicket['status'] }) => {
     OPEN: { label: 'Ouvert', bg: 'bg-amber-500/10 text-amber-500 border-amber-500/20', icon: AlertCircle },
     IN_PROGRESS: { label: 'En cours', bg: 'bg-blue-500/10 text-blue-500 border-blue-500/20', icon: Clock },
     RESOLVED: { label: 'Résolu', bg: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20', icon: CheckCircle2 },
-    CLOSED: { label: 'Fermé', bg: 'bg-white/10 text-gray-400 border-white/5', icon: X },
+    CLOSED: { label: 'Fermé', bg: 'bg-white dark:bg-[#1f1f1f]/10 text-gray-400 border-white/5', icon: X },
   };
 
   const active = config[status] || config.OPEN;
@@ -245,7 +245,7 @@ function FitiniTicketsDashboard() {
           { label: "Résolus", val: tickets.filter(t => t.status === 'RESOLVED').length, color: "text-emerald-400", bg: "bg-emerald-400/10" },
         ].map((st, idx) => (
           <div key={idx} className="glass-card p-6 rounded-3xl border border-white/5 flex flex-col gap-1">
-            <span className="text-xs font-bold tracking-widest uppercase text-gray-500">{st.label}</span>
+            <span className="text-xs font-bold tracking-widest uppercase text-gray-500 dark:text-gray-400">{st.label}</span>
             <span className={`text-4xl font-black ${st.color}`}>{st.val}</span>
           </div>
         ))}
@@ -259,7 +259,7 @@ function FitiniTicketsDashboard() {
           {loading ? (
             <div className="space-y-3">
               {[1, 2, 3].map(i => (
-                <div key={i} className="w-full h-24 rounded-3xl bg-white/5 animate-pulse border border-white/5" />
+                <div key={i} className="w-full h-24 rounded-3xl bg-white dark:bg-[#1f1f1f]/5 animate-pulse border border-white/5" />
               ))}
             </div>
           ) : error ? (
@@ -272,8 +272,8 @@ function FitiniTicketsDashboard() {
             </div>
           ) : tickets.length === 0 ? (
             <div className="glass-card p-16 rounded-4xl text-center flex flex-col items-center justify-center border border-white/5">
-              <div className="w-20 h-20 rounded-3xl bg-white/5 flex items-center justify-center mb-4 border border-white/5">
-                <Inbox className="w-10 h-10 text-gray-500" />
+              <div className="w-20 h-20 rounded-3xl bg-white dark:bg-[#1f1f1f]/5 flex items-center justify-center mb-4 border border-white/5">
+                <Inbox className="w-10 h-10 text-gray-500 dark:text-gray-400" />
               </div>
               <h3 className="text-xl font-black text-white">Aucun ticket ouvert</h3>
               <p className="text-gray-400 text-sm mt-1 max-w-xs">Vous n'avez soumis aucun ticket pour le moment. Notre support est là pour vous aider !</p>
@@ -288,7 +288,7 @@ function FitiniTicketsDashboard() {
                   className={`glass-card p-5 rounded-3xl border cursor-pointer transition-all duration-300 group relative overflow-hidden ${
                     selectedTicket?.id === t.id 
                       ? 'border-brand-primary bg-brand-primary/5 shadow-xl shadow-brand-primary/10 scale-[0.99]' 
-                      : 'border-white/5 hover:border-white/20 hover:bg-white/2'
+                      : 'border-white/5 hover:border-white/20 hover:bg-white dark:bg-[#1f1f1f]/2'
                   }`}
                 >
                   <div className="flex items-start justify-between gap-4">
@@ -298,13 +298,13 @@ function FitiniTicketsDashboard() {
                         <PriorityBadge priority={t.priority} />
                       </div>
                       <h3 className="font-extrabold text-white group-hover:text-brand-primary transition-colors pt-1">{t.title}</h3>
-                      <div className="flex items-center gap-2 text-xs text-gray-500 pt-1 font-medium">
+                      <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 pt-1 font-medium">
                         <span>#{t.id.slice(0, 8)}</span>
                         <span>•</span>
                         <span>Mis à jour {formatDistanceToNow(new Date(t.updatedAt), { addSuffix: true, locale: fr })}</span>
                       </div>
                     </div>
-                    <ChevronRight className="w-5 h-5 text-gray-600 group-hover:text-brand-primary group-hover:translate-x-1 transition-all shrink-0 self-center" />
+                    <ChevronRight className="w-5 h-5 text-gray-600 dark:text-gray-400 group-hover:text-brand-primary group-hover:translate-x-1 transition-all shrink-0 self-center" />
                   </div>
                 </motion.div>
               ))}
@@ -316,14 +316,14 @@ function FitiniTicketsDashboard() {
         {selectedTicket && (
           <div className="lg:col-span-7 col-span-12 flex flex-col h-125 md:h-150 glass-card rounded-3xl overflow-hidden border border-brand-primary/20 bg-[#1a0f0a]/90">
             {/* Header de Discussion */}
-            <div className="p-5 border-b border-white/5 flex items-center justify-between bg-white/5">
+            <div className="p-5 border-b border-white/5 flex items-center justify-between bg-white dark:bg-[#1f1f1f]/5">
               <div className="flex flex-col gap-0.5">
                 <span className="text-[10px] font-black text-brand-primary uppercase tracking-widest">Discussion Ticket</span>
                 <h3 className="font-black text-white line-clamp-1">{selectedTicket.title}</h3>
               </div>
               <button
                 onClick={() => setSelectedTicket(null)}
-                className="p-2 bg-white/5 hover:bg-white/10 hover:text-white rounded-xl transition-colors text-gray-400"
+                className="p-2 bg-white dark:bg-[#1f1f1f]/5 hover:bg-white dark:bg-[#1f1f1f]/10 hover:text-white rounded-xl transition-colors text-gray-400"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -334,7 +334,7 @@ function FitiniTicketsDashboard() {
               {detailsLoading ? (
                 <div className="flex flex-col gap-4 justify-center items-center h-full">
                   <RefreshCcw className="w-8 h-8 text-brand-primary animate-spin" />
-                  <p className="text-xs text-gray-500 tracking-widest uppercase font-bold">Chargement du fil...</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 tracking-widest uppercase font-bold">Chargement du fil...</p>
                 </div>
               ) : (
                 <>
@@ -354,7 +354,7 @@ function FitiniTicketsDashboard() {
                             ? 'bg-brand-primary text-white rounded-tr-none border-brand-primary/50' 
                             : isSupport
                               ? 'bg-brand-accent/20 text-white border-brand-accent/30 rounded-tl-none'
-                              : 'bg-white/5 text-gray-200 border-white/5 rounded-tl-none'
+                              : 'bg-white dark:bg-[#1f1f1f]/5 text-gray-200 border-white/5 rounded-tl-none'
                         }`}>
                           <div className="flex items-center gap-2 justify-between">
                             <span className="text-[10px] font-black uppercase tracking-wider flex items-center gap-1 opacity-75">
@@ -377,7 +377,7 @@ function FitiniTicketsDashboard() {
 
             {/* Input Réponse */}
             <form onSubmit={handleSendReply} className="p-4 border-t border-white/5 bg-[#1a0f0a]/50">
-              <div className="relative flex items-center gap-3 bg-white/5 border border-white/10 focus-within:border-brand-primary/50 focus-within:bg-white/10 transition-all rounded-2xl p-2 pr-3">
+              <div className="relative flex items-center gap-3 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 focus-within:border-brand-primary/50 focus-within:bg-white dark:bg-[#1f1f1f]/10 transition-all rounded-2xl p-2 pr-3">
                 <textarea
                   value={replyText}
                   onChange={(e) => setReplyText(e.target.value)}
@@ -430,7 +430,7 @@ function FitiniTicketsDashboard() {
                   </div>
                   <h3 className="text-xl font-black text-white">Créer un ticket support</h3>
                 </div>
-                <button onClick={() => setShowCreateModal(false)} className="text-gray-500 hover:text-white transition-colors p-1 hover:bg-white/5 rounded-lg">
+                <button onClick={() => setShowCreateModal(false)} className="text-gray-500 dark:text-gray-400 hover:text-white transition-colors p-1 hover:bg-white dark:bg-[#1f1f1f]/5 rounded-lg">
                   <X className="w-6 h-6" />
                 </button>
               </div>
@@ -444,7 +444,7 @@ function FitiniTicketsDashboard() {
                     value={newTitle}
                     onChange={(e) => setNewTitle(e.target.value)}
                     placeholder="Ex: Erreur de calcul sur la paie de Mars..."
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-white focus:border-brand-primary focus:bg-white/10 outline-none transition-all text-sm font-medium"
+                    className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-2xl px-4 py-3 text-white focus:border-brand-primary focus:bg-white dark:bg-[#1f1f1f]/10 outline-none transition-all text-sm font-medium"
                   />
                 </div>
 
@@ -458,8 +458,8 @@ function FitiniTicketsDashboard() {
                         onClick={() => setNewPriority(p)}
                         className={`py-2.5 rounded-2xl text-xs font-black uppercase border tracking-wider transition-all ${
                           newPriority === p 
-                            ? p === 'LOW' ? 'bg-emerald-500/20 border-emerald-500 text-emerald-400 shadow-lg' : p === 'MEDIUM' ? 'bg-amber-500/20 border-amber-500 text-amber-400 shadow-lg' : 'bg-red-500/20 border-red-500 text-red-400 shadow-lg'
-                            : 'bg-white/5 border-white/5 text-gray-500 hover:bg-white/10'
+                            ? p === 'LOW' ? 'bg-emerald-500/20 border-emerald-500 text-emerald-400 shadow-lg' : p === 'MEDIUM' ? 'bg-amber-500/20 border-amber-500 text-amber-400 shadow-lg' : 'bg-red-50 dark:bg-red-500/100/20 border-red-500 text-red-400 shadow-lg'
+                            : 'bg-white dark:bg-[#1f1f1f]/5 border-white/5 text-gray-500 dark:text-gray-400 hover:bg-white dark:bg-[#1f1f1f]/10'
                         }`}
                       >
                         {p === 'LOW' ? 'Basse' : p === 'MEDIUM' ? 'Moyenne' : 'Haute'}
@@ -476,7 +476,7 @@ function FitiniTicketsDashboard() {
                     onChange={(e) => setNewMessage(e.target.value)}
                     placeholder="Décrivez votre problème avec le plus de détails possible afin que nous puissions vous aider rapidement..."
                     rows={4}
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-white focus:border-brand-primary focus:bg-white/10 outline-none transition-all text-sm font-medium resize-none leading-relaxed"
+                    className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-2xl px-4 py-3 text-white focus:border-brand-primary focus:bg-white dark:bg-[#1f1f1f]/10 outline-none transition-all text-sm font-medium resize-none leading-relaxed"
                   />
                 </div>
 
@@ -585,8 +585,8 @@ function PremiumChatDashboard() {
               </span>
             </h1>
             <div className="flex items-center gap-2 text-xs font-medium">
-              <span className={`w-2 h-2 rounded-full shadow shadow-emerald-500/50 inline-block ${isSupportOnline ? 'bg-emerald-500 animate-ping' : 'bg-gray-500'}`} />
-              <span className={isSupportOnline ? 'text-emerald-500' : 'text-gray-500'}>{isSupportOnline ? 'Support BAMOUSSO en ligne' : 'Support BAMOUSSO hors-ligne'}</span>
+              <span className={`w-2 h-2 rounded-full shadow shadow-emerald-500/50 inline-block ${isSupportOnline ? 'bg-emerald-500 animate-ping' : 'bg-gray-50 dark:bg-gray-800/500'}`} />
+              <span className={isSupportOnline ? 'text-emerald-500' : 'text-gray-500 dark:text-gray-400'}>{isSupportOnline ? 'Support BAMOUSSO en ligne' : 'Support BAMOUSSO hors-ligne'}</span>
             </div>
           </div>
         </div>
@@ -596,11 +596,11 @@ function PremiumChatDashboard() {
       <div className="flex-1 flex flex-col glass-card rounded-3xl md:rounded-4xl border border-brand-primary/15 overflow-hidden bg-[#1a0f0a]/95 shadow-2xl">
         
         {/* Messages Area */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar bg-white/1">
+        <div className="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar bg-white dark:bg-[#1f1f1f]/1">
           {loading ? (
             <div className="flex flex-col gap-4 justify-center items-center h-full">
               <RefreshCcw className="w-10 h-10 text-brand-primary animate-spin" />
-              <p className="text-xs text-gray-500 font-black uppercase tracking-widest">Initialisation du salon sécurisé...</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 font-black uppercase tracking-widest">Initialisation du salon sécurisé...</p>
             </div>
           ) : !room || room.messages.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-center p-8 space-y-3 max-w-md mx-auto">
@@ -630,17 +630,17 @@ function PremiumChatDashboard() {
                           ? 'bg-brand-primary text-white rounded-br-none border-brand-primary/50' 
                           : isSupport
                             ? 'bg-brand-accent/25 text-white border-brand-accent/40 rounded-bl-none'
-                            : 'bg-white/5 text-gray-200 border-white/5 rounded-bl-none'
+                            : 'bg-white dark:bg-[#1f1f1f]/5 text-gray-200 border-white/5 rounded-bl-none'
                       }`}>
                         <p className="whitespace-pre-wrap wrap-break-word leading-relaxed">{msg.content}</p>
                       </div>
                       
-                      <div className={`flex items-center gap-2 text-[10px] text-gray-500 font-bold px-1 ${isMe ? 'justify-end' : 'justify-start'}`}>
+                      <div className={`flex items-center gap-2 text-[10px] text-gray-500 dark:text-gray-400 font-bold px-1 ${isMe ? 'justify-end' : 'justify-start'}`}>
                         {isSupport && !isMe && <span className="text-brand-accent flex items-center gap-0.5 uppercase tracking-widest"><Shield className="w-2.5 h-2.5" /> Support</span>}
                         <span>{format(new Date(msg.createdAt), 'HH:mm')}</span>
                         {isMe && (
                           <span>
-                            {msg.isRead ? <CheckCheck className="w-3 h-3 text-emerald-400 inline" /> : <CheckCircle2 className="w-2.5 h-2.5 text-gray-600 inline" />}
+                            {msg.isRead ? <CheckCheck className="w-3 h-3 text-emerald-400 inline" /> : <CheckCircle2 className="w-2.5 h-2.5 text-gray-600 dark:text-gray-400 inline" />}
                           </span>
                         )}
                       </div>
@@ -655,7 +655,7 @@ function PremiumChatDashboard() {
 
         {/* Zone d'écriture */}
         <div className="p-4 border-t border-white/5 bg-black/20">
-          <form onSubmit={handleSendMessage} className="relative flex items-center gap-3 bg-white/5 border border-white/10 focus-within:border-brand-primary/50 focus-within:bg-white/10 transition-all rounded-3xl p-2 pl-4 pr-3 shadow-inner">
+          <form onSubmit={handleSendMessage} className="relative flex items-center gap-3 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 focus-within:border-brand-primary/50 focus-within:bg-white dark:bg-[#1f1f1f]/10 transition-all rounded-3xl p-2 pl-4 pr-3 shadow-inner">
             <input
               type="text"
               value={chatText}
@@ -844,7 +844,7 @@ function SuperAdminDashboard() {
         </div>
 
         {/* Switch Tabs */}
-        <div className="flex bg-white/5 p-1 rounded-2xl border border-white/5 self-start">
+        <div className="flex bg-white dark:bg-[#1f1f1f]/5 p-1 rounded-2xl border border-white/5 self-start">
           {[
             { id: 'CHATS', label: 'Chats Directs', icon: MessageSquare },
             { id: 'TICKETS', label: 'Tickets Support', icon: Inbox },
@@ -861,7 +861,7 @@ function SuperAdminDashboard() {
                 className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-2 transition-all duration-300 ${
                   activeTab === t.id 
                     ? 'bg-brand-primary text-white shadow-md shadow-brand-primary/20' 
-                    : 'text-gray-400 hover:text-white hover:bg-white/5'
+                    : 'text-gray-400 hover:text-white hover:bg-white dark:bg-[#1f1f1f]/5'
                 }`}
               >
                 <Icon className="w-4 h-4" />
@@ -883,14 +883,14 @@ function SuperAdminDashboard() {
             
             {/* Liste des salons (Gauche) */}
             <div className={`${selectedRoom ? 'hidden md:flex' : 'flex'} flex-col w-full md:w-80 border-r border-white/5 bg-black/10 shrink-0`}>
-              <div className="p-4 border-b border-white/5 font-black text-xs text-gray-500 uppercase tracking-widest">
+              <div className="p-4 border-b border-white/5 font-black text-xs text-gray-500 dark:text-gray-400 uppercase tracking-widest">
                 Salons de Discussion
               </div>
               <div className="flex-1 overflow-y-auto custom-scrollbar">
                 {roomsLoading ? (
-                  <div className="p-4 text-xs text-gray-600 font-bold uppercase tracking-widest text-center animate-pulse">Chargement salons...</div>
+                  <div className="p-4 text-xs text-gray-600 dark:text-gray-400 font-bold uppercase tracking-widest text-center animate-pulse">Chargement salons...</div>
                 ) : rooms.length === 0 ? (
-                  <div className="p-8 text-xs text-gray-500 font-bold text-center">Aucun salon actif</div>
+                  <div className="p-8 text-xs text-gray-500 dark:text-gray-400 font-bold text-center">Aucun salon actif</div>
                 ) : (
                   rooms.map((r) => {
                     const unreadCount = r._count?.messages || 0;
@@ -904,7 +904,7 @@ function SuperAdminDashboard() {
                           fetchRoomMessages(r.id);
                         }}
                         className={`p-4 border-b border-white/5 cursor-pointer transition-colors relative ${
-                          selectedRoom?.id === r.id ? 'bg-brand-primary/10 border-r-2 border-r-brand-primary' : 'hover:bg-white/2'
+                          selectedRoom?.id === r.id ? 'bg-brand-primary/10 border-r-2 border-r-brand-primary' : 'hover:bg-white dark:bg-[#1f1f1f]/2'
                         }`}
                       >
                         <div className="flex items-center gap-3">
@@ -916,7 +916,7 @@ function SuperAdminDashboard() {
                               <div className="flex items-center gap-2 min-w-0">
                                 <h4 className="font-bold text-white text-sm truncate">{r.company.name}</h4>
                               </div>
-                              <span className="text-[9px] text-gray-600 font-bold shrink-0">{r.company.plan}</span>
+                              <span className="text-[9px] text-gray-600 dark:text-gray-400 font-bold shrink-0">{r.company.plan}</span>
                             </div>
                             <div className="flex items-center gap-1.5 mt-0.5 mb-1">
                               {onlineCompanies?.includes(r.companyId) ? (
@@ -925,13 +925,13 @@ function SuperAdminDashboard() {
                                   En ligne
                                 </span>
                               ) : (
-                                <span className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-wider text-gray-500">
-                                  <span className="w-1.5 h-1.5 bg-gray-500 rounded-full" />
+                                <span className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                                  <span className="w-1.5 h-1.5 bg-gray-50 dark:bg-gray-800/500 rounded-full" />
                                   Hors ligne
                                 </span>
                               )}
                             </div>
-                            <p className="text-xs text-gray-500 truncate font-medium">
+                            <p className="text-xs text-gray-500 dark:text-gray-400 truncate font-medium">
                               {latestMsg ? latestMsg.content : "Nouveau salon"}
                             </p>
                           </div>
@@ -949,17 +949,17 @@ function SuperAdminDashboard() {
             </div>
 
             {/* Conversation Actuelle (Droite) */}
-            <div className={`${!selectedRoom ? 'hidden md:flex' : 'flex'} flex-col flex-1 min-w-0 bg-white/1`}>
+            <div className={`${!selectedRoom ? 'hidden md:flex' : 'flex'} flex-col flex-1 min-w-0 bg-white dark:bg-[#1f1f1f]/1`}>
               {selectedRoom ? (
                 <>
                   {/* Header chat */}
-                  <div className="p-4 border-b border-white/5 bg-white/5 flex items-center justify-between">
+                  <div className="p-4 border-b border-white/5 bg-white dark:bg-[#1f1f1f]/5 flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <button onClick={() => setSelectedRoom(null)} className="md:hidden text-gray-500 hover:text-white p-2 bg-white/5 rounded-xl"><ChevronRight className="w-5 h-5 rotate-180" /></button>
+                      <button onClick={() => setSelectedRoom(null)} className="md:hidden text-gray-500 dark:text-gray-400 hover:text-white p-2 bg-white dark:bg-[#1f1f1f]/5 rounded-xl"><ChevronRight className="w-5 h-5 rotate-180" /></button>
                       <div>
                         <h3 className="font-black text-white text-base">{selectedRoom.company.name}</h3>
-                        <p className={`text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 ${onlineCompanies?.includes(selectedRoom.companyId) ? 'text-emerald-500' : 'text-gray-500'}`}>
-                          <span className={`w-1.5 h-1.5 rounded-full ${onlineCompanies?.includes(selectedRoom.companyId) ? 'bg-emerald-500' : 'bg-gray-500'}`} /> 
+                        <p className={`text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 ${onlineCompanies?.includes(selectedRoom.companyId) ? 'text-emerald-500' : 'text-gray-500 dark:text-gray-400'}`}>
+                          <span className={`w-1.5 h-1.5 rounded-full ${onlineCompanies?.includes(selectedRoom.companyId) ? 'bg-emerald-500' : 'bg-gray-50 dark:bg-gray-800/500'}`} /> 
                           {onlineCompanies?.includes(selectedRoom.companyId) ? 'Client en ligne' : 'Client hors-ligne'}
                         </p>
                       </div>
@@ -973,9 +973,9 @@ function SuperAdminDashboard() {
                       return (
                         <div key={msg.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
                           <div className={`max-w-[80%] p-3.5 rounded-2xl border text-sm font-medium ${
-                            isMe ? 'bg-brand-primary text-white border-brand-primary/50 rounded-br-none' : 'bg-white/5 text-gray-200 border-white/5 rounded-bl-none'
+                            isMe ? 'bg-brand-primary text-white border-brand-primary/50 rounded-br-none' : 'bg-white dark:bg-[#1f1f1f]/5 text-gray-200 border-white/5 rounded-bl-none'
                           }`}>
-                            {!isMe && <p className="text-[9px] font-black text-gray-500 uppercase tracking-wider mb-1">{msg.sender.firstName} {msg.sender.lastName}</p>}
+                            {!isMe && <p className="text-[9px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">{msg.sender.firstName} {msg.sender.lastName}</p>}
                             <p className="whitespace-pre-wrap wrap-break-word leading-relaxed">{msg.content}</p>
                             <span className="block text-[8px] text-right opacity-50 mt-1 font-bold">{format(new Date(msg.createdAt), 'HH:mm')}</span>
                           </div>
@@ -987,7 +987,7 @@ function SuperAdminDashboard() {
 
                   {/* Input */}
                   <div className="p-4 border-t border-white/5 bg-black/20">
-                    <form onSubmit={handleSendChatMessage} className="flex items-center gap-2 bg-white/5 border border-white/10 focus-within:border-brand-primary/50 rounded-2xl p-1.5 pl-3 pr-2">
+                    <form onSubmit={handleSendChatMessage} className="flex items-center gap-2 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 focus-within:border-brand-primary/50 rounded-2xl p-1.5 pl-3 pr-2">
                       <input
                         type="text"
                         value={chatText}
@@ -1003,7 +1003,7 @@ function SuperAdminDashboard() {
                   </div>
                 </>
               ) : (
-                <div className="flex-1 flex flex-col items-center justify-center text-center text-gray-500">
+                <div className="flex-1 flex flex-col items-center justify-center text-center text-gray-500 dark:text-gray-400">
                   <MessageCircle className="w-12 h-12 text-white/10 mb-2" />
                   <p className="font-bold uppercase text-xs tracking-widest">Sélectionnez une discussion</p>
                 </div>
@@ -1019,22 +1019,22 @@ function SuperAdminDashboard() {
           <div className="flex-1 flex flex-col md:flex-row rounded-3xl md:rounded-4xl border border-white/10 bg-[#1a0f0a]/95 overflow-hidden shadow-2xl">
             {/* Liste tickets */}
             <div className={`${selectedTicket ? 'hidden md:flex' : 'flex'} flex-col w-full md:w-96 border-r border-white/5 bg-black/10 shrink-0`}>
-              <div className="p-4 border-b border-white/5 font-black text-xs text-gray-500 uppercase tracking-widest flex items-center justify-between">
+              <div className="p-4 border-b border-white/5 font-black text-xs text-gray-500 dark:text-gray-400 uppercase tracking-widest flex items-center justify-between">
                 <span>Fil d'Attente Tickets</span>
                 <button onClick={fetchAllTickets} className="text-brand-primary hover:text-white p-1 transition-colors"><RefreshCcw className="w-3.5 h-3.5" /></button>
               </div>
               <div className="flex-1 overflow-y-auto custom-scrollbar space-y-0.5">
                 {ticketsLoading ? (
-                  <div className="p-4 text-center text-xs animate-pulse text-gray-600">Chargement...</div>
+                  <div className="p-4 text-center text-xs animate-pulse text-gray-600 dark:text-gray-400">Chargement...</div>
                 ) : tickets.length === 0 ? (
-                  <div className="p-8 text-center text-xs text-gray-600 font-bold">Aucun ticket trouvé</div>
+                  <div className="p-8 text-center text-xs text-gray-600 dark:text-gray-400 font-bold">Aucun ticket trouvé</div>
                 ) : (
                   tickets.map((t) => (
                     <div
                       key={t.id}
                       onClick={() => fetchTicketMessages(t.id)}
                       className={`p-4 border-b border-white/5 cursor-pointer transition-all ${
-                        selectedTicket?.id === t.id ? 'bg-brand-primary/10' : 'hover:bg-white/1'
+                        selectedTicket?.id === t.id ? 'bg-brand-primary/10' : 'hover:bg-white dark:bg-[#1f1f1f]/1'
                       }`}
                     >
                       <div className="flex flex-wrap gap-1.5 mb-2">
@@ -1042,7 +1042,7 @@ function SuperAdminDashboard() {
                         <PriorityBadge priority={t.priority} />
                       </div>
                       <h4 className="font-black text-sm text-white leading-snug line-clamp-1">{t.title}</h4>
-                      <div className="flex justify-between items-center text-[10px] text-gray-500 font-bold mt-2">
+                      <div className="flex justify-between items-center text-[10px] text-gray-500 dark:text-gray-400 font-bold mt-2">
                         <span className="text-brand-primary">{t.company?.name}</span>
                         <span>{formatDistanceToNow(new Date(t.createdAt), { locale: fr })}</span>
                       </div>
@@ -1053,13 +1053,13 @@ function SuperAdminDashboard() {
             </div>
 
             {/* Vue Ticket Détails */}
-            <div className={`${!selectedTicket ? 'hidden md:flex' : 'flex'} flex-col flex-1 min-w-0 bg-white/1`}>
+            <div className={`${!selectedTicket ? 'hidden md:flex' : 'flex'} flex-col flex-1 min-w-0 bg-white dark:bg-[#1f1f1f]/1`}>
               {selectedTicket ? (
                 <>
                   {/* Header */}
-                  <div className="p-4 bg-white/5 border-b border-white/5 flex items-center justify-between gap-3 flex-wrap shrink-0">
+                  <div className="p-4 bg-white dark:bg-[#1f1f1f]/5 border-b border-white/5 flex items-center justify-between gap-3 flex-wrap shrink-0">
                     <div className="flex items-center gap-3">
-                      <button onClick={() => setSelectedTicket(null)} className="md:hidden text-gray-500 p-2 bg-white/5 rounded-xl"><ChevronRight className="w-5 h-5 rotate-180" /></button>
+                      <button onClick={() => setSelectedTicket(null)} className="md:hidden text-gray-500 dark:text-gray-400 p-2 bg-white dark:bg-[#1f1f1f]/5 rounded-xl"><ChevronRight className="w-5 h-5 rotate-180" /></button>
                       <div>
                         <div className="flex items-center gap-2">
                           <h3 className="font-black text-white text-base">{selectedTicket.title}</h3>
@@ -1081,7 +1081,7 @@ function SuperAdminDashboard() {
                         </button>
                       )}
                       {selectedTicket.status !== 'CLOSED' && (
-                        <button onClick={() => handleUpdateStatus('CLOSED')} className="px-2.5 py-1.5 text-[9px] font-black tracking-wider uppercase bg-white/5 border border-white/10 hover:bg-white/20 transition-all rounded-lg text-gray-400">
+                        <button onClick={() => handleUpdateStatus('CLOSED')} className="px-2.5 py-1.5 text-[9px] font-black tracking-wider uppercase bg-white dark:bg-[#1f1f1f]/5 border border-white/10 hover:bg-white dark:bg-[#1f1f1f]/20 transition-all rounded-lg text-gray-400">
                           CLOTURER
                         </button>
                       )}
@@ -1095,7 +1095,7 @@ function SuperAdminDashboard() {
                       return (
                         <div key={m.id} className={`flex ${isSupport ? 'justify-end' : 'justify-start'}`}>
                           <div className={`max-w-[85%] p-4 rounded-2xl shadow border text-sm font-medium ${
-                            isSupport ? 'bg-brand-primary text-white border-brand-primary/50 rounded-tr-none' : 'bg-white/5 text-gray-200 border-white/5 rounded-tl-none'
+                            isSupport ? 'bg-brand-primary text-white border-brand-primary/50 rounded-tr-none' : 'bg-white dark:bg-[#1f1f1f]/5 text-gray-200 border-white/5 rounded-tl-none'
                           }`}>
                             <p className="text-[9px] font-black text-gray-400 uppercase tracking-wider flex items-center gap-1 mb-1.5">
                               {isSupport ? <Shield className="w-2.5 h-2.5" /> : <User className="w-2.5 h-2.5" />}
@@ -1112,7 +1112,7 @@ function SuperAdminDashboard() {
 
                   {/* Input Réponse */}
                   <div className="p-4 bg-[#1a0f0a]/50 border-t border-white/5">
-                    <form onSubmit={handleSendTicketReply} className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-2xl p-1.5 pl-3 pr-2">
+                    <form onSubmit={handleSendTicketReply} className="flex items-center gap-3 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-2xl p-1.5 pl-3 pr-2">
                       <input
                         type="text"
                         value={replyText}
@@ -1129,7 +1129,7 @@ function SuperAdminDashboard() {
                   </div>
                 </>
               ) : (
-                <div className="flex-1 flex flex-col items-center justify-center text-center text-gray-500 gap-2">
+                <div className="flex-1 flex flex-col items-center justify-center text-center text-gray-500 dark:text-gray-400 gap-2">
                   <Inbox className="w-12 h-12 text-white/10" />
                   <p className="font-black uppercase text-xs tracking-widest">Sélectionnez un ticket</p>
                 </div>

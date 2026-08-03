@@ -22,7 +22,7 @@ const DashboardEmployee = () => {
   };
 
   const baseModules = [
-    { name: 'Mon Pointage', desc: 'Arrivée / Départ', icon: Clock, path: '/attendance', color: 'bg-green-500' },
+    { name: 'Mon Pointage', desc: 'Arrivée / Départ', icon: Clock, path: '/attendance', color: 'bg-green-50 dark:bg-green-500/100' },
     { name: 'Mes Congés', desc: 'Solde & Demandes', icon: Calendar, path: '/leaves', color: 'bg-yellow-500' },
     { name: 'Mon Coffre-fort', desc: 'Fiches de paie', icon: FileText, path: '/documents', color: 'bg-purple-500' },
     { name: 'Actualités', desc: 'Annonces entreprise', icon: Megaphone, path: '/announcements', color: 'bg-orange-500' },

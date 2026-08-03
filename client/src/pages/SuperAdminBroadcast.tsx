@@ -192,7 +192,7 @@ const SuperAdminBroadcast = () => {
           </div>
 
           {/* Tab Navigation */}
-          <div className="flex items-center gap-2 bg-white/5 border border-white/10 p-1.5 rounded-2xl self-start md:self-auto">
+          <div className="flex items-center gap-2 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 p-1.5 rounded-2xl self-start md:self-auto">
             <button
               onClick={() => setActiveTab('create')}
               className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs transition-all ${activeTab === 'create' ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/20' : 'text-gray-400 hover:text-white'}`}
@@ -213,7 +213,7 @@ const SuperAdminBroadcast = () => {
       <AnimatePresence>
         {successMessage && (
           <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
-            className="bg-green-500/10 border border-green-500/30 text-green-400 rounded-2xl p-4 text-sm font-medium flex items-center gap-3">
+            className="bg-green-50 dark:bg-green-500/100/10 border border-green-500/30 text-green-400 rounded-2xl p-4 text-sm font-medium flex items-center gap-3">
             <CheckCircle className="w-5 h-5 shrink-0" />
             <span>{successMessage}</span>
           </motion.div>
@@ -224,7 +224,7 @@ const SuperAdminBroadcast = () => {
       <AnimatePresence>
         {errorMessage && (
           <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
-            className="bg-red-500/10 border border-red-500/30 text-red-400 rounded-2xl p-4 text-sm font-medium flex items-center gap-3">
+            className="bg-red-50 dark:bg-red-500/100/10 border border-red-500/30 text-red-400 rounded-2xl p-4 text-sm font-medium flex items-center gap-3">
             <AlertCircle className="w-5 h-5 shrink-0" />
             <span>{errorMessage}</span>
           </motion.div>
@@ -261,11 +261,11 @@ const SuperAdminBroadcast = () => {
                     key={item.id}
                     type="button"
                     onClick={() => setTargetType(item.id as any)}
-                    className={`p-4 rounded-2xl border text-left transition-all duration-300 flex flex-col justify-between ${isSelected ? 'border-orange-500 bg-orange-500/10 text-white shadow-lg shadow-orange-500/10' : 'border-white/10 bg-white/5 text-gray-400 hover:border-white/20 hover:text-gray-200'}`}
+                    className={`p-4 rounded-2xl border text-left transition-all duration-300 flex flex-col justify-between ${isSelected ? 'border-orange-500 bg-orange-500/10 text-white shadow-lg shadow-orange-500/10' : 'border-white/10 bg-white dark:bg-[#1f1f1f]/5 text-gray-400 hover:border-white/20 hover:text-gray-200'}`}
                   >
                     <div>
                       <div className="flex items-center justify-between mb-2">
-                        <Icon className={`w-5 h-5 ${isSelected ? 'text-orange-400' : 'text-gray-500'}`} />
+                        <Icon className={`w-5 h-5 ${isSelected ? 'text-orange-400' : 'text-gray-500 dark:text-gray-400'}`} />
                         {isSelected && <CheckCircle className="w-4 h-4 text-orange-400" />}
                       </div>
                       <p className="font-bold text-sm text-white mb-1">{item.label}</p>
@@ -281,19 +281,19 @@ const SuperAdminBroadcast = () => {
               <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="space-y-4 pt-3">
                 <div className="flex items-center justify-between gap-3">
                   <div className="relative flex-1">
-                    <Search className="w-4 h-4 text-gray-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                    <Search className="w-4 h-4 text-gray-500 dark:text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                     <input
                       type="text"
                       placeholder="Rechercher une entreprise ou un gérant..."
                       value={searchCompany}
                       onChange={e => setSearchCompany(e.target.value)}
-                      className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-white text-xs placeholder-gray-500 focus:outline-none focus:border-orange-500/50"
+                      className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-white text-xs placeholder-gray-500 focus:outline-none focus:border-orange-500/50"
                     />
                   </div>
                   <button
                     type="button"
                     onClick={selectAllCompanies}
-                    className="px-3.5 py-2.5 bg-white/5 hover:bg-white/10 text-orange-400 text-xs font-bold rounded-xl border border-white/10 transition-all shrink-0"
+                    className="px-3.5 py-2.5 bg-white dark:bg-[#1f1f1f]/5 hover:bg-white dark:bg-[#1f1f1f]/10 text-orange-400 text-xs font-bold rounded-xl border border-white/10 transition-all shrink-0"
                   >
                     {selectedCompanyIds.length === companies.length ? 'Tout désélectionner' : 'Tout sélectionner'}
                   </button>
@@ -306,17 +306,17 @@ const SuperAdminBroadcast = () => {
                       <div
                         key={c.id}
                         onClick={() => toggleSelectCompany(c.id)}
-                        className={`p-3 rounded-xl border cursor-pointer transition-all flex items-center justify-between ${isChecked ? 'border-orange-500/50 bg-orange-500/10 text-white' : 'border-white/5 bg-white/5 text-gray-400 hover:border-white/10'}`}
+                        className={`p-3 rounded-xl border cursor-pointer transition-all flex items-center justify-between ${isChecked ? 'border-orange-500/50 bg-orange-500/10 text-white' : 'border-white/5 bg-white dark:bg-[#1f1f1f]/5 text-gray-400 hover:border-white/10'}`}
                       >
                         <div className="min-w-0">
                           <p className="font-bold text-xs text-white truncate">{c.name}</p>
-                          <p className="text-[10px] text-gray-500 truncate">{c.manager ? `${c.manager.firstName} ${c.manager.lastName} (${c.manager.email})` : 'Aucun gérant'}</p>
+                          <p className="text-[10px] text-gray-500 dark:text-gray-400 truncate">{c.manager ? `${c.manager.firstName} ${c.manager.lastName} (${c.manager.email})` : 'Aucun gérant'}</p>
                         </div>
                         <input
                           type="checkbox"
                           checked={isChecked}
                           onChange={() => { }}
-                          className="w-4 h-4 rounded bg-white/5 border-white/20 text-orange-500 focus:ring-orange-500/30 shrink-0 ml-2"
+                          className="w-4 h-4 rounded bg-white dark:bg-[#1f1f1f]/5 border-white/20 text-orange-500 focus:ring-orange-500/30 shrink-0 ml-2"
                         />
                       </div>
                     );
@@ -336,7 +336,7 @@ const SuperAdminBroadcast = () => {
                       key={plan}
                       type="button"
                       onClick={() => setTargetPlan(plan)}
-                      className={`py-3 px-4 rounded-xl border text-sm font-bold transition-all ${targetPlan === plan ? 'border-orange-500 bg-orange-500/10 text-orange-400' : 'border-white/10 bg-white/5 text-gray-400 hover:border-white/20'}`}
+                      className={`py-3 px-4 rounded-xl border text-sm font-bold transition-all ${targetPlan === plan ? 'border-orange-500 bg-orange-500/10 text-orange-400' : 'border-white/10 bg-white dark:bg-[#1f1f1f]/5 text-gray-400 hover:border-white/20'}`}
                     >
                       {plan === 'KORO' ? 'Kôrô' : plan}
                     </button>
@@ -352,7 +352,7 @@ const SuperAdminBroadcast = () => {
                 <select
                   value={targetRole}
                   onChange={e => setTargetRole(e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500/50"
+                  className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500/50"
                 >
                   <option value="ALL" className="bg-gray-900">Tous les rôles (Ensemble du personnel)</option>
                   <option value="COMPANY_ADMIN" className="bg-gray-900">Administrateurs / Dirigeants d'Entreprise uniquement</option>
@@ -377,8 +377,8 @@ const SuperAdminBroadcast = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <label className={`flex items-center gap-4 p-4 rounded-2xl border cursor-pointer transition-all ${sendEmail ? 'border-orange-500/50 bg-orange-500/10 text-white' : 'border-white/10 bg-white/5 text-gray-400'}`}>
-                <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-orange-400 shrink-0">
+              <label className={`flex items-center gap-4 p-4 rounded-2xl border cursor-pointer transition-all ${sendEmail ? 'border-orange-500/50 bg-orange-500/10 text-white' : 'border-white/10 bg-white dark:bg-[#1f1f1f]/5 text-gray-400'}`}>
+                <div className="w-10 h-10 rounded-xl bg-white dark:bg-[#1f1f1f]/5 flex items-center justify-center text-orange-400 shrink-0">
                   <Mail className="w-5 h-5" />
                 </div>
                 <div className="flex-1">
@@ -389,12 +389,12 @@ const SuperAdminBroadcast = () => {
                   type="checkbox"
                   checked={sendEmail}
                   onChange={e => setSendEmail(e.target.checked)}
-                  className="w-5 h-5 rounded bg-white/5 border-white/20 text-orange-500 focus:ring-orange-500/30"
+                  className="w-5 h-5 rounded bg-white dark:bg-[#1f1f1f]/5 border-white/20 text-orange-500 focus:ring-orange-500/30"
                 />
               </label>
 
-              <label className={`flex items-center gap-4 p-4 rounded-2xl border cursor-pointer transition-all ${sendInApp ? 'border-orange-500/50 bg-orange-500/10 text-white' : 'border-white/10 bg-white/5 text-gray-400'}`}>
-                <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-orange-400 shrink-0">
+              <label className={`flex items-center gap-4 p-4 rounded-2xl border cursor-pointer transition-all ${sendInApp ? 'border-orange-500/50 bg-orange-500/10 text-white' : 'border-white/10 bg-white dark:bg-[#1f1f1f]/5 text-gray-400'}`}>
+                <div className="w-10 h-10 rounded-xl bg-white dark:bg-[#1f1f1f]/5 flex items-center justify-center text-orange-400 shrink-0">
                   <Bell className="w-5 h-5" />
                 </div>
                 <div className="flex-1">
@@ -405,7 +405,7 @@ const SuperAdminBroadcast = () => {
                   type="checkbox"
                   checked={sendInApp}
                   onChange={e => setSendInApp(e.target.checked)}
-                  className="w-5 h-5 rounded bg-white/5 border-white/20 text-orange-500 focus:ring-orange-500/30"
+                  className="w-5 h-5 rounded bg-white dark:bg-[#1f1f1f]/5 border-white/20 text-orange-500 focus:ring-orange-500/30"
                 />
               </label>
             </div>
@@ -432,7 +432,7 @@ const SuperAdminBroadcast = () => {
                   placeholder="Ex: 🚀 Mise à jour Bamousso RH : Nouvelle fonctionnalité de Messagerie"
                   value={subject}
                   onChange={e => setSubject(e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-orange-500/50"
+                  className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-orange-500/50"
                   required
                 />
               </div>
@@ -445,7 +445,7 @@ const SuperAdminBroadcast = () => {
                   placeholder="Bonjour,\n\nNous avons le plaisir de vous informer qu'une nouvelle mise à jour est disponible..."
                   value={message}
                   onChange={e => setMessage(e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-orange-500/50 resize-y"
+                  className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl p-4 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-orange-500/50 resize-y"
                   required
                 />
               </div>
@@ -463,7 +463,7 @@ const SuperAdminBroadcast = () => {
                   />
                   <label
                     htmlFor="broadcastAttachment"
-                    className="flex items-center gap-3 p-4 rounded-2xl border border-dashed border-white/20 bg-white/5 cursor-pointer hover:border-orange-500/50 transition-all"
+                    className="flex items-center gap-3 p-4 rounded-2xl border border-dashed border-white/20 bg-white dark:bg-[#1f1f1f]/5 cursor-pointer hover:border-orange-500/50 transition-all"
                   >
                     <Paperclip className="w-5 h-5 text-orange-400" />
                     <span className="text-sm text-gray-300 truncate">
@@ -506,7 +506,7 @@ const SuperAdminBroadcast = () => {
             </div>
           ) : history.length === 0 ? (
             <div className="glass-card rounded-3xl p-12 text-center text-gray-400">
-              <Megaphone className="w-12 h-12 text-gray-600 mx-auto mb-3" />
+              <Megaphone className="w-12 h-12 text-gray-600 dark:text-gray-400 mx-auto mb-3" />
               <p className="font-medium">Aucune diffusion envoyée pour le moment.</p>
             </div>
           ) : (
@@ -520,22 +520,22 @@ const SuperAdminBroadcast = () => {
                       </span>
                       <h3 className="text-base font-bold text-white">{item.subject}</h3>
                     </div>
-                    <span className="text-xs text-gray-500 font-medium">
+                    <span className="text-xs text-gray-500 dark:text-gray-400 font-medium">
                       {new Date(item.createdAt).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </div>
 
-                  <p className="text-sm text-gray-300 whitespace-pre-line leading-relaxed bg-white/5 p-4 rounded-xl">
+                  <p className="text-sm text-gray-300 whitespace-pre-line leading-relaxed bg-white dark:bg-[#1f1f1f]/5 p-4 rounded-xl">
                     {item.message}
                   </p>
 
                   <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
                     <div className="flex items-center gap-4 text-xs text-gray-400">
                       <span className="flex items-center gap-1.5">
-                        <Mail className={`w-4 h-4 ${item.sendEmail ? 'text-green-400' : 'text-gray-600'}`} /> E-mail: {item.sendEmail ? 'Oui' : 'Non'}
+                        <Mail className={`w-4 h-4 ${item.sendEmail ? 'text-green-400' : 'text-gray-600 dark:text-gray-400'}`} /> E-mail: {item.sendEmail ? 'Oui' : 'Non'}
                       </span>
                       <span className="flex items-center gap-1.5">
-                        <Bell className={`w-4 h-4 ${item.sendInApp ? 'text-green-400' : 'text-gray-600'}`} /> In-App: {item.sendInApp ? 'Oui' : 'Non'}
+                        <Bell className={`w-4 h-4 ${item.sendInApp ? 'text-green-400' : 'text-gray-600 dark:text-gray-400'}`} /> In-App: {item.sendInApp ? 'Oui' : 'Non'}
                       </span>
                     </div>
 
@@ -577,7 +577,7 @@ const SuperAdminBroadcast = () => {
               </div>
 
               <div className="space-y-3 text-sm max-h-[60vh] overflow-y-auto pr-1">
-                <div className="bg-white/5 rounded-xl p-3 space-y-1">
+                <div className="bg-white dark:bg-[#1f1f1f]/5 rounded-xl p-3 space-y-1">
                   <p className="text-xs font-bold text-orange-400 uppercase">Cible sélectionnée</p>
                   <p className="text-white font-medium">
                     {targetType === 'ALL' && 'Toutes les entreprises du SaaS'}
@@ -587,7 +587,7 @@ const SuperAdminBroadcast = () => {
                   </p>
                 </div>
 
-                <div className="bg-white/5 rounded-xl p-3 space-y-1">
+                <div className="bg-white dark:bg-[#1f1f1f]/5 rounded-xl p-3 space-y-1">
                   <p className="text-xs font-bold text-orange-400 uppercase">Canaux d'envoi</p>
                   <p className="text-gray-300 text-xs">
                     {sendEmail && '📧 E-mail (via Resend)  '}
@@ -595,13 +595,13 @@ const SuperAdminBroadcast = () => {
                   </p>
                 </div>
 
-                <div className="bg-white/5 rounded-xl p-3 space-y-1">
+                <div className="bg-white dark:bg-[#1f1f1f]/5 rounded-xl p-3 space-y-1">
                   <p className="text-xs font-bold text-orange-400 uppercase">Sujet / Objet</p>
                   <p className="text-white font-medium">{subject}</p>
                 </div>
 
                 {attachmentFile && (
-                  <div className="bg-white/5 rounded-xl p-3 space-y-1">
+                  <div className="bg-white dark:bg-[#1f1f1f]/5 rounded-xl p-3 space-y-1">
                     <p className="text-xs font-bold text-orange-400 uppercase">Document attaché</p>
                     <p className="text-xs text-gray-300">📎 {attachmentFile.name} ({(attachmentFile.size / 1024).toFixed(1)} KB)</p>
                   </div>
@@ -613,7 +613,7 @@ const SuperAdminBroadcast = () => {
                   type="button"
                   onClick={() => setShowConfirmModal(false)}
                   disabled={isSubmitting}
-                  className="flex-1 py-3 bg-white/5 hover:bg-white/10 text-gray-300 font-bold text-sm rounded-xl transition-all"
+                  className="flex-1 py-3 bg-white dark:bg-[#1f1f1f]/5 hover:bg-white dark:bg-[#1f1f1f]/10 text-gray-300 font-bold text-sm rounded-xl transition-all"
                 >
                   Annuler / Editer
                 </button>

@@ -27,7 +27,7 @@ const NotificationCenter = () => {
     <div className="relative" ref={dropdownRef}>
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2.5 rounded-2xl hover:bg-white/10 transition-all duration-300 group"
+        className="relative p-2.5 rounded-2xl hover:bg-white dark:bg-[#1f1f1f]/10 transition-all duration-300 group"
       >
         <Bell className="w-6 h-6 text-gray-400 group-hover:text-white" />
         {unreadCount > 0 && (
@@ -39,22 +39,22 @@ const NotificationCenter = () => {
 
       {isOpen && (
         <div className="absolute right-[-1rem] sm:right-0 mt-4 w-[calc(100vw-2rem)] sm:w-96 bg-[#1a0f0a] border border-white/10 rounded-[2rem] overflow-hidden z-50 shadow-[0_20px_50px_rgba(0,0,0,0.5)] animate-in fade-in zoom-in duration-300">
-          <div className="py-4 px-6 bg-white/10 border-b border-white/10 flex justify-between items-center">
+          <div className="py-4 px-6 bg-white dark:bg-[#1f1f1f]/10 border-b border-white/10 flex justify-between items-center">
             <h3 className="text-sm font-black text-white uppercase tracking-widest">Notifications</h3>
-            <button onClick={() => setIsOpen(false)} className="text-gray-500 hover:text-white transition-colors">
+            <button onClick={() => setIsOpen(false)} className="text-gray-500 dark:text-gray-400 hover:text-white transition-colors">
                 <X className="w-5 h-5" />
             </button>
           </div>
           
           <div className="max-h-[32rem] overflow-y-auto custom-scrollbar">
             {notifications.length === 0 ? (
-              <div className="py-12 text-center text-gray-500 font-bold text-sm">Aucune notification pour le moment</div>
+              <div className="py-12 text-center text-gray-500 dark:text-gray-400 font-bold text-sm">Aucune notification pour le moment</div>
             ) : (
               <ul className="divide-y divide-white/5">
                 {notifications.map((notification) => (
                   <li 
                     key={notification.id} 
-                    className={`p-6 hover:bg-white/5 transition cursor-pointer relative group ${!notification.read ? 'bg-white/5' : ''}`}
+                    className={`p-6 hover:bg-white dark:bg-[#1f1f1f]/5 transition cursor-pointer relative group ${!notification.read ? 'bg-white dark:bg-[#1f1f1f]/5' : ''}`}
                     onClick={() => !notification.read && markAsRead(notification.id)}
                   >
                     {!notification.read && (
@@ -67,7 +67,7 @@ const NotificationCenter = () => {
                         <div className="flex items-center gap-2">
                             <button 
                                 onClick={(e) => handleDelete(notification.id, e)}
-                                className="text-gray-500 hover:text-rose-500 p-1 opacity-0 group-hover:opacity-100 transition-all"
+                                className="text-gray-500 dark:text-gray-400 hover:text-rose-500 p-1 opacity-0 group-hover:opacity-100 transition-all"
                                 title="Supprimer"
                             >
                                 <Trash2 className="w-4 h-4" />

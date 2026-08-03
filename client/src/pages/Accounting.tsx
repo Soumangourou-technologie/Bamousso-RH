@@ -123,7 +123,7 @@ const Accounting = () => {
           <p className="text-gray-400 font-medium mt-1">Suivi de trésorerie et notes de frais</p>
         </div>
         <div className="flex items-center gap-3">
-          <button onClick={handleExport} className="bg-white/10 text-white px-6 py-3 rounded-xl font-black text-sm uppercase tracking-widest border border-white/20 hover:bg-white/20 flex items-center gap-2 transition-all">
+          <button onClick={handleExport} className="bg-white dark:bg-[#1f1f1f]/10 text-white px-6 py-3 rounded-xl font-black text-sm uppercase tracking-widest border border-white/20 hover:bg-white dark:bg-[#1f1f1f]/20 flex items-center gap-2 transition-all">
             <Download className="w-4 h-4" />
             Export Excel
           </button>
@@ -133,26 +133,26 @@ const Accounting = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="glass-card p-8 rounded-4xl border border-white/5 bg-linear-to-br from-green-600/10 to-green-900/10">
           <TrendingUp className="w-8 h-8 text-green-500 mb-6" />
-          <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">Entrées (Ce mois)</p>
+          <p className="text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-1">Entrées (Ce mois)</p>
           <p className="text-3xl font-black text-white tracking-tighter">{stats.monthIncome.toLocaleString()} FCFA</p>
         </motion.div>
         
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="glass-card p-8 rounded-4xl border border-white/5 bg-linear-to-br from-red-600/10 to-red-900/10">
           <TrendingDown className="w-8 h-8 text-red-500 mb-6" />
-          <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">Dépenses (Ce mois)</p>
+          <p className="text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-1">Dépenses (Ce mois)</p>
           <p className="text-3xl font-black text-white tracking-tighter">{stats.monthExpense.toLocaleString()} FCFA</p>
         </motion.div>
         
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="glass-card p-8 rounded-4xl border border-white/5">
           <Wallet className="w-8 h-8 text-brand-accent mb-6" />
-          <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">Solde (Mois)</p>
+          <p className="text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-1">Solde (Mois)</p>
           <p className={`text-xl font-black tracking-tighter mt-2 ${solde < 0 ? 'text-red-400' : 'text-emerald-400'}`}>
             {solde > 0 ? '+' : ''}{solde.toLocaleString()} FCFA
           </p>
         </motion.div>
       </div>
 
-      <div className="flex space-x-2 bg-white/5 p-1 rounded-xl w-fit">
+      <div className="flex space-x-2 bg-white dark:bg-[#1f1f1f]/5 p-1 rounded-xl w-fit">
         <button
           onClick={() => setActiveTab('TRESO')}
           className={`px-6 py-2 rounded-lg font-bold text-sm transition-colors ${activeTab === 'TRESO' ? 'bg-brand-primary text-white' : 'text-gray-400 hover:text-white'}`}
@@ -165,7 +165,7 @@ const Accounting = () => {
         >
           Notes de Frais
           {stats.pendingExpenseReports > 0 && (
-            <span className="bg-red-500 text-white text-[10px] px-2 py-0.5 rounded-full">{stats.pendingExpenseReports}</span>
+            <span className="bg-red-50 dark:bg-red-500/100 text-white text-[10px] px-2 py-0.5 rounded-full">{stats.pendingExpenseReports}</span>
           )}
         </button>
       </div>

@@ -57,13 +57,13 @@ const CompactCountdown = ({ endsAt, billingCycle }: { endsAt: string, billingCyc
 
   return (
     <div className="flex flex-col gap-1.5 bg-gray-50/50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700 rounded-2xl px-5 py-3 w-72 shadow-sm">
-      <div className="flex justify-between items-center text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
+      <div className="flex justify-between items-center text-[10px] font-bold text-gray-400 dark:text-gray-500 dark:text-gray-400 uppercase tracking-wider">
         <span>Début : {startDateStr}</span>
         <span>Fin : {endDateStr}</span>
       </div>
       <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-1 overflow-hidden relative">
         <div 
-          className={`absolute top-0 left-0 h-full rounded-full transition-all duration-1000 ${progress > 90 ? 'bg-red-500' : progress > 75 ? 'bg-orange-500' : 'bg-brand-primary'}`}
+          className={`absolute top-0 left-0 h-full rounded-full transition-all duration-1000 ${progress > 90 ? 'bg-red-50 dark:bg-red-500/100' : progress > 75 ? 'bg-orange-500' : 'bg-brand-primary'}`}
           style={{ width: `${progress}%` }}
         />
       </div>
@@ -103,7 +103,7 @@ const DashboardHR = () => {
   const baseModules = [
     { name: 'Annuaire', desc: 'Gestion des talents', icon: Users, path: '/employees', color: 'bg-blue-500' },
     { name: 'Organisation', desc: 'Départements', icon: Layers, path: '/departments', color: 'bg-indigo-500' },
-    { name: 'Temps & Présences', desc: 'Validation des pointages', icon: Clock, path: '/attendance', color: 'bg-green-500' },
+    { name: 'Temps & Présences', desc: 'Validation des pointages', icon: Clock, path: '/attendance', color: 'bg-green-50 dark:bg-green-500/100' },
     { name: 'Absences', desc: 'Validation des congés', icon: Calendar, path: '/leaves', color: 'bg-yellow-500' },
     { name: 'Coffre-fort RH', desc: 'Partage de documents', icon: FileText, path: '/documents', color: 'bg-purple-500' },
     { name: 'Communication', desc: 'Publier une annonce', icon: Megaphone, path: '/announcements', color: 'bg-orange-500' },

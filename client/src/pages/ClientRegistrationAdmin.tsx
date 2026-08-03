@@ -112,7 +112,7 @@ const ClientRegistrationAdmin = () => {
       <div className="flex items-start gap-3 py-2">
         <Icon className="w-4 h-4 text-orange-400 mt-0.5 shrink-0" />
         <div>
-          <p className="text-[10px] uppercase tracking-wider text-gray-500 font-bold">{label}</p>
+          <p className="text-[10px] uppercase tracking-wider text-gray-500 dark:text-gray-400 font-bold">{label}</p>
           <p className="text-sm text-white font-medium">{value}</p>
         </div>
       </div>
@@ -143,7 +143,7 @@ const ClientRegistrationAdmin = () => {
       {/* Folders Grid */}
       {groups.length === 0 ? (
         <div className="glass-card rounded-3xl p-12 text-center">
-          <FolderOpen className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+          <FolderOpen className="w-16 h-16 text-gray-600 dark:text-gray-400 mx-auto mb-4" />
           <p className="text-gray-400 font-medium">Aucun enregistrement client pour le moment.</p>
         </div>
       ) : (
@@ -160,10 +160,10 @@ const ClientRegistrationAdmin = () => {
                 </div>
                 <div className="min-w-0">
                   <p className="text-white font-bold truncate">{g.commercial.firstName} {g.commercial.lastName}</p>
-                  <p className="text-xs text-gray-500 truncate">{g.commercial.email}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{g.commercial.email}</p>
                 </div>
               </div>
-              <div className="flex items-center justify-between bg-white/5 rounded-xl px-4 py-3">
+              <div className="flex items-center justify-between bg-white dark:bg-[#1f1f1f]/5 rounded-xl px-4 py-3">
                 <div className="flex items-center gap-2 text-gray-400">
                   <Users className="w-4 h-4" />
                   <span className="text-sm font-bold">{g.count} client{g.count > 1 ? 's' : ''}</span>
@@ -206,27 +206,27 @@ const ClientRegistrationAdmin = () => {
               className="w-full glass-card rounded-2xl p-5 text-left hover:border-orange-500/20 border border-transparent transition-all group">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-xl bg-white dark:bg-[#1f1f1f]/5 flex items-center justify-center">
                     {reg.clientType === 'ENTREPRISE' ? <Building2 className="w-5 h-5 text-blue-400" /> : <User className="w-5 h-5 text-green-400" />}
                   </div>
                   <div>
                     <p className="text-white font-bold">{reg.firstName} {reg.lastName}</p>
-                    <p className="text-xs text-gray-500">{reg.clientType === 'ENTREPRISE' ? reg.companyName || 'Entreprise' : 'Particulier'} • {reg.city || 'N/A'}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">{reg.clientType === 'ENTREPRISE' ? reg.companyName || 'Entreprise' : 'Particulier'} • {reg.city || 'N/A'}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="text-[10px] bg-green-500/10 text-green-400 px-2 py-1 rounded-lg font-bold uppercase">{reg.status}</span>
-                  <div className="flex items-center gap-1 text-gray-500 text-xs">
+                  <span className="text-[10px] bg-green-50 dark:bg-green-500/100/10 text-green-400 px-2 py-1 rounded-lg font-bold uppercase">{reg.status}</span>
+                  <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400 text-xs">
                     <Clock className="w-3 h-3" />
                     {new Date(reg.createdAt).toLocaleDateString('fr-FR')}
                   </div>
-                  <Eye className="w-4 h-4 text-gray-500 group-hover:text-orange-400 transition-colors" />
+                  <Eye className="w-4 h-4 text-gray-500 dark:text-gray-400 group-hover:text-orange-400 transition-colors" />
                 </div>
               </div>
               {reg.documents.length > 0 && (
                 <div className="mt-3 flex items-center gap-2">
-                  <FileText className="w-3 h-3 text-gray-500" />
-                  <span className="text-[10px] text-gray-500 font-bold">{reg.documents.length} document(s) joint(s)</span>
+                  <FileText className="w-3 h-3 text-gray-500 dark:text-gray-400" />
+                  <span className="text-[10px] text-gray-500 dark:text-gray-400 font-bold">{reg.documents.length} document(s) joint(s)</span>
                 </div>
               )}
             </motion.button>
@@ -266,7 +266,7 @@ const ClientRegistrationAdmin = () => {
           <button
             onClick={() => handleDelete(r.id)}
             disabled={isDeleting}
-            className="flex items-center gap-2 px-4 py-2.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 rounded-xl font-bold text-xs transition-all self-start md:self-auto disabled:opacity-50"
+            className="flex items-center gap-2 px-4 py-2.5 bg-red-50 dark:bg-red-500/100/10 hover:bg-red-50 dark:bg-red-500/100/20 text-red-400 border border-red-500/30 rounded-xl font-bold text-xs transition-all self-start md:self-auto disabled:opacity-50"
           >
             {isDeleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
             Supprimer le client
@@ -309,7 +309,7 @@ const ClientRegistrationAdmin = () => {
               <InfoRow icon={Building2} label="Nom" value={r.companyName} />
               <InfoRow icon={Briefcase} label="Statut juridique" value={r.legalStatus} />
               <InfoRow icon={Briefcase} label="Secteur" value={r.sector} />
-              {r.companyDescription && <p className="text-xs text-gray-400 mt-2 bg-white/5 rounded-lg p-3">{r.companyDescription}</p>}
+              {r.companyDescription && <p className="text-xs text-gray-400 mt-2 bg-white dark:bg-[#1f1f1f]/5 rounded-lg p-3">{r.companyDescription}</p>}
             </div>
           )}
 
@@ -321,7 +321,7 @@ const ClientRegistrationAdmin = () => {
               <InfoRow icon={Calendar} label="Date" value={r.rdvDate ? new Date(r.rdvDate).toLocaleDateString('fr-FR') : null} />
               <InfoRow icon={Clock} label="Heure" value={r.rdvTime} />
               <InfoRow icon={Briefcase} label="Mode" value={r.rdvMode} />
-              {r.rdvDescription && <p className="text-xs text-gray-400 mt-2 bg-white/5 rounded-lg p-3">{r.rdvDescription}</p>}
+              {r.rdvDescription && <p className="text-xs text-gray-400 mt-2 bg-white dark:bg-[#1f1f1f]/5 rounded-lg p-3">{r.rdvDescription}</p>}
             </div>
           )}
         </div>
@@ -332,14 +332,14 @@ const ClientRegistrationAdmin = () => {
             <h4 className="text-sm font-bold text-purple-400 mb-4 flex items-center gap-2">✍️ Signatures</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {r.clientSignatureUrl && (
-                <div className="bg-white/5 rounded-xl p-3 text-center">
-                  <p className="text-xs text-gray-500 font-bold mb-2">Signature Client</p>
+                <div className="bg-white dark:bg-[#1f1f1f]/5 rounded-xl p-3 text-center">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 font-bold mb-2">Signature Client</p>
                   <img src={r.clientSignatureUrl} alt="Signature client" className="max-h-24 mx-auto rounded" />
                 </div>
               )}
               {r.commercialSignatureUrl && (
-                <div className="bg-white/5 rounded-xl p-3 text-center">
-                  <p className="text-xs text-gray-500 font-bold mb-2">Signature Commercial</p>
+                <div className="bg-white dark:bg-[#1f1f1f]/5 rounded-xl p-3 text-center">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 font-bold mb-2">Signature Commercial</p>
                   <img src={r.commercialSignatureUrl} alt="Signature commercial" className="max-h-24 mx-auto rounded" />
                 </div>
               )}
@@ -354,21 +354,21 @@ const ClientRegistrationAdmin = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {r.idDocumentUrlRecto && (
                 <a href={r.idDocumentUrlRecto} target="_blank" rel="noreferrer"
-                  className="flex items-center gap-3 bg-white/5 hover:bg-white/10 rounded-xl p-4 transition-all">
+                  className="flex items-center gap-3 bg-white dark:bg-[#1f1f1f]/5 hover:bg-white dark:bg-[#1f1f1f]/10 rounded-xl p-4 transition-all">
                   <Download className="w-5 h-5 text-orange-400" />
                   <span className="text-sm text-gray-300 font-medium">Télécharger le Recto</span>
                 </a>
               )}
               {r.idDocumentUrlVerso && (
                 <a href={r.idDocumentUrlVerso} target="_blank" rel="noreferrer"
-                  className="flex items-center gap-3 bg-white/5 hover:bg-white/10 rounded-xl p-4 transition-all">
+                  className="flex items-center gap-3 bg-white dark:bg-[#1f1f1f]/5 hover:bg-white dark:bg-[#1f1f1f]/10 rounded-xl p-4 transition-all">
                   <Download className="w-5 h-5 text-orange-400" />
                   <span className="text-sm text-gray-300 font-medium">Télécharger le Verso</span>
                 </a>
               )}
               {r.idDocumentUrl && !r.idDocumentUrlRecto && (
                 <a href={r.idDocumentUrl} target="_blank" rel="noreferrer"
-                  className="flex items-center gap-3 bg-white/5 hover:bg-white/10 rounded-xl p-4 transition-all">
+                  className="flex items-center gap-3 bg-white dark:bg-[#1f1f1f]/5 hover:bg-white dark:bg-[#1f1f1f]/10 rounded-xl p-4 transition-all">
                   <Download className="w-5 h-5 text-orange-400" />
                   <span className="text-sm text-gray-300 font-medium">Télécharger la pièce d'identité</span>
                 </a>
@@ -385,10 +385,10 @@ const ClientRegistrationAdmin = () => {
             <div className="space-y-2">
               {r.documents.map(doc => (
                 <a key={doc.id} href={doc.url} target="_blank" rel="noreferrer"
-                  className="flex items-center gap-3 bg-white/5 hover:bg-white/10 rounded-xl p-3 transition-all">
+                  className="flex items-center gap-3 bg-white dark:bg-[#1f1f1f]/5 hover:bg-white dark:bg-[#1f1f1f]/10 rounded-xl p-3 transition-all">
                   <FileText className="w-4 h-4 text-blue-400" />
                   <span className="text-sm text-gray-300 flex-1">{doc.title}</span>
-                  <span className="text-[10px] text-gray-500">{new Date(doc.createdAt).toLocaleDateString('fr-FR')}</span>
+                  <span className="text-[10px] text-gray-500 dark:text-gray-400">{new Date(doc.createdAt).toLocaleDateString('fr-FR')}</span>
                   <Download className="w-4 h-4 text-gray-400" />
                 </a>
               ))}

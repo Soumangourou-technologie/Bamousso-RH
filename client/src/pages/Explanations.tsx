@@ -125,14 +125,14 @@ const Explanations = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         <div className="glass-card p-8 rounded-4xl border border-white/5">
-          <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">En cours</p>
+          <p className="text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-1">En cours</p>
           <div className="flex items-center gap-3">
             <AlertCircle className="w-5 h-5 text-amber-500" />
             <p className="text-3xl font-black text-white">{pendingCount}</p>
           </div>
         </div>
         <div className="glass-card p-8 rounded-4xl border border-white/5">
-          <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">Clôturées</p>
+          <p className="text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-1">Clôturées</p>
           <div className="flex items-center gap-3">
             <CheckCircle2 className="w-5 h-5 text-emerald-500" />
             <p className="text-3xl font-black text-white">{closedCount}</p>
@@ -148,15 +148,15 @@ const Explanations = () => {
         
         <div className="space-y-4">
           {explanations.map((exp) => (
-            <div key={exp.id} className="p-8 bg-white/5 rounded-3xl border border-white/10 flex flex-col md:flex-row justify-between items-center gap-6 group hover:bg-white/10 transition-all">
+            <div key={exp.id} className="p-8 bg-white dark:bg-[#1f1f1f]/5 rounded-3xl border border-white/10 flex flex-col md:flex-row justify-between items-center gap-6 group hover:bg-white dark:bg-[#1f1f1f]/10 transition-all">
               <div className="flex items-center gap-6">
                 <div className="w-16 h-16 rounded-2xl bg-brand-primary/10 flex items-center justify-center text-brand-primary">
                   <FileWarning className="w-8 h-8" />
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-white">{exp.title}</h3>
-                  <p className="text-sm text-gray-500">{isAdmin ? `Pour : ${exp.employee.firstName} ${exp.employee.lastName}` : `Par : ${exp.creator.firstName} ${exp.creator.lastName}`}</p>
-                  <p className="text-xs text-gray-600 mt-1">{new Date(exp.createdAt).toLocaleDateString('fr-FR')}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{isAdmin ? `Pour : ${exp.employee.firstName} ${exp.employee.lastName}` : `Par : ${exp.creator.firstName} ${exp.creator.lastName}`}</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{new Date(exp.createdAt).toLocaleDateString('fr-FR')}</p>
                 </div>
               </div>
               <div className="flex items-center gap-4">
@@ -170,7 +170,7 @@ const Explanations = () => {
                 
                 <button 
                   onClick={() => setSelectedExplanation(exp)}
-                  className="p-3 bg-white/5 hover:bg-white/10 text-white rounded-xl transition-all"
+                  className="p-3 bg-white dark:bg-[#1f1f1f]/5 hover:bg-white dark:bg-[#1f1f1f]/10 text-white rounded-xl transition-all"
                 >
                   <MessageSquare className="w-5 h-5" />
                 </button>
@@ -189,7 +189,7 @@ const Explanations = () => {
 
           {explanations.length === 0 && (
             <div className="py-20 text-center">
-              <p className="text-gray-600 font-bold italic">Aucune demande d'explication.</p>
+              <p className="text-gray-600 dark:text-gray-400 font-bold italic">Aucune demande d'explication.</p>
             </div>
           )}
         </div>
@@ -201,12 +201,12 @@ const Explanations = () => {
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsModalOpen(false)} className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
             <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="relative bg-brand-900 border border-white/10 p-8 rounded-[2.5rem] max-w-lg w-full shadow-2xl">
-              <button onClick={() => setIsModalOpen(false)} className="absolute top-6 right-6 text-gray-500 hover:text-white transition-colors"><X className="w-6 h-6" /></button>
+              <button onClick={() => setIsModalOpen(false)} className="absolute top-6 right-6 text-gray-500 dark:text-gray-400 hover:text-white transition-colors"><X className="w-6 h-6" /></button>
               <h2 className="text-2xl font-black text-white mb-6">Nouvelle Demande</h2>
               <form onSubmit={handleCreate} className="space-y-6">
                 <div>
-                  <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Employé concerné</label>
-                  <select required value={newRequest.employeeId} onChange={e => setNewRequest({...newRequest, employeeId: e.target.value})} className="w-full bg-white/5 border border-white/10 p-4 rounded-2xl text-white font-bold outline-none focus:ring-2 focus:ring-brand-primary appearance-none">
+                  <label className="block text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-2">Employé concerné</label>
+                  <select required value={newRequest.employeeId} onChange={e => setNewRequest({...newRequest, employeeId: e.target.value})} className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 p-4 rounded-2xl text-white font-bold outline-none focus:ring-2 focus:ring-brand-primary appearance-none">
                     <option value="" className="bg-brand-900">Choisir...</option>
                     {employees.map(emp => (
                       <option key={emp.id} value={emp.id} className="bg-brand-900">{emp.firstName} {emp.lastName}</option>
@@ -214,12 +214,12 @@ const Explanations = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Objet du manquement</label>
-                  <input required value={newRequest.title} onChange={e => setNewRequest({...newRequest, title: e.target.value})} className="w-full bg-white/5 border border-white/10 p-4 rounded-2xl text-white font-bold outline-none focus:ring-2 focus:ring-brand-primary" placeholder="ex: Absence injustifiée du 25/04" />
+                  <label className="block text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-2">Objet du manquement</label>
+                  <input required value={newRequest.title} onChange={e => setNewRequest({...newRequest, title: e.target.value})} className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 p-4 rounded-2xl text-white font-bold outline-none focus:ring-2 focus:ring-brand-primary" placeholder="ex: Absence injustifiée du 25/04" />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Description détaillée</label>
-                  <textarea required value={newRequest.description} onChange={e => setNewRequest({...newRequest, description: e.target.value})} className="w-full bg-white/5 border border-white/10 p-4 rounded-2xl text-white font-medium outline-none focus:ring-2 focus:ring-brand-primary h-32 resize-none" placeholder="Veuillez expliquer les faits..." />
+                  <label className="block text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-2">Description détaillée</label>
+                  <textarea required value={newRequest.description} onChange={e => setNewRequest({...newRequest, description: e.target.value})} className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 p-4 rounded-2xl text-white font-medium outline-none focus:ring-2 focus:ring-brand-primary h-32 resize-none" placeholder="Veuillez expliquer les faits..." />
                 </div>
                 <button type="submit" className="w-full bg-brand-primary text-white py-5 rounded-2xl font-black text-lg uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-brand-primary/20">
                   Envoyer la demande
@@ -236,7 +236,7 @@ const Explanations = () => {
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setSelectedExplanation(null)} className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
             <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="relative bg-brand-900 border border-white/10 p-8 rounded-[2.5rem] max-w-2xl w-full shadow-2xl overflow-y-auto max-h-[90vh]">
-              <button onClick={() => setSelectedExplanation(null)} className="absolute top-6 right-6 text-gray-500 hover:text-white transition-colors"><X className="w-6 h-6" /></button>
+              <button onClick={() => setSelectedExplanation(null)} className="absolute top-6 right-6 text-gray-500 dark:text-gray-400 hover:text-white transition-colors"><X className="w-6 h-6" /></button>
               
               <div className="space-y-8">
                 <div>
@@ -244,23 +244,23 @@ const Explanations = () => {
                   <p className="text-gray-400 font-medium">{selectedExplanation.description}</p>
                 </div>
 
-                <div className="p-6 bg-white/5 rounded-2xl border border-white/10">
-                  <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-4">Réponse de l'employé</h3>
+                <div className="p-6 bg-white dark:bg-[#1f1f1f]/5 rounded-2xl border border-white/10">
+                  <h3 className="text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-4">Réponse de l'employé</h3>
                   {selectedExplanation.response ? (
                     <p className="text-white font-medium italic">"{selectedExplanation.response}"</p>
                   ) : (
-                    <p className="text-gray-600 italic">En attente de réponse...</p>
+                    <p className="text-gray-600 dark:text-gray-400 italic">En attente de réponse...</p>
                   )}
                 </div>
 
                 {!isAdmin && selectedExplanation.status === 'PENDING' && (
                   <form onSubmit={handleRespond} className="space-y-4">
-                    <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest">Votre explication</label>
+                    <label className="block text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest">Votre explication</label>
                     <textarea 
                       required 
                       value={responseText} 
                       onChange={e => setResponseText(e.target.value)} 
-                      className="w-full bg-white/5 border border-white/10 p-4 rounded-2xl text-white font-medium outline-none focus:ring-2 focus:ring-brand-primary h-32 resize-none" 
+                      className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 p-4 rounded-2xl text-white font-medium outline-none focus:ring-2 focus:ring-brand-primary h-32 resize-none" 
                       placeholder="Tapez votre réponse ici..." 
                     />
                     <button type="submit" className="w-full bg-brand-primary text-white py-4 rounded-2xl font-black text-sm uppercase tracking-widest">

@@ -329,7 +329,7 @@ const HelpModule = () => {
                 </div>
                 <button 
                   onClick={() => setIsOpen(false)}
-                  className="p-2 text-gray-500 hover:text-white hover:bg-white/10 rounded-xl transition-all"
+                  className="p-2 text-gray-500 dark:text-gray-400 hover:text-white hover:bg-white dark:bg-[#1f1f1f]/10 rounded-xl transition-all"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -346,10 +346,10 @@ const HelpModule = () => {
                 </div>
 
                 <div className="mt-8">
-                  <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest text-center">
+                  <p className="text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest text-center">
                     Besoin de plus d'assistance ?
                   </p>
-                  <a href="/support" className="mt-4 block w-full text-center py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm font-bold text-white transition-all">
+                  <a href="/support" className="mt-4 block w-full text-center py-3 bg-white dark:bg-[#1f1f1f]/5 hover:bg-white dark:bg-[#1f1f1f]/10 border border-white/10 rounded-xl text-sm font-bold text-white transition-all">
                     Contacter le support client
                   </a>
                 </div>

@@ -206,13 +206,13 @@ const Messaging = () => {
       <div className={`w-full md:w-96 flex flex-col gap-6 h-full transition-all duration-300 ${selectedContact ? 'hidden md:flex' : 'flex'}`}>
         <div className="glass-card p-4 md:p-6 rounded-4xl border border-white/5 flex flex-col h-full overflow-hidden">
           <div className="relative mb-6">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 w-5 h-5" />
             <input 
               type="text" 
               placeholder="Rechercher une discussion..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full pl-12 pr-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-white font-bold outline-none focus:ring-2 focus:ring-brand-primary placeholder:text-gray-600 transition-all"
+              className="w-full pl-12 pr-6 py-4 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-2xl text-white font-bold outline-none focus:ring-2 focus:ring-brand-primary placeholder:text-gray-600 dark:text-gray-400 transition-all"
             />
           </div>
 
@@ -221,7 +221,7 @@ const Messaging = () => {
               <button 
                 key={chat.id}
                 onClick={() => setSelectedContact(chat)}
-                className={`w-full p-4 rounded-2xl flex items-center gap-4 transition-all group ${selectedContact?.id === chat.id ? 'bg-brand-primary/20 border border-brand-primary/30' : 'hover:bg-white/5 border border-transparent'}`}
+                className={`w-full p-4 rounded-2xl flex items-center gap-4 transition-all group ${selectedContact?.id === chat.id ? 'bg-brand-primary/20 border border-brand-primary/30' : 'hover:bg-white dark:bg-[#1f1f1f]/5 border border-transparent'}`}
               >
                 <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-black shrink-0 shadow-lg transition-transform group-hover:scale-105 ${chat.isSupport ? 'bg-linear-to-br from-brand-primary to-brand-accent' : 'bg-gray-700'}`}>
                   {chat.name[0]}
@@ -231,7 +231,7 @@ const Messaging = () => {
                     <div className="flex items-center gap-2 min-w-0">
                       <p className="text-sm font-black text-white truncate">{chat.name}</p>
                     </div>
-                    {chat.time && <p className="text-[10px] text-gray-500 font-bold shrink-0">{chat.time}</p>}
+                    {chat.time && <p className="text-[10px] text-gray-500 dark:text-gray-400 font-bold shrink-0">{chat.time}</p>}
                   </div>
                   <div className="flex items-center gap-1.5 mb-1">
                     {(chat.isSupport ? isSupportOnline : onlineUsers?.includes(chat.id)) ? (
@@ -240,8 +240,8 @@ const Messaging = () => {
                         En ligne
                       </span>
                     ) : (
-                      <span className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-wider text-gray-500">
-                        <span className="w-1.5 h-1.5 bg-gray-500 rounded-full" />
+                      <span className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                        <span className="w-1.5 h-1.5 bg-gray-50 dark:bg-gray-800/500 rounded-full" />
                         Hors ligne
                       </span>
                     )}
@@ -263,7 +263,7 @@ const Messaging = () => {
       <div className={`flex-1 glass-card rounded-4xl md:rounded-[2.5rem] border border-white/5 overflow-hidden flex flex-col relative shadow-2xl transition-all duration-300 ${selectedContact ? 'flex' : 'hidden md:flex'}`}>
         {selectedContact ? (
           <>
-            <div className="p-4 md:p-6 border-b border-white/5 flex justify-between items-center bg-white/5 backdrop-blur-xl z-10">
+            <div className="p-4 md:p-6 border-b border-white/5 flex justify-between items-center bg-white dark:bg-[#1f1f1f]/5 backdrop-blur-xl z-10">
               <div className="flex items-center gap-3 md:gap-4">
                 <button 
                   onClick={() => setSelectedContact(null)}
@@ -285,17 +285,17 @@ const Messaging = () => {
                   </h2>
                   <div className="flex items-center gap-2">
                     <p className="text-[10px] md:text-xs text-brand-primary uppercase tracking-wider font-bold">{selectedContact.role}</p>
-                    <span className="text-gray-600">•</span>
+                    <span className="text-gray-600 dark:text-gray-400">•</span>
                     {(selectedContact.isSupport ? isSupportOnline : onlineUsers?.includes(selectedContact.id)) ? (
                       <span className="text-[10px] text-emerald-400 font-black uppercase tracking-wider">En ligne</span>
                     ) : (
-                      <span className="text-[10px] text-gray-500 font-black uppercase tracking-wider">Hors ligne</span>
+                      <span className="text-[10px] text-gray-500 dark:text-gray-400 font-black uppercase tracking-wider">Hors ligne</span>
                     )}
                   </div>
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <button className="p-3 hover:bg-white/10 rounded-xl text-gray-400 transition-colors"><MoreVertical className="w-5 h-5" /></button>
+                <button className="p-3 hover:bg-white dark:bg-[#1f1f1f]/10 rounded-xl text-gray-400 transition-colors"><MoreVertical className="w-5 h-5" /></button>
               </div>
             </div>
 
@@ -304,7 +304,7 @@ const Messaging = () => {
                <div className="relative z-10 space-y-4">
                   {messages.map((msg) => (
                     <div key={msg.id} className={`flex ${msg.senderId === user?.id ? 'justify-end' : 'justify-start'}`}>
-                      <div className={`p-4 rounded-2xl max-w-md shadow-lg ${msg.senderId === user?.id ? 'bg-brand-primary text-white rounded-br-none' : 'bg-white/5 border border-white/10 text-white rounded-bl-none'}`}>
+                      <div className={`p-4 rounded-2xl max-w-md shadow-lg ${msg.senderId === user?.id ? 'bg-brand-primary text-white rounded-br-none' : 'bg-white dark:bg-[#1f1f1f]/5 border border-white/10 text-white rounded-bl-none'}`}>
                         <p className="text-sm font-medium leading-relaxed">{msg.content}</p>
                         {msg.attachmentUrl && (
                           <div className="mt-2 rounded-lg overflow-hidden border border-white/10">
@@ -317,7 +317,7 @@ const Messaging = () => {
                             )}
                           </div>
                         )}
-                        <p className={`text-[9px] font-black mt-2 uppercase tracking-widest ${msg.senderId === user?.id ? 'text-white/60' : 'text-gray-500'}`}>
+                        <p className={`text-[9px] font-black mt-2 uppercase tracking-widest ${msg.senderId === user?.id ? 'text-white/60' : 'text-gray-500 dark:text-gray-400'}`}>
                           {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </p>
                       </div>
@@ -327,14 +327,14 @@ const Messaging = () => {
                </div>
             </div>
 
-            <div className="p-4 md:p-6 bg-white/5 border-t border-white/5 backdrop-blur-xl">
+            <div className="p-4 md:p-6 bg-white dark:bg-[#1f1f1f]/5 border-t border-white/5 backdrop-blur-xl">
               {selectedFile && (
                 <div className="mb-4 p-3 bg-brand-primary/10 border border-brand-primary/20 rounded-xl flex justify-between items-center animate-in slide-in-from-bottom-2">
                   <div className="flex items-center gap-2">
                     <Paperclip className="w-4 h-4 text-brand-primary" />
                     <span className="text-xs text-white font-bold">{selectedFile.name}</span>
                   </div>
-                  <button onClick={() => setSelectedFile(null)} className="p-1 hover:bg-white/10 rounded-full"><X className="w-4 h-4 text-gray-500" /></button>
+                  <button onClick={() => setSelectedFile(null)} className="p-1 hover:bg-white dark:bg-[#1f1f1f]/10 rounded-full"><X className="w-4 h-4 text-gray-500 dark:text-gray-400" /></button>
                 </div>
               )}
               <form onSubmit={handleSend} className="flex items-center gap-2 md:gap-4">
@@ -347,7 +347,7 @@ const Messaging = () => {
                 <button 
                   type="button" 
                   onClick={() => fileInputRef.current?.click()}
-                  className="p-3 md:p-4 hover:bg-white/10 rounded-2xl text-gray-500 transition-colors hover:text-white group"
+                  className="p-3 md:p-4 hover:bg-white dark:bg-[#1f1f1f]/10 rounded-2xl text-gray-500 dark:text-gray-400 transition-colors hover:text-white group"
                 >
                   <Paperclip className="w-5 h-5 md:w-6 md:h-6 transition-transform group-hover:scale-110" />
                 </button>
@@ -357,7 +357,7 @@ const Messaging = () => {
                     value={newMessage}
                     onChange={e => setNewMessage(e.target.value)}
                     placeholder="Votre message..."
-                    className="w-full bg-white/5 border border-white/10 p-3 md:p-4 rounded-xl md:rounded-2xl text-white text-sm md:text-base font-medium outline-none focus:ring-2 focus:ring-brand-primary transition-all"
+                    className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 p-3 md:p-4 rounded-xl md:rounded-2xl text-white text-sm md:text-base font-medium outline-none focus:ring-2 focus:ring-brand-primary transition-all"
                   />
                 </div>
                 <button 

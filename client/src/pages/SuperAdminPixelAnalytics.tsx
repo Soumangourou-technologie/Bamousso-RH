@@ -274,7 +274,7 @@ fbq('track', 'PageView');
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 bg-white/5 border border-white/10 px-4 py-2 rounded-2xl">
+          <div className="flex items-center gap-2 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 px-4 py-2 rounded-2xl">
             <span className="text-xs font-bold text-gray-300">ID Pixel :</span>
             <span className="text-xs font-mono font-black text-brand-primary bg-brand-primary/10 px-2 py-1 rounded-lg border border-brand-primary/30">
               {analytics?.config.pixelId || configForm.pixelId}
@@ -288,7 +288,7 @@ fbq('track', 'PageView');
 
           <button
             onClick={fetchAnalyticsAndConfig}
-            className="p-2.5 bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white rounded-xl transition border border-white/10 flex items-center gap-2 text-xs font-semibold"
+            className="p-2.5 bg-white dark:bg-[#1f1f1f]/5 hover:bg-white dark:bg-[#1f1f1f]/10 text-gray-300 hover:text-white rounded-xl transition border border-white/10 flex items-center gap-2 text-xs font-semibold"
           >
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
             Actualiser
@@ -303,7 +303,7 @@ fbq('track', 'PageView');
           className={`flex items-center gap-2 px-5 py-3 rounded-t-2xl font-bold text-sm transition-all ${
             activeTab === 'overview'
               ? 'bg-brand-primary text-white border-t-2 border-brand-primary shadow-lg shadow-brand-primary/20'
-              : 'text-gray-400 hover:text-white hover:bg-white/5'
+              : 'text-gray-400 hover:text-white hover:bg-white dark:bg-[#1f1f1f]/5'
           }`}
         >
           <BarChart2 className="w-4 h-4" />
@@ -315,13 +315,13 @@ fbq('track', 'PageView');
           className={`flex items-center gap-2 px-5 py-3 rounded-t-2xl font-bold text-sm transition-all ${
             activeTab === 'stream'
               ? 'bg-brand-primary text-white border-t-2 border-brand-primary shadow-lg shadow-brand-primary/20'
-              : 'text-gray-400 hover:text-white hover:bg-white/5'
+              : 'text-gray-400 hover:text-white hover:bg-white dark:bg-[#1f1f1f]/5'
           }`}
         >
           <Activity className="w-4 h-4" />
           Journal Événements Temps Réel
           {analytics?.recentEvents && (
-            <span className="bg-white/20 text-white text-xs px-2 py-0.5 rounded-full font-mono">
+            <span className="bg-white dark:bg-[#1f1f1f]/20 text-white text-xs px-2 py-0.5 rounded-full font-mono">
               {analytics.recentEvents.length}
             </span>
           )}
@@ -332,7 +332,7 @@ fbq('track', 'PageView');
           className={`flex items-center gap-2 px-5 py-3 rounded-t-2xl font-bold text-sm transition-all ${
             activeTab === 'leads'
               ? 'bg-brand-primary text-white border-t-2 border-brand-primary shadow-lg shadow-brand-primary/20'
-              : 'text-gray-400 hover:text-white hover:bg-white/5'
+              : 'text-gray-400 hover:text-white hover:bg-white dark:bg-[#1f1f1f]/5'
           }`}
         >
           <UserPlus className="w-4 h-4 text-emerald-400" />
@@ -344,7 +344,7 @@ fbq('track', 'PageView');
           className={`flex items-center gap-2 px-5 py-3 rounded-t-2xl font-bold text-sm transition-all ${
             activeTab === 'config'
               ? 'bg-brand-primary text-white border-t-2 border-brand-primary shadow-lg shadow-brand-primary/20'
-              : 'text-gray-400 hover:text-white hover:bg-white/5'
+              : 'text-gray-400 hover:text-white hover:bg-white dark:bg-[#1f1f1f]/5'
           }`}
         >
           <Sliders className="w-4 h-4" />
@@ -356,7 +356,7 @@ fbq('track', 'PageView');
           className={`flex items-center gap-2 px-5 py-3 rounded-t-2xl font-bold text-sm transition-all ${
             activeTab === 'test'
               ? 'bg-brand-primary text-white border-t-2 border-brand-primary shadow-lg shadow-brand-primary/20'
-              : 'text-gray-400 hover:text-white hover:bg-white/5'
+              : 'text-gray-400 hover:text-white hover:bg-white dark:bg-[#1f1f1f]/5'
           }`}
         >
           <Zap className="w-4 h-4" />
@@ -429,7 +429,7 @@ fbq('track', 'PageView');
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 relative">
               {/* Étape 1 */}
-              <div className="bg-white/5 p-5 rounded-2xl border border-white/10 flex flex-col justify-between space-y-4">
+              <div className="bg-white dark:bg-[#1f1f1f]/5 p-5 rounded-2xl border border-white/10 flex flex-col justify-between space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-gray-400 uppercase">Étape 1</span>
                   <Eye className="w-5 h-5 text-blue-400" />
@@ -438,13 +438,13 @@ fbq('track', 'PageView');
                   <div className="text-xs font-bold text-gray-300">Visites de Pages (PageView)</div>
                   <div className="text-2xl font-black text-white mt-1">{analytics?.funnel.pageViews || 0}</div>
                 </div>
-                <div className="text-[11px] text-gray-400 bg-white/5 p-2 rounded-xl">
+                <div className="text-[11px] text-gray-400 bg-white dark:bg-[#1f1f1f]/5 p-2 rounded-xl">
                   Redirection initiale depuis les publicités Facebook
                 </div>
               </div>
 
               {/* Étape 2 */}
-              <div className="bg-white/5 p-5 rounded-2xl border border-amber-500/20 flex flex-col justify-between space-y-4">
+              <div className="bg-white dark:bg-[#1f1f1f]/5 p-5 rounded-2xl border border-amber-500/20 flex flex-col justify-between space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-amber-400 uppercase">Étape 2</span>
                   <Users className="w-5 h-5 text-amber-400" />
@@ -459,7 +459,7 @@ fbq('track', 'PageView');
               </div>
 
               {/* Étape 3 */}
-              <div className="bg-white/5 p-5 rounded-2xl border border-emerald-500/20 flex flex-col justify-between space-y-4">
+              <div className="bg-white dark:bg-[#1f1f1f]/5 p-5 rounded-2xl border border-emerald-500/20 flex flex-col justify-between space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-emerald-400 uppercase">Étape 3</span>
                   <ShieldCheck className="w-5 h-5 text-emerald-400" />
@@ -474,7 +474,7 @@ fbq('track', 'PageView');
               </div>
 
               {/* Étape 4 */}
-              <div className="bg-white/5 p-5 rounded-2xl border border-purple-500/20 flex flex-col justify-between space-y-4">
+              <div className="bg-white dark:bg-[#1f1f1f]/5 p-5 rounded-2xl border border-purple-500/20 flex flex-col justify-between space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-purple-400 uppercase">Étape 4</span>
                   <CreditCard className="w-5 h-5 text-purple-400" />
@@ -500,16 +500,16 @@ fbq('track', 'PageView');
               </h3>
 
               {Object.keys(analytics?.campaignBreakdown || {}).length === 0 ? (
-                <div className="text-center py-8 text-xs text-gray-400 bg-white/5 rounded-2xl border border-dashed border-white/10">
+                <div className="text-center py-8 text-xs text-gray-400 bg-white dark:bg-[#1f1f1f]/5 rounded-2xl border border-dashed border-white/10">
                   Aucune donnée de campagne UTM enregistrée pour le moment.
-                  <p className="mt-1 text-[11px] text-gray-500">
+                  <p className="mt-1 text-[11px] text-gray-500 dark:text-gray-400">
                     Ajoutez `?utm_campaign=NomDeVotrePub` aux liens de vos publicités Facebook.
                   </p>
                 </div>
               ) : (
                 <div className="space-y-3">
                   {Object.entries(analytics?.campaignBreakdown || {}).map(([campaign, count]) => (
-                    <div key={campaign} className="flex items-center justify-between bg-white/5 p-3.5 rounded-xl border border-white/5">
+                    <div key={campaign} className="flex items-center justify-between bg-white dark:bg-[#1f1f1f]/5 p-3.5 rounded-xl border border-white/5">
                       <span className="text-xs font-bold text-gray-200 font-mono">{campaign}</span>
                       <span className="text-xs font-black text-brand-primary bg-brand-primary/10 px-3 py-1 rounded-full border border-brand-primary/20">
                         {count} événements
@@ -528,18 +528,18 @@ fbq('track', 'PageView');
               </h3>
 
               {Object.keys(analytics?.eventBreakdown || {}).length === 0 ? (
-                <div className="text-center py-8 text-xs text-gray-400 bg-white/5 rounded-2xl border border-dashed border-white/10">
+                <div className="text-center py-8 text-xs text-gray-400 bg-white dark:bg-[#1f1f1f]/5 rounded-2xl border border-dashed border-white/10">
                   Aucun événement enregistré.
                 </div>
               ) : (
                 <div className="space-y-3">
                   {Object.entries(analytics?.eventBreakdown || {}).map(([event, count]) => (
-                    <div key={event} className="flex items-center justify-between bg-white/5 p-3.5 rounded-xl border border-white/5">
+                    <div key={event} className="flex items-center justify-between bg-white dark:bg-[#1f1f1f]/5 p-3.5 rounded-xl border border-white/5">
                       <div className="flex items-center gap-2">
                         <span className="w-2 h-2 rounded-full bg-emerald-400" />
                         <span className="text-xs font-bold text-white">{event}</span>
                       </div>
-                      <span className="text-xs font-bold text-gray-300 font-mono bg-white/10 px-3 py-1 rounded-full">
+                      <span className="text-xs font-bold text-gray-300 font-mono bg-white dark:bg-[#1f1f1f]/10 px-3 py-1 rounded-full">
                         {count} fois
                       </span>
                     </div>
@@ -572,7 +572,7 @@ fbq('track', 'PageView');
                   placeholder="Rechercher Nom, Tél, Email, UTM..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="bg-white/5 border border-white/10 rounded-xl pl-9 pr-4 py-2 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-brand-primary w-48 md:w-64"
+                  className="bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl pl-9 pr-4 py-2 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-brand-primary w-48 md:w-64"
                 />
               </div>
 
@@ -595,7 +595,7 @@ fbq('track', 'PageView');
           {/* Tableau du stream */}
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs text-gray-300">
-              <thead className="bg-white/5 text-gray-400 uppercase text-[10px] tracking-wider font-bold">
+              <thead className="bg-white dark:bg-[#1f1f1f]/5 text-gray-400 uppercase text-[10px] tracking-wider font-bold">
                 <tr>
                   <th className="py-3 px-4 rounded-l-xl">Date & Heure</th>
                   <th className="py-3 px-4">Événement</th>
@@ -608,7 +608,7 @@ fbq('track', 'PageView');
               <tbody className="divide-y divide-white/5 font-mono">
                 {paginatedEvents.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="py-8 text-center text-gray-500 italic">
+                    <td colSpan={6} className="py-8 text-center text-gray-500 dark:text-gray-400 italic">
                       Aucun événement correspondant aux critères.
                     </td>
                   </tr>
@@ -618,12 +618,12 @@ fbq('track', 'PageView');
                     const hasContact = cData.name || cData.email || cData.phone || cData.companyName;
 
                     return (
-                      <tr key={ev.id} className="hover:bg-white/5 transition-colors">
+                      <tr key={ev.id} className="hover:bg-white dark:bg-[#1f1f1f]/5 transition-colors">
                         <td className="py-3 px-4 text-gray-400">
                           {new Date(ev.createdAt).toLocaleString('fr-FR')}
                         </td>
                         <td className="py-3 px-4">
-                          <span className="font-bold text-white bg-white/10 px-2.5 py-1 rounded-lg">
+                          <span className="font-bold text-white bg-white dark:bg-[#1f1f1f]/10 px-2.5 py-1 rounded-lg">
                             {ev.eventName}
                           </span>
                         </td>
@@ -653,7 +653,7 @@ fbq('track', 'PageView');
                               </div>
                             </div>
                           ) : (
-                            <span className="text-gray-500 italic text-[11px]">Visiteur Anonyme</span>
+                            <span className="text-gray-500 dark:text-gray-400 italic text-[11px]">Visiteur Anonyme</span>
                           )}
                         </td>
                         <td className="py-3 px-4 text-brand-primary font-semibold">
@@ -698,7 +698,7 @@ fbq('track', 'PageView');
               <button
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
-                className="flex items-center gap-1 bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl text-white font-bold disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white/10 transition-all cursor-pointer"
+                className="flex items-center gap-1 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 px-3 py-1.5 rounded-xl text-white font-bold disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white dark:bg-[#1f1f1f]/10 transition-all cursor-pointer"
               >
                 <ChevronLeft className="w-4 h-4" />
                 Précédent
@@ -711,7 +711,7 @@ fbq('track', 'PageView');
               <button
                 onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
                 disabled={currentPage >= totalPages}
-                className="flex items-center gap-1 bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl text-white font-bold disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white/10 transition-all cursor-pointer"
+                className="flex items-center gap-1 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 px-3 py-1.5 rounded-xl text-white font-bold disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white dark:bg-[#1f1f1f]/10 transition-all cursor-pointer"
               >
                 Suivant
                 <ChevronRight className="w-4 h-4" />
@@ -753,9 +753,9 @@ fbq('track', 'PageView');
                   value={configForm.pixelId}
                   onChange={(e) => setConfigForm({ ...configForm, pixelId: e.target.value })}
                   placeholder="ex: 3595484767284161"
-                  className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white font-mono focus:outline-none focus:border-brand-primary"
+                  className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white font-mono focus:outline-none focus:border-brand-primary"
                 />
-                <p className="text-[11px] text-gray-500 mt-1">
+                <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-1">
                   Identifiant unique fourni par votre Gestionnaire de Publicités Meta.
                 </p>
               </div>
@@ -770,9 +770,9 @@ fbq('track', 'PageView');
                   value={configForm.conversionsApiToken || ''}
                   onChange={(e) => setConfigForm({ ...configForm, conversionsApiToken: e.target.value })}
                   placeholder="EAA..."
-                  className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-xs text-white font-mono focus:outline-none focus:border-brand-primary"
+                  className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-2xl px-4 py-3 text-xs text-white font-mono focus:outline-none focus:border-brand-primary"
                 />
-                <p className="text-[11px] text-gray-500 mt-1">
+                <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-1">
                   Permet le suivi côté serveur en contournant les bloqueurs de publicité (AdBlockers / iOS Safari).
                 </p>
               </div>
@@ -787,7 +787,7 @@ fbq('track', 'PageView');
                   value={configForm.testEventCode || ''}
                   onChange={(e) => setConfigForm({ ...configForm, testEventCode: e.target.value })}
                   placeholder="ex: TEST12345"
-                  className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white font-mono focus:outline-none focus:border-brand-primary"
+                  className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white font-mono focus:outline-none focus:border-brand-primary"
                 />
               </div>
 
@@ -795,7 +795,7 @@ fbq('track', 'PageView');
               <div className="pt-4 border-t border-white/10 space-y-4">
                 <h4 className="text-xs font-bold text-gray-300 uppercase">Options de suivi</h4>
 
-                <label className="flex items-center justify-between p-3.5 bg-white/5 rounded-2xl cursor-pointer hover:bg-white/10 transition border border-white/5">
+                <label className="flex items-center justify-between p-3.5 bg-white dark:bg-[#1f1f1f]/5 rounded-2xl cursor-pointer hover:bg-white dark:bg-[#1f1f1f]/10 transition border border-white/5">
                   <span className="text-xs font-bold text-white">Activer le Pixel Meta Global</span>
                   <input
                     type="checkbox"
@@ -805,7 +805,7 @@ fbq('track', 'PageView');
                   />
                 </label>
 
-                <label className="flex items-center justify-between p-3.5 bg-white/5 rounded-2xl cursor-pointer hover:bg-white/10 transition border border-white/5">
+                <label className="flex items-center justify-between p-3.5 bg-white dark:bg-[#1f1f1f]/5 rounded-2xl cursor-pointer hover:bg-white dark:bg-[#1f1f1f]/10 transition border border-white/5">
                   <span className="text-xs font-bold text-white">Activer l'API Conversions Serveur (CAPI)</span>
                   <input
                     type="checkbox"
@@ -815,7 +815,7 @@ fbq('track', 'PageView');
                   />
                 </label>
 
-                <label className="flex items-center justify-between p-3.5 bg-white/5 rounded-2xl cursor-pointer hover:bg-white/10 transition border border-white/5">
+                <label className="flex items-center justify-between p-3.5 bg-white dark:bg-[#1f1f1f]/5 rounded-2xl cursor-pointer hover:bg-white dark:bg-[#1f1f1f]/10 transition border border-white/5">
                   <span className="text-xs font-bold text-white">Suivre automatiquement les visites de page (PageView)</span>
                   <input
                     type="checkbox"
@@ -854,7 +854,7 @@ fbq('track', 'PageView');
               </pre>
               <button
                 onClick={handleCopySnippet}
-                className="absolute top-2 right-2 p-2 bg-white/10 hover:bg-white/20 text-white rounded-xl text-xs flex items-center gap-1 font-semibold border border-white/10"
+                className="absolute top-2 right-2 p-2 bg-white dark:bg-[#1f1f1f]/10 hover:bg-white dark:bg-[#1f1f1f]/20 text-white rounded-xl text-xs flex items-center gap-1 font-semibold border border-white/10"
               >
                 {copiedSnippet ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
                 {copiedSnippet ? 'Copié !' : 'Copier'}
@@ -883,7 +883,7 @@ fbq('track', 'PageView');
               <select
                 value={testEventName}
                 onChange={(e) => setTestEventName(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white focus:outline-none focus:border-brand-primary"
+                className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white focus:outline-none focus:border-brand-primary"
               >
                 <option value="PageView">PageView (Visite de page)</option>
                 <option value="Lead">Lead (Prospect formulaire)</option>
@@ -900,7 +900,7 @@ fbq('track', 'PageView');
                 placeholder="ex: TEST98765"
                 value={customTestCode}
                 onChange={(e) => setCustomTestCode(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white font-mono focus:outline-none focus:border-brand-primary"
+                className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white font-mono focus:outline-none focus:border-brand-primary"
               />
             </div>
 
@@ -948,7 +948,7 @@ fbq('track', 'PageView');
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-              <div className="bg-white/5 p-4 rounded-2xl border border-white/10 space-y-2">
+              <div className="bg-white dark:bg-[#1f1f1f]/5 p-4 rounded-2xl border border-white/10 space-y-2">
                 <div className="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
                   <Link2 className="w-4 h-4 text-brand-primary" />
                   URL du Webhook Meta Lead Ads
@@ -958,7 +958,7 @@ fbq('track', 'PageView');
                 </div>
               </div>
 
-              <div className="bg-white/5 p-4 rounded-2xl border border-white/10 space-y-2">
+              <div className="bg-white dark:bg-[#1f1f1f]/5 p-4 rounded-2xl border border-white/10 space-y-2">
                 <div className="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
                   <ShieldCheck className="w-4 h-4 text-blue-400" />
                   Jeton de Vérification (Verify Token)
@@ -1004,7 +1004,7 @@ fbq('track', 'PageView');
                     placeholder="ex: Jean Koffi"
                     value={simLead.name}
                     onChange={(e) => setSimLead({ ...simLead, name: e.target.value })}
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-primary"
+                    className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-primary"
                   />
                 </div>
 
@@ -1016,7 +1016,7 @@ fbq('track', 'PageView');
                     placeholder="ex: Société Abidjan Transport"
                     value={simLead.companyName}
                     onChange={(e) => setSimLead({ ...simLead, companyName: e.target.value })}
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-primary"
+                    className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-primary"
                   />
                 </div>
 
@@ -1028,7 +1028,7 @@ fbq('track', 'PageView');
                     placeholder="ex: 0708091011"
                     value={simLead.phone}
                     onChange={(e) => setSimLead({ ...simLead, phone: e.target.value })}
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-primary font-mono"
+                    className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-primary font-mono"
                   />
                 </div>
 
@@ -1040,7 +1040,7 @@ fbq('track', 'PageView');
                     placeholder="ex: jean.koffi@gmail.com"
                     value={simLead.email}
                     onChange={(e) => setSimLead({ ...simLead, email: e.target.value })}
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-primary font-mono"
+                    className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-primary font-mono"
                   />
                 </div>
               </div>
@@ -1051,7 +1051,7 @@ fbq('track', 'PageView');
                   type="text"
                   value={simLead.adName}
                   onChange={(e) => setSimLead({ ...simLead, adName: e.target.value })}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-primary"
+                  className="w-full bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-primary"
                 />
               </div>
 
