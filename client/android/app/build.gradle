@@ -52,3 +52,23 @@ try {
 } catch(Exception e) {
     logger.info("google-services.json not found, google-services plugin not applied. Push Notifications won't work")
 }
+
+// Snyk Security Fix: Force secure versions for transitive dependencies
+configurations.all {
+    resolutionStrategy {
+        eachDependency { DependencyResolveDetails details ->
+            if (details.requested.group == 'com.google.protobuf' && details.requested.name == 'protobuf-java') {
+                details.useVersion '3.25.1'
+                details.because 'Snyk vulnerability fix'
+            }
+            if (details.requested.group == 'io.netty') {
+                details.useVersion '4.1.104.Final'
+                details.because 'Snyk vulnerability fix'
+            }
+            if (details.requested.group == 'commons-io' && details.requested.name == 'commons-io') {
+                details.useVersion '2.14.0'
+                details.because 'Snyk vulnerability fix'
+            }
+        }
+    }
+}

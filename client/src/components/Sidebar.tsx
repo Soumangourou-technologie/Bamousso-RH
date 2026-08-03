@@ -5,7 +5,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
   Building2, LayoutDashboard, LogOut, Moon, Sun, Users, Layers, X, 
   Calendar, Clock, FileText, Megaphone, Settings as SettingsIcon,
-  ListTodo, Banknote, MessageCircle, MessageSquare, FileWarning, BarChart3, Shield, UserPlus, LifeBuoy, Truck, Target, Wallet
+  ListTodo, Banknote, MessageCircle, MessageSquare, FileWarning, BarChart3, Shield, UserPlus, LifeBuoy, Truck, Target, Wallet, ShoppingCart, Package, History
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
@@ -290,6 +290,24 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
               <UserPlus className="w-5 h-5" />
               Enregistrement Client
             </Link>
+          )}
+
+          {/* Module Ventes & Facturation (Admin, Commercial, Vendeur) */}
+          {!isSuperAdmin && (user.role === 'COMPANY_ADMIN' || isCommercial || user.role === 'VENDEUR') && (
+            <>
+              <Link to="/sales/products" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/sales/products' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
+                <Package className="w-5 h-5" />
+                Catalogue
+              </Link>
+              <Link to="/sales/pos" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/sales/pos' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
+                <ShoppingCart className="w-5 h-5" />
+                Caisse (POS)
+              </Link>
+              <Link to="/sales/history" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/sales/history' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
+                <History className="w-5 h-5" />
+                Historique Ventes
+              </Link>
+            </>
           )}
 
           {/* Admin/HR: Vue Clients Commerciaux */}

@@ -44,6 +44,9 @@ import Upgrade from './pages/Upgrade';
 import Missions from './pages/Missions';
 import WorkSchedules from './pages/WorkSchedules';
 import Accounting from './pages/Accounting';
+import ProductsManager from './pages/sales/ProductsManager';
+import PointOfSale from './pages/sales/PointOfSale';
+import SalesHistory from './pages/sales/SalesHistory';
 
 import { NotificationProvider } from './context/NotificationContext';
 
@@ -140,6 +143,13 @@ function App() {
                   {/* Module Évolution d'offre / Upgrade */}
                   <Route element={<ProtectedRoute allowedRoles={['COMPANY_ADMIN']} />}>
                     <Route path="/upgrade-plan" element={<Upgrade />} />
+                  </Route>
+
+                  {/* Module Ventes (POS) */}
+                  <Route element={<ProtectedRoute allowedRoles={['COMPANY_ADMIN', 'COMMERCIAL', 'VENDEUR']} />}>
+                    <Route path="/sales/products" element={<ProductsManager />} />
+                    <Route path="/sales/pos" element={<PointOfSale />} />
+                    <Route path="/sales/history" element={<SalesHistory />} />
                   </Route>
 
                   {/* Module Support Client */}

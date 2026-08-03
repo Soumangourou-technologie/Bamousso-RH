@@ -58,6 +58,10 @@ model Company {
   // Relations avec le Support Client
   supportTickets  SupportTicket[]
   supportChatRoom SupportChatRoom?
+  
+  // Ventes & POS
+  products        Product[]
+  saleInvoices    SaleInvoice[]
 }
 
 /// Modèle Cas Disciplinaire (Conflit)
@@ -188,6 +192,9 @@ model User {
   createdSupportTickets SupportTicket[]        @relation("TicketCreator")
   ticketMessages        SupportTicketMessage[] @relation("TicketMessageSender")
   supportChatMessages   SupportChatMessage[]   @relation("SupportChatMessageSender")
+
+  // Ventes & POS
+  sales                 SaleInvoice[]          @relation("CashierSales")
 }
 
 model Suggestion {
@@ -770,5 +777,76 @@ model MetaPixelEvent {
   status       String   @default("SUCCESS") // SUCCESS | TEST | FAILED
   capiResponse Json?    // Réponse de l'API Meta Conversions
   createdAt    DateTime @default(now())
+}
+
+// ==========================================
+// --- MODULE VENTES & FACTURATION (POS)  ---
+// ==========================================
+
+/// Modèle Article / Produit (Catalogue)
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  price       Float
+  vatRate     Float    @default(0) // Taux de TVA en pourcentage (ex: 18)
+  stock       Int?     // Quantité en stock (Optionnel)
+  
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  
+  saleItems   SaleItem[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([companyId])
+}
+
+/// Modèle Facture de Vente
+model SaleInvoice {
+  id              String   @id @default(uuid())
+  invoiceNumber   String   // Numéro de facture (ex: FAC-2026-001)
+  clientName      String?
+  clientPhone     String?  // Numéro WhatsApp
+  
+  totalHT         Float
+  totalVAT        Float
+  totalTTC        Float
+  paymentMethod   String   @default("CASH") // CASH, MOBILE_MONEY, BANK_TRANSFER, CARD
+  status          String   @default("PAID") // PAID, PENDING, CANCELLED
+  pdfUrl          String?  // Lien vers le PDF généré
+  
+  // Relations
+  companyId       String
+  company         Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  
+  cashierId       String
+  cashier         User     @relation("CashierSales", fields: [cashierId], references: [id])
+  
+  // Ligne de trésorerie associée dans la comptabilité (optionnelle car on ne l'a pas encore définie dans CompanyTransaction relation de retour, on utilise reference dans transaction)
+  transactionRef  String?  // Pour faire le lien direct
+  
+  items           SaleItem[]
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([companyId])
+}
+
+/// Modèle Ligne de Vente (Article facturé)
+model SaleItem {
+  id            String   @id @default(uuid())
+  quantity      Int
+  unitPrice     Float    // Prix au moment de la vente
+  vatRate       Float    // Taux de TVA appliqué
+  totalLineTTC  Float    // (unitPrice * quantity) + TVA
+  
+  productId     String?
+  product       Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  
+  saleInvoiceId String
+  saleInvoice   SaleInvoice @relation(fields: [saleInvoiceId], references: [id], onDelete: Cascade)
 }
 
