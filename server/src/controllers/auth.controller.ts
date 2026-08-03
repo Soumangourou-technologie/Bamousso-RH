@@ -255,6 +255,7 @@ export const login = catchAsync(async (req: Request, res: Response, next: NextFu
     company: user.company ? {
       id: user.company.id,
       name: user.company.name,
+      logoUrl: user.company.logoUrl,
       plan: (user.company as any).plan,
       billingCycle: (user.company as any).billingCycle,
       isLocked: (user.company as any).isLocked,
@@ -321,6 +322,7 @@ export const getCurrentUser = catchAsync(async (req: any, res: Response) => {
     company: user.company ? {
       id: user.company.id,
       name: user.company.name,
+      logoUrl: user.company.logoUrl,
       plan: (user.company as any).plan,
       billingCycle: (user.company as any).billingCycle,
       isActive: user.company.isActive,
