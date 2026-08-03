@@ -103,7 +103,7 @@ const DashboardHR = () => {
   const baseModules = [
     { name: 'Annuaire', desc: 'Gestion des talents', icon: Users, path: '/employees', color: 'bg-blue-500' },
     { name: 'Organisation', desc: 'Départements', icon: Layers, path: '/departments', color: 'bg-indigo-500' },
-    { name: 'Temps & Présences', desc: 'Validation des pointages', icon: Clock, path: '/attendance', color: 'bg-green-50 dark:bg-green-500/100' },
+    { name: 'Temps & Présences', desc: 'Validation des pointages', icon: Clock, path: '/attendance', color: 'bg-green-500' },
     { name: 'Absences', desc: 'Validation des congés', icon: Calendar, path: '/leaves', color: 'bg-yellow-500' },
     { name: 'Coffre-fort RH', desc: 'Partage de documents', icon: FileText, path: '/documents', color: 'bg-purple-500' },
     { name: 'Communication', desc: 'Publier une annonce', icon: Megaphone, path: '/announcements', color: 'bg-orange-500' },

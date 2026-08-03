@@ -134,7 +134,7 @@ const DashboardAdmin = () => {
     { name: 'Annuaire',      desc: 'Gérer les employés',           icon: Users,         path: '/employees',    color: 'bg-blue-500',   feature: 'employees',   stat: `${stats.employees}${maxEmp ? ' / ' + maxEmp : ' / Illimité'} employés` },
     { name: 'Départements',  desc: 'Structure de l\'entreprise',   icon: Layers,        path: '/departments',  color: 'bg-indigo-500', feature: 'departments', stat: `${stats.departments} départements` },
     { name: 'Rôles & Permissions', desc: 'Définir les accès',       icon: Shield,        path: '/roles',        color: 'bg-blue-500',   feature: 'roles' },
-    { name: 'Pointage',      desc: 'Suivi du temps',               icon: Clock,         path: '/attendance',   color: 'bg-green-50 dark:bg-green-500/100',  feature: 'attendance' },
+    { name: 'Pointage',      desc: 'Suivi du temps',               icon: Clock,         path: '/attendance',   color: 'bg-green-500',  feature: 'attendance' },
     { name: 'Congés',        desc: 'Demandes & Absences',          icon: Calendar,      path: '/leaves',       color: 'bg-yellow-500', feature: 'leaves' },
     { name: 'Tâches',        desc: 'Organisation quotidienne',    icon: Zap,           path: '/tasks',        color: 'bg-amber-500',  feature: 'tasks' },
     { name: 'Documents',     desc: 'Fiches de paie & Contrats',    icon: FileText,      path: '/documents',    color: 'bg-purple-500', feature: 'documents' },
