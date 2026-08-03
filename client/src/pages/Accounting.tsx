@@ -123,7 +123,7 @@ const Accounting = () => {
           <p className="text-gray-400 font-medium mt-1">Suivi de trésorerie et notes de frais</p>
         </div>
         <div className="flex items-center gap-3">
-          <button onClick={handleExport} className="bg-white dark:bg-[#1f1f1f]/10 text-white px-6 py-3 rounded-xl font-black text-sm uppercase tracking-widest border border-white/20 hover:bg-white dark:bg-[#1f1f1f]/20 flex items-center gap-2 transition-all">
+          <button onClick={handleExport} className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-6 py-3 rounded-xl font-black text-sm uppercase tracking-widest border border-gray-200 dark:border-white/20 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2 transition-all">
             <Download className="w-4 h-4" />
             Export Excel
           </button>
