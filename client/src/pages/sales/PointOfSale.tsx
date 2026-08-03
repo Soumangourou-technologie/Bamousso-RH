@@ -179,7 +179,7 @@ const PointOfSale = () => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Rechercher un produit..."
-            className="w-full pl-11 pr-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#ff5722] focus:border-transparent outline-none transition-all shadow-sm"
+            className="w-full pl-11 pr-4 py-3 bg-white text-gray-900 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#ff5722] focus:border-transparent outline-none transition-all shadow-sm"
           />
         </div>
 
@@ -228,7 +228,7 @@ const PointOfSale = () => {
               placeholder="Nom du Client (Optionnel)"
               value={clientName}
               onChange={e => setClientName(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 text-sm bg-white border border-gray-200 rounded-lg outline-none focus:border-[#ff5722]"
+              className="w-full pl-9 pr-3 py-2 text-sm bg-white text-gray-900 border border-gray-200 rounded-lg outline-none focus:border-[#ff5722]"
             />
           </div>
           <div className="relative">
@@ -238,7 +238,7 @@ const PointOfSale = () => {
               placeholder="Téléphone WhatsApp (Optionnel)"
               value={clientPhone}
               onChange={e => setClientPhone(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 text-sm bg-white border border-gray-200 rounded-lg outline-none focus:border-[#ff5722]"
+              className="w-full pl-9 pr-3 py-2 text-sm bg-white text-gray-900 border border-gray-200 rounded-lg outline-none focus:border-[#ff5722]"
             />
           </div>
         </div>
@@ -299,7 +299,7 @@ const PointOfSale = () => {
             <select 
               value={paymentMethod}
               onChange={e => setPaymentMethod(e.target.value)}
-              className="w-full p-2.5 text-sm bg-gray-50 border border-gray-200 rounded-lg outline-none focus:border-[#ff5722]"
+              className="w-full p-2.5 text-sm bg-gray-50 text-gray-900 border border-gray-200 rounded-lg outline-none focus:border-[#ff5722]"
             >
               <option value="CASH">Espèces (Cash)</option>
               <option value="MOBILE_MONEY">Mobile Money (Orange/Wave...)</option>

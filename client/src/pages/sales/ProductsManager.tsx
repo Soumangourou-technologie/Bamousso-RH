@@ -199,7 +199,7 @@ const ProductsManager = () => {
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#ff5722] focus:border-transparent transition-all outline-none"
+                    className="w-full pl-10 pr-4 py-3 bg-gray-50 text-gray-900 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#ff5722] focus:border-transparent transition-all outline-none"
                     placeholder="Ex: Clavier Sans Fil"
                   />
                 </div>
@@ -216,7 +216,7 @@ const ProductsManager = () => {
                     min="0"
                     value={formData.price}
                     onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                    className="w-full pl-4 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#ff5722] focus:border-transparent transition-all outline-none"
+                    className="w-full pl-4 pr-12 py-3 bg-gray-50 text-gray-900 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#ff5722] focus:border-transparent transition-all outline-none"
                     placeholder="15000"
                   />
                   <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-gray-400 font-medium">
@@ -240,7 +240,7 @@ const ProductsManager = () => {
                       max="100"
                       value={formData.vatRate}
                       onChange={(e) => setFormData({ ...formData, vatRate: e.target.value })}
-                      className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#ff5722] focus:border-transparent transition-all outline-none"
+                      className="w-full pl-10 pr-4 py-3 bg-gray-50 text-gray-900 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#ff5722] focus:border-transparent transition-all outline-none"
                     />
                   </div>
                 </div>
@@ -258,7 +258,7 @@ const ProductsManager = () => {
                       min="0"
                       value={formData.stock}
                       onChange={(e) => setFormData({ ...formData, stock: e.target.value })}
-                      className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#ff5722] focus:border-transparent transition-all outline-none"
+                      className="w-full pl-10 pr-4 py-3 bg-gray-50 text-gray-900 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#ff5722] focus:border-transparent transition-all outline-none"
                       placeholder="Qté"
                     />
                   </div>
@@ -273,7 +273,7 @@ const ProductsManager = () => {
                   rows={2}
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#ff5722] focus:border-transparent transition-all outline-none resize-none"
+                  className="w-full p-4 bg-gray-50 text-gray-900 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#ff5722] focus:border-transparent transition-all outline-none resize-none"
                   placeholder="Détails supplémentaires..."
                 />
               </div>
