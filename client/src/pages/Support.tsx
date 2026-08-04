@@ -314,7 +314,7 @@ function FitiniTicketsDashboard() {
 
         {/* DISCUSSION DE TICKET SÉLECTIONNÉ */}
         {selectedTicket && (
-          <div className="lg:col-span-7 col-span-12 flex flex-col h-125 md:h-150 glass-card rounded-3xl overflow-hidden border border-brand-primary/20 bg-[#1a0f0a]/90">
+          <div className="lg:col-span-7 col-span-12 flex flex-col h-125 md:h-150 glass-card rounded-3xl overflow-hidden border border-brand-primary/20 bg-white/90 dark:bg-[#1a0f0a]/90">
             {/* Header de Discussion */}
             <div className="p-5 border-b border-white/5 flex items-center justify-between bg-white dark:bg-[#1f1f1f]/5">
               <div className="flex flex-col gap-0.5">
@@ -376,7 +376,7 @@ function FitiniTicketsDashboard() {
             </div>
 
             {/* Input Réponse */}
-            <form onSubmit={handleSendReply} className="p-4 border-t border-white/5 bg-[#1a0f0a]/50">
+            <form onSubmit={handleSendReply} className="p-4 border-t border-black/5 dark:border-white/5 bg-gray-50/50 dark:bg-[#1a0f0a]/50">
               <div className="relative flex items-center gap-3 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 focus-within:border-brand-primary/50 focus-within:bg-white dark:bg-[#1f1f1f]/10 transition-all rounded-2xl p-2 pr-3">
                 <textarea
                   value={replyText}
@@ -421,7 +421,7 @@ function FitiniTicketsDashboard() {
               initial={{ scale: 0.9, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              className="w-full max-w-lg glass-card rounded-3xl md:rounded-4xl p-4 md:p-6 border border-white/10 overflow-hidden z-10 relative flex flex-col gap-4 bg-[#1a0f0a]"
+              className="w-full max-w-lg glass-card rounded-3xl md:rounded-4xl p-4 md:p-6 border border-black/10 dark:border-white/10 overflow-hidden z-10 relative flex flex-col gap-4 bg-white dark:bg-[#1a0f0a]"
             >
               <div className="flex items-center justify-between border-b border-white/5 pb-4">
                 <div className="flex items-center gap-2">
@@ -593,7 +593,7 @@ function PremiumChatDashboard() {
       </div>
 
       {/* Interface Principale */}
-      <div className="flex-1 flex flex-col glass-card rounded-3xl md:rounded-4xl border border-brand-primary/15 overflow-hidden bg-[#1a0f0a]/95 shadow-2xl">
+      <div className="flex-1 flex flex-col glass-card rounded-3xl md:rounded-4xl border border-brand-primary/15 overflow-hidden bg-white/95 dark:bg-[#1a0f0a]/95 shadow-2xl">
         
         {/* Messages Area */}
         <div className="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar bg-white dark:bg-[#1f1f1f]/1">
@@ -879,7 +879,7 @@ function SuperAdminDashboard() {
         {/* CONSOLE CHAT */}
         {/* ===================================== */}
         {activeTab === 'CHATS' && (
-          <div className="flex-1 flex flex-col md:flex-row rounded-3xl md:rounded-4xl border border-white/10 bg-[#1a0f0a]/95 overflow-hidden shadow-2xl">
+          <div className="flex-1 flex flex-col md:flex-row rounded-3xl md:rounded-4xl border border-black/10 dark:border-white/10 bg-white/95 dark:bg-[#1a0f0a]/95 overflow-hidden shadow-2xl">
             
             {/* Liste des salons (Gauche) */}
             <div className={`${selectedRoom ? 'hidden md:flex' : 'flex'} flex-col w-full md:w-80 border-r border-white/5 bg-black/10 shrink-0`}>
@@ -1016,7 +1016,7 @@ function SuperAdminDashboard() {
         {/* CONSOLE TICKETS */}
         {/* ===================================== */}
         {activeTab === 'TICKETS' && (
-          <div className="flex-1 flex flex-col md:flex-row rounded-3xl md:rounded-4xl border border-white/10 bg-[#1a0f0a]/95 overflow-hidden shadow-2xl">
+          <div className="flex-1 flex flex-col md:flex-row rounded-3xl md:rounded-4xl border border-black/10 dark:border-white/10 bg-white/95 dark:bg-[#1a0f0a]/95 overflow-hidden shadow-2xl">
             {/* Liste tickets */}
             <div className={`${selectedTicket ? 'hidden md:flex' : 'flex'} flex-col w-full md:w-96 border-r border-white/5 bg-black/10 shrink-0`}>
               <div className="p-4 border-b border-white/5 font-black text-xs text-gray-500 dark:text-gray-400 uppercase tracking-widest flex items-center justify-between">
@@ -1089,7 +1089,7 @@ function SuperAdminDashboard() {
                   </div>
 
                   {/* Fil Discussion */}
-                  <div className="flex-1 overflow-y-auto p-5 space-y-4 custom-scrollbar bg-[#1a0f0a]/30">
+                  <div className="flex-1 overflow-y-auto p-5 space-y-4 custom-scrollbar bg-gray-50/30 dark:bg-[#1a0f0a]/30">
                     {ticketMessages.map((m) => {
                       const isSupport = m.sender.role === 'SUPER_ADMIN';
                       return (
@@ -1111,7 +1111,7 @@ function SuperAdminDashboard() {
                   </div>
 
                   {/* Input Réponse */}
-                  <div className="p-4 bg-[#1a0f0a]/50 border-t border-white/5">
+                  <div className="p-4 bg-gray-50/50 dark:bg-[#1a0f0a]/50 border-t border-black/5 dark:border-white/5">
                     <form onSubmit={handleSendTicketReply} className="flex items-center gap-3 bg-white dark:bg-[#1f1f1f]/5 border border-white/10 rounded-2xl p-1.5 pl-3 pr-2">
                       <input
                         type="text"

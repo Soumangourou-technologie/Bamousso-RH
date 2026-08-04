@@ -50,7 +50,7 @@
   /* Bamousso Custom Pattern Background - Premium Implementation */
   .bg-senufo {
     position: relative;
-    background-color: #1a0f0a;
+    background-color: var(--chromatic-surface-base);
   }
   
   .bg-senufo::before {

@@ -110,7 +110,7 @@ const SignaturePad = ({ label, onSignatureChange, disabled = false }: SignatureP
           </button>
         )}
       </div>
-      <div className="relative rounded-2xl overflow-hidden border border-white/10 bg-[#1a0f0a]/30">
+      <div className="relative rounded-2xl overflow-hidden border border-black/10 dark:border-white/10 bg-gray-50/50 dark:bg-[#1a0f0a]/30">
         <canvas
           ref={canvasRef}
           className="w-full cursor-crosshair touch-none"

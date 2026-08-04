@@ -108,10 +108,10 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
       {/* Sidebar principale */}
       <div className={`
-        w-64 bg-[#1a0f0a] text-white h-screen fixed left-0 top-0 flex flex-col z-50 transition-all duration-300 ease-in-out border-r border-white/5 shadow-2xl
+        w-64 bg-white dark:bg-[#1a0f0a] text-gray-900 dark:text-white h-screen fixed left-0 top-0 flex flex-col z-50 transition-all duration-300 ease-in-out border-r border-black/5 dark:border-white/5 shadow-2xl
         ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}>
-        <div className="p-6 border-b border-white/5 flex flex-col gap-1">
+        <div className="p-6 border-b border-black/5 dark:border-white/5 flex flex-col gap-1">
           <div className="flex items-center justify-between">
             <h1 className="text-2xl font-black flex items-center gap-2 tracking-tighter">
               {company?.logoUrl && !isSuperAdmin ? (
@@ -121,7 +121,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                   <Building2 className="w-5 h-5 text-white" />
                 </div>
               )}
-              <span className="text-white">
+              <span className="text-gray-900 dark:text-white">
                 {!isSuperAdmin && company?.name ? company.name : 'BAMOUSSO'}
               </span>
             </h1>
@@ -133,22 +133,22 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
         </div>
 
         <nav className="flex-1 p-4 space-y-2 overflow-y-auto custom-scrollbar">
-          <Link to={dashboardPath} className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === dashboardPath ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
+          <Link to={dashboardPath} className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === dashboardPath ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-black/5 dark:hover:bg-white/5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'}`}>
             <LayoutDashboard className="w-5 h-5" />
             Tableau de bord
           </Link>
 
           {isSuperAdmin && (
             <>
-              <Link to="/dashboard/super-admin/offline" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/dashboard/super-admin/offline' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
+              <Link to="/dashboard/super-admin/offline" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/dashboard/super-admin/offline' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-black/5 dark:hover:bg-white/5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'}`}>
                 <Wallet className="w-5 h-5" />
                 Clients Hors-Ligne
               </Link>
-              <Link to="/dashboard/super-admin/broadcast" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/dashboard/super-admin/broadcast' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
+              <Link to="/dashboard/super-admin/broadcast" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/dashboard/super-admin/broadcast' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-black/5 dark:hover:bg-white/5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'}`}>
                 <Megaphone className="w-5 h-5" />
                 Diffusion & Emails
               </Link>
-              <Link to="/dashboard/super-admin/pixel-analytics" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/dashboard/super-admin/pixel-analytics' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
+              <Link to="/dashboard/super-admin/pixel-analytics" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/dashboard/super-admin/pixel-analytics' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-black/5 dark:hover:bg-white/5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'}`}>
                 <BarChart3 className="w-5 h-5" />
                 Analytique Meta / Pixel
               </Link>
@@ -156,14 +156,14 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           )}
 
           {(isSuperAdmin || user.role === 'COMPANY_ADMIN') && (
-            <Link to="/support" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/support' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
+            <Link to="/support" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/support' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-black/5 dark:hover:bg-white/5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'}`}>
               <LifeBuoy className="w-5 h-5" />
               Support Client
             </Link>
           )}
 
           {isSuperAdmin && (
-            <Link to="/messaging" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/messaging' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
+            <Link to="/messaging" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/messaging' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-black/5 dark:hover:bg-white/5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'}`}>
               <MessageSquare className="w-5 h-5" />
               Messagerie Interne
             </Link>
@@ -171,11 +171,11 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
           {!isSuperAdmin && canManageHr && (
             <>
-              <Link to="/employees" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/employees' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
+              <Link to="/employees" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/employees' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-black/5 dark:hover:bg-white/5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'}`}>
                 <Users className="w-5 h-5" />
                 Employés
               </Link>
-              <Link to="/departments" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/departments' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
+              <Link to="/departments" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/departments' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-black/5 dark:hover:bg-white/5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'}`}>
                 <Layers className="w-5 h-5" />
                 Départements
               </Link>
@@ -184,29 +184,29 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
           {!isSuperAdmin && (
             <>
-              <Link to="/attendance" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/attendance' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
+              <Link to="/attendance" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/attendance' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-black/5 dark:hover:bg-white/5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'}`}>
                 <Clock className="w-5 h-5" />
                 Pointage
               </Link>
 
-              <Link to="/leaves" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/leaves' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
+              <Link to="/leaves" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/leaves' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-black/5 dark:hover:bg-white/5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'}`}>
                 <Calendar className="w-5 h-5" />
                 Congés
               </Link>
 
-              <Link to="/tasks" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/tasks' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
+              <Link to="/tasks" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/tasks' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-black/5 dark:hover:bg-white/5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'}`}>
                 <ListTodo className="w-5 h-5" />
                 Tâches
               </Link>
 
               {(plan === 'LOUBA' || plan === 'KORO') && (
                 <>
-                  <Link to="/messaging" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/messaging' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
+                  <Link to="/messaging" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/messaging' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-black/5 dark:hover:bg-white/5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'}`}>
                     <MessageCircle className="w-5 h-5" />
                     Messagerie
                   </Link>
 
-                  <Link to="/explanations" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/explanations' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
+                  <Link to="/explanations" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/explanations' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-black/5 dark:hover:bg-white/5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'}`}>
                     <FileWarning className="w-5 h-5" />
                     Explications
                     <SidebarBadge count={badgeCounts.explanations} />
@@ -214,7 +214,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                 </>
               )}
 
-              <Link to="/suggestions" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/suggestions' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
+              <Link to="/suggestions" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/suggestions' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-black/5 dark:hover:bg-white/5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'}`}>
                 <MessageSquare className="w-5 h-5" />
                 Suggestions
                 <SidebarBadge count={badgeCounts.suggestions} />
@@ -224,11 +224,11 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                 <>
                   {canManageHr && (
                     <>
-                      <Link to="/salaries" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/salaries' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
+                      <Link to="/salaries" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/salaries' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-black/5 dark:hover:bg-white/5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'}`}>
                         <Banknote className="w-5 h-5" />
                         Salaires
                       </Link>
-                      <Link to="/work-schedules" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/work-schedules' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
+                      <Link to="/work-schedules" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/work-schedules' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-black/5 dark:hover:bg-white/5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'}`}>
                         <Clock className="w-5 h-5" />
                         Horaires de travail
                       </Link>
@@ -236,14 +236,14 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                   )}
 
                   {canManageHr && (
-                    <Link to="/analytics" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/analytics' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
+                    <Link to="/analytics" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/analytics' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-black/5 dark:hover:bg-white/5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'}`}>
                       <BarChart3 className="w-5 h-5" />
                       Analytique
                     </Link>
                   )}
 
                   {!isSuperAdmin && canViewAccounting && (
-                    <Link to="/accounting" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/accounting' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
+                    <Link to="/accounting" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/accounting' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-black/5 dark:hover:bg-white/5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'}`}>
                       <Wallet className="w-5 h-5" />
                       Comptabilité
                     </Link>
@@ -251,7 +251,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                 </>
               )}
 
-              <Link to="/documents" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/documents' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
+              <Link to="/documents" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/documents' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-black/5 dark:hover:bg-white/5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'}`}>
                 <FileText className="w-5 h-5" />
                 Documents
                 <SidebarBadge count={badgeCounts.documents} />
@@ -259,7 +259,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
               <Link
                 to="/announcements"
-                className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/announcements' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}
+                className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/announcements' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-black/5 dark:hover:bg-white/5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'}`}
               >
                 <Megaphone className="w-5 h-5" />
                 Annonces
@@ -270,7 +270,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
           {/* Missions: Livraison (Livreur + Admin/HR) */}
           {!isSuperAdmin && (canManageHr || user.role === 'LIVREUR') && (
-            <Link to="/missions/livraison" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname.startsWith('/missions/livraison') ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
+            <Link to="/missions/livraison" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname.startsWith('/missions/livraison') ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-black/5 dark:hover:bg-white/5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'}`}>
               <Truck className="w-5 h-5" />
               Livraisons
             </Link>
@@ -278,7 +278,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
           {/* Missions: Prospection (Commercial + Admin/HR) */}
           {!isSuperAdmin && (canManageHr || isCommercial) && (
-            <Link to="/missions/prospection" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname.startsWith('/missions/prospection') ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
+            <Link to="/missions/prospection" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname.startsWith('/missions/prospection') ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-black/5 dark:hover:bg-white/5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'}`}>
               <Target className="w-5 h-5" />
               Prospections
             </Link>
@@ -286,7 +286,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
           {/* Commercial: Enregistrement Client */}
           {!isSuperAdmin && isCommercial && (
-            <Link to="/client-registration" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/client-registration' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
+            <Link to="/client-registration" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/client-registration' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-black/5 dark:hover:bg-white/5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'}`}>
               <UserPlus className="w-5 h-5" />
               Enregistrement Client
             </Link>
@@ -295,15 +295,15 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           {/* Module Ventes & Facturation (Admin, Commercial, Vendeur) */}
           {!isSuperAdmin && (user.role === 'COMPANY_ADMIN' || isCommercial || user.role === 'VENDEUR') && (
             <>
-              <Link to="/sales/products" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/sales/products' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
+              <Link to="/sales/products" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/sales/products' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-black/5 dark:hover:bg-white/5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'}`}>
                 <Package className="w-5 h-5" />
                 Catalogue
               </Link>
-              <Link to="/sales/pos" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/sales/pos' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
+              <Link to="/sales/pos" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/sales/pos' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-black/5 dark:hover:bg-white/5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'}`}>
                 <ShoppingCart className="w-5 h-5" />
                 Caisse (POS)
               </Link>
-              <Link to="/sales/history" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/sales/history' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
+              <Link to="/sales/history" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/sales/history' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-black/5 dark:hover:bg-white/5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'}`}>
                 <History className="w-5 h-5" />
                 Historique Ventes
               </Link>
@@ -312,7 +312,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
           {/* Admin/HR: Vue Clients Commerciaux */}
           {!isSuperAdmin && canManageHr && (
-            <Link to="/client-registrations" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/client-registrations' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}>
+            <Link to="/client-registrations" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/client-registrations' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-black/5 dark:hover:bg-white/5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'}`}>
               <UserPlus className="w-5 h-5" />
               Clients Commerciaux
             </Link>
@@ -322,7 +322,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
             <>
               <Link
                 to="/settings"
-                className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/settings' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}
+                className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/settings' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-black/5 dark:hover:bg-white/5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'}`}
               >
                 <SettingsIcon className="w-5 h-5" />
                 Paramètres
@@ -330,7 +330,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
               {user.role === 'COMPANY_ADMIN' && (
                 <Link
                   to="/roles"
-                  className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/roles' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-white/5 text-gray-400 hover:text-white'}`}
+                  className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/roles' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-black/5 dark:hover:bg-white/5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'}`}
                 >
                   <Shield className="w-5 h-5" />
                   Rôles & Permissions
@@ -340,10 +340,10 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           ) : null}
         </nav>
 
-        <div className="p-4 border-t border-white/5 space-y-4">
+        <div className="p-4 border-t border-black/5 dark:border-white/5 space-y-4">
           <button
               onClick={toggleTheme}
-              className="w-full flex items-center justify-center gap-2 p-3 bg-white/5 hover:bg-white/10 text-gray-900 dark:text-white rounded-2xl transition-all duration-300 text-sm font-bold"
+              className="w-full flex items-center justify-center gap-2 p-3 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-gray-900 dark:text-white rounded-2xl transition-all duration-300 text-sm font-bold"
           >
               {theme === 'light' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
               {theme === 'light' ? 'Mode Nuit' : 'Mode Jour'}
@@ -354,7 +354,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                   <span className="font-black text-lg">{user.firstName[0]}{user.lastName[0]}</span>
               </div>
               <div className="min-w-0">
-                  <p className="font-bold text-sm text-white truncate">{user.firstName} {user.lastName}</p>
+                  <p className="font-bold text-sm text-gray-900 dark:text-white truncate">{user.firstName} {user.lastName}</p>
                   <p className="text-[10px] text-gray-400 truncate uppercase tracking-wider font-bold">{user.email}</p>
               </div>
           </div>

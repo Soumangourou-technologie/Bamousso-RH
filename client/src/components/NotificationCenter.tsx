@@ -38,10 +38,10 @@ const NotificationCenter = () => {
       </button>
 
       {isOpen && (
-        <div className="absolute right-[-1rem] sm:right-0 mt-4 w-[calc(100vw-2rem)] sm:w-96 bg-[#1a0f0a] border border-white/10 rounded-[2rem] overflow-hidden z-50 shadow-[0_20px_50px_rgba(0,0,0,0.5)] animate-in fade-in zoom-in duration-300">
+        <div className="absolute right-[-1rem] sm:right-0 mt-4 w-[calc(100vw-2rem)] sm:w-96 bg-white dark:bg-[#1a0f0a] border border-black/10 dark:border-white/10 rounded-[2rem] overflow-hidden z-50 shadow-[0_20px_50px_rgba(0,0,0,0.5)] animate-in fade-in zoom-in duration-300">
           <div className="py-4 px-6 bg-white dark:bg-[#1f1f1f]/10 border-b border-white/10 flex justify-between items-center">
-            <h3 className="text-sm font-black text-white uppercase tracking-widest">Notifications</h3>
-            <button onClick={() => setIsOpen(false)} className="text-gray-500 dark:text-gray-400 hover:text-white transition-colors">
+            <h3 className="text-sm font-black text-gray-900 dark:text-white uppercase tracking-widest">Notifications</h3>
+            <button onClick={() => setIsOpen(false)} className="text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors">
                 <X className="w-5 h-5" />
             </button>
           </div>
