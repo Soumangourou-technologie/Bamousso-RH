@@ -40,12 +40,12 @@ const Landing = () => {
   };
 
   return (
-    <div className="min-h-screen bg-senufo bg-surface-base font-sans text-text-primary selection:bg-brand-primary selection:text-white">
+    <div className="dark min-h-screen bg-senufo bg-[#1a0f0a] font-sans text-white selection:bg-brand-primary selection:text-white">
       {/* Navigation */}
       <nav className="container mx-auto px-6 py-6 flex justify-between items-center relative z-10">
         <div className="flex items-center gap-2">
           <Building2 className="w-8 h-8 text-brand-primary" />
-          <span className="text-2xl font-black tracking-tight text-text-primary">BAMOUSSO</span>
+          <span className="text-2xl font-black tracking-tight text-white">BAMOUSSO</span>
         </div>
         <div className="flex items-center gap-6">
           <a href="#features" className="hidden md:inline-block font-bold text-gray-300 hover:text-brand-primary transition-colors text-sm uppercase tracking-wider">
@@ -57,7 +57,7 @@ const Landing = () => {
           <a href="#pricing" className="hidden md:inline-block font-bold text-gray-300 hover:text-brand-primary transition-colors text-sm uppercase tracking-wider">
             Tarifs
           </a>
-          <Link to="/register" className="bg-white/10 hover:bg-brand-primary text-gray-900 dark:text-white border border-white/20 hover:border-brand-primary px-5 py-2.5 rounded-full font-bold transition-all text-sm shadow-md hover:shadow-brand-primary/30">
+          <Link to="/register" className="bg-white/10 hover:bg-brand-primary text-white border border-white/20 hover:border-brand-primary px-5 py-2.5 rounded-full font-bold transition-all text-sm shadow-md hover:shadow-brand-primary/30">
             S'inscrire
           </Link>
           <Link to="/login" className="bg-brand-primary hover:bg-brand-800 text-white px-6 py-2.5 rounded-full font-bold shadow-lg shadow-brand-primary/30 transition-all hover:-translate-y-0.5">
@@ -246,11 +246,11 @@ const Landing = () => {
       <FAQSection />
 
       {/* Pricing Section */}
-      <div id="pricing" className="py-24 bg-surface-base relative bg-senufo">
+      <div id="pricing" className="py-24 bg-[#1a0f0a] relative bg-senufo border-t border-white/5">
         <div className="container mx-auto px-6">
           <div className="text-center mb-10">
-            <h2 className="text-4xl font-extrabold mb-4 text-brand-900">Nos Formules</h2>
-            <p className="text-text-secondary text-lg mb-8">Choisissez le pilier qui soutiendra votre croissance.</p>
+            <h2 className="text-4xl font-extrabold mb-4 text-white">Nos Formules</h2>
+            <p className="text-gray-400 text-lg mb-8">Choisissez le pilier qui soutiendra votre croissance.</p>
             <PricingToggle billingCycle={billingCycle} onChange={setBillingCycle} />
           </div>
 
@@ -317,21 +317,21 @@ const Landing = () => {
       </div>
 
       {/* Footer */}
-      <footer className="bg-surface-panel border-t border-surface-border py-12">
+      <footer className="bg-[#1a0f0a] border-t border-white/10 py-12 text-white">
         <div className="container mx-auto px-6 text-center">
           <div className="flex justify-center items-center gap-2 mb-6">
             <Building2 className="w-6 h-6 text-brand-primary" />
-            <span className="text-xl font-bold tracking-widest">BAMOUSSO</span>
+            <span className="text-xl font-bold tracking-widest text-white">BAMOUSSO</span>
           </div>
-          <p className="text-text-secondary text-sm mb-6">
+          <p className="text-gray-400 text-sm mb-6">
             La solution RH qui incarne la sagesse et la force de l'Afrique.
           </p>
-          <div className="flex justify-center gap-6 text-sm text-text-tertiary">
+          <div className="flex justify-center gap-6 text-sm text-gray-400">
             <a href="#" className="hover:text-brand-primary">Mentions légales</a>
             <a href="#" className="hover:text-brand-primary">Confidentialité</a>
             <a href="#" className="hover:text-brand-primary">Contact</a>
           </div>
-          <div className="mt-8 text-xs text-text-tertiary">
+          <div className="mt-8 text-xs text-gray-500">
             &copy; {new Date().getFullYear()} Bamousso SaaS. Fait avec fierté en Côte d'Ivoire.
           </div>
         </div>

@@ -63,7 +63,7 @@ export const FAQSection = () => {
   };
 
   return (
-    <section id="faq" className="py-24 relative overflow-hidden bg-surface-base border-t border-white/5">
+    <section id="faq" className="py-24 relative overflow-hidden bg-[#1a0f0a] border-t border-white/5">
       {/* Glow Effects */}
       <div className="absolute top-1/2 left-0 w-96 h-96 bg-brand-primary/10 blur-[130px] rounded-full pointer-events-none" />
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-brand-accent/10 blur-[130px] rounded-full pointer-events-none" />

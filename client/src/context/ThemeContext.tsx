@@ -18,8 +18,14 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
  * Fournisseur du contexte de Thème.
  */
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Initialisation de l'état avec la valeur stockée ou 'dark' par défaut
+  // Initialisation de l'état avec 'dark' par défaut (et migration du localStorage si nécessaire)
   const [theme, setTheme] = useState<Theme>(() => {
+    const hasInitializedV2 = localStorage.getItem('theme_v2_fix');
+    if (!hasInitializedV2) {
+      localStorage.setItem('theme_v2_fix', 'true');
+      localStorage.setItem('theme', 'dark');
+      return 'dark';
+    }
     const savedTheme = localStorage.getItem('theme');
     return (savedTheme as Theme) || 'dark';
   });
