@@ -8,16 +8,16 @@
   --chromatic-brand-primary: #ff5722; /* Vibrant Orange */
   --chromatic-brand-accent: #d4a017; /* Savanna Gold */
 
-  /* Surface - Light & Clean (Mode Jour) */
-  --chromatic-surface-base: #fdfaf6; /* Warm off-white */
-  --chromatic-surface-panel: rgba(255, 255, 255, 0.8); /* Glass White */
-  --chromatic-surface-tonal: rgba(232, 220, 203, 0.4);
-  --chromatic-surface-border: rgba(26, 15, 10, 0.08);
+  /* Surface - Deep & Premium (Default Senufo Dark Theme) */
+  --chromatic-surface-base: #1a0f0a; /* Deep Ebony */
+  --chromatic-surface-panel: rgba(36, 22, 17, 0.7); /* Glass Dark Chocolate */
+  --chromatic-surface-tonal: rgba(62, 39, 35, 0.4);
+  --chromatic-surface-border: rgba(255, 255, 255, 0.08);
   
-  /* Text - High contrast against light tones */
-  --chromatic-text-primary: #1a0f0a; /* Deep Ebony text */
-  --chromatic-text-secondary: #3e2723;
-  --chromatic-text-tertiary: #795548;
+  /* Text - High contrast against deep tones */
+  --chromatic-text-primary: #fdfaf6;
+  --chromatic-text-secondary: #e8dccb;
+  --chromatic-text-tertiary: #a1887f;
   --chromatic-text-on-brand: #ffffff;
 
   /* Status */
@@ -45,6 +45,20 @@
   
   --line-height-heading: 1.1;
   --line-height-body: 1.6;
+}
+
+/* Light Mode - Mode Jour */
+.light {
+  /* Surface - Light & Clean */
+  --chromatic-surface-base: #fdfaf6; /* Warm off-white */
+  --chromatic-surface-panel: rgba(255, 255, 255, 0.85); /* Glass White */
+  --chromatic-surface-tonal: rgba(232, 220, 203, 0.4);
+  --chromatic-surface-border: rgba(26, 15, 10, 0.08);
+  
+  /* Text - High contrast against light tones */
+  --chromatic-text-primary: #1a0f0a; /* Deep Ebony text */
+  --chromatic-text-secondary: #3e2723;
+  --chromatic-text-tertiary: #795548;
 }
 
 /* Dark Mode - Senufo Premium Theme */

@@ -18,10 +18,10 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
  * Fournisseur du contexte de Thème.
  */
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Initialisation de l'état avec la valeur stockée ou 'light' par défaut
+  // Initialisation de l'état avec la valeur stockée ou 'dark' par défaut
   const [theme, setTheme] = useState<Theme>(() => {
     const savedTheme = localStorage.getItem('theme');
-    return (savedTheme as Theme) || 'light';
+    return (savedTheme as Theme) || 'dark';
   });
 
   // Met à jour la classe sur l'élément <html> et enregistre le choix
