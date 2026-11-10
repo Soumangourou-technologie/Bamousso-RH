@@ -1,27 +1,28 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowRight, ArrowUpRight, BookOpen, Building2, Check, Clock3, GraduationCap, MessageCircle, Store, UsersRound } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, BookOpen, BriefcaseBusiness, Building2, Check, GraduationCap, MessageCircle, Store, UserRound } from 'lucide-react';
 import { EXTRA_EMPLOYEE_COST_MONTHLY, PRICING_PLANS, type BillingCycle, type PlanType } from '@shared/pricing';
 import api from '../utils/api';
 import { trackMetaEvent } from '../utils/metaPixel';
 import './Landing.css';
 
-const areas = [
+const audiences = [
   {
-    name: 'Bamousso RH', title: 'Gérer votre entreprise', icon: UsersRound, tone: 'green', target: '/register/entreprise',
-    description: 'Suivez les présences, les congés, les tâches et l’activité de vos équipes dans un même espace.',
-    action: 'Créer mon espace RH',
+    title: 'Particulier', icon: UserRound, path: '/register/personnel',
+    description: 'Trouvez un emploi, déposez votre CV et suivez des formations à votre rythme.',
+    action: 'Créer un compte personnel',
   },
   {
-    name: 'Annuaire Pro', title: 'Trouver des fournisseurs', icon: Store, tone: 'orange', target: '/annuaire-pro',
-    description: 'Recherchez un fournisseur, consultez son catalogue et demandez un devis ou passez commande.',
-    action: 'Explorer l’annuaire',
+    title: 'Entreprise', icon: Building2, path: '/register/entreprise',
+    description: 'Gérez vos équipes, recrutez et trouvez des fournisseurs pour votre activité.',
+    action: 'Créer un compte entreprise',
   },
-  {
-    name: 'Bamousso Académie', title: 'Développer vos compétences', icon: GraduationCap, tone: 'blue', target: '/academie',
-    description: 'Suivez une formation à votre rythme ou inscrivez vos collaborateurs et suivez leur progression.',
-    action: 'Voir les formations',
-  },
+];
+
+const shortcuts = [
+  { title: 'Offres d’emploi', icon: BriefcaseBusiness, path: '/emploi' },
+  { title: 'Annuaire Pro', icon: Store, path: '/annuaire-pro' },
+  { title: 'Formations', icon: GraduationCap, path: '/academie' },
 ];
 
 const plans = [
@@ -58,40 +59,6 @@ const questions = [
 const contactFallback = '2250706045256';
 const number = new Intl.NumberFormat('fr-CI');
 
-function DashboardIllustration() {
-  return (
-    <div className="bmh-illustration" aria-hidden="true">
-      <div className="bmh-illustration-grid" />
-      <div className="bmh-demo">
-        <div className="bmh-demo-top"><span><i /><i /><i /></span><span>APERÇU DU TABLEAU DE BORD</span></div>
-        <div className="bmh-demo-body">
-          <div className="bmh-demo-side">
-            <span className="bmh-demo-logo"><Building2 size={16} /></span>
-            <span className="bmh-demo-icon"><UsersRound size={17} /></span>
-            <Clock3 size={17} />
-            <Store size={17} />
-            <BookOpen size={17} />
-          </div>
-          <div className="bmh-demo-content">
-            <div className="bmh-demo-title"><div><small>RESSOURCES HUMAINES</small><strong>Vue d’ensemble</strong></div><span>Cette semaine</span></div>
-            <div className="bmh-demo-stats">
-              <div><small>Équipe</small><strong>24</strong><span>collaborateurs</span></div>
-              <div><small>Présences</small><strong>96 %</strong><span>cette semaine</span></div>
-            </div>
-            <div className="bmh-demo-chart">
-              <span>Activité de l’équipe</span>
-              <div className="bmh-demo-bars">
-                <i /><i /><i /><i /><i /><i /><i />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="bmh-demo-note"><span><Check size={17} /></span><div><strong>Pointage enregistré</strong><small>Exemple de suivi d’équipe</small></div></div>
-    </div>
-  );
-}
-
 export default function Landing() {
   const navigate = useNavigate();
   const [billingCycle, setBillingCycle] = useState<BillingCycle>('MONTHLY');
@@ -118,10 +85,8 @@ export default function Landing() {
         <div className="bmh-shell bmh-nav">
           <Link className="bmh-brand" to="/" aria-label="Bamousso, accueil"><span><Building2 size={20} /></span>Bamousso<span className="bmh-brand-dot">.</span></Link>
           <nav className="bmh-nav-links" aria-label="Navigation principale">
-            <a href="#features">Les solutions</a>
+            <a href="#features">Explorer</a>
             <a href="#pricing">Tarifs RH</a>
-            <Link to="/emploi">Offres d’emploi</Link>
-            <a href="#faq">Questions fréquentes</a>
           </nav>
           <Link className="bmh-button bmh-button-outline" to="/login">Se connecter <ArrowUpRight size={15} aria-hidden="true" /></Link>
         </div>
@@ -129,32 +94,30 @@ export default function Landing() {
 
       <main id="contenu">
         <section className="bmh-shell bmh-hero" aria-labelledby="bmh-title">
-          <div>
-            <p className="bmh-kicker"><i /> Conçu en Côte d’Ivoire</p>
-            <h1 id="bmh-title">Gérez votre entreprise.<br /><em>Développez votre activité.</em></h1>
-            <p className="bmh-hero-text">Organisez le travail de vos équipes, trouvez des fournisseurs et développez vos compétences avec Bamousso.</p>
-            <div className="bmh-actions">
-              <Link className="bmh-button bmh-button-primary" to="/register">Créer un compte <ArrowRight size={18} aria-hidden="true" /></Link>
-              <a className="bmh-button bmh-button-outline" href="#features">Voir les solutions</a>
-            </div>
-          </div>
-          <DashboardIllustration />
-        </section>
-
-        <section className="bmh-shell bmh-section bmh-solutions" id="features" aria-labelledby="bmh-solutions-title">
-          <p className="bmh-kicker"><i /> Les solutions Bamousso</p>
-          <h2 id="bmh-solutions-title">Que souhaitez-vous faire ?</h2>
-          <div className="bmh-tiles">
-            {areas.map(({ name, title, icon: Icon, tone, target, description, action }) => (
-              <article className={`bmh-tile bmh-tile-${tone}`} key={name}>
-                <span className="bmh-tile-icon"><Icon size={23} aria-hidden="true" /></span>
-                <p className="bmh-tile-name">{name}</p>
-                <h3>{title}</h3>
+          <p className="bmh-kicker"><i /> Conçu en Côte d’Ivoire</p>
+          <h1 id="bmh-title">Un espace pour travailler<br className="bmh-desktop-break" /> et se développer</h1>
+          <p className="bmh-hero-text">Emploi et formations pour les particuliers. Gestion RH, recrutement et annuaire pour les entreprises.</p>
+          <div className="bmh-audiences">
+            {audiences.map(({ title, icon: Icon, path, description, action }) => (
+              <article className="bmh-tile bmh-audience" key={path}>
+                <div className="bmh-audience-heading">
+                  <span className="bmh-tile-icon"><Icon size={21} aria-hidden="true" /></span>
+                  <h2>{title}</h2>
+                </div>
                 <p>{description}</p>
-                <Link to={target}>{action}<ArrowUpRight size={17} aria-hidden="true" /></Link>
+                <Link className="bmh-button bmh-button-primary" to={path}>{action}<ArrowRight size={16} aria-hidden="true" /></Link>
               </article>
             ))}
           </div>
+        </section>
+
+        <section className="bmh-shell bmh-explore" id="features" aria-labelledby="bmh-explore-title">
+          <h2 id="bmh-explore-title">Explorer Bamousso</h2>
+          <ul className="bmh-shortcuts">
+            {shortcuts.map(({ title, icon: Icon, path }) => (
+              <li key={path}><Link to={path}><Icon size={19} aria-hidden="true" />{title}<ArrowUpRight size={16} aria-hidden="true" /></Link></li>
+            ))}
+          </ul>
         </section>
 
         <section className="bmh-band" id="pricing" aria-labelledby="bmh-pricing-title">
