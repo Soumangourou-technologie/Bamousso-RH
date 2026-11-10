@@ -44,6 +44,8 @@ import Upgrade from './pages/Upgrade';
 import Missions from './pages/Missions';
 import WorkSchedules from './pages/WorkSchedules';
 import Accounting from './pages/Accounting';
+import SupplierQuotes from './pages/SupplierQuotes';
+import ProfessionalDirectory, { SupplierProfileEditor } from './pages/ProfessionalDirectory';
 import ProductsManager from './pages/sales/ProductsManager';
 import PointOfSale from './pages/sales/PointOfSale';
 import SalesHistory from './pages/sales/SalesHistory';
@@ -69,6 +71,7 @@ function App() {
           <NotificationProvider>
             <Routes>
               <Route path="/" element={<RootRoute />} />
+              <Route path="/annuaire-pro" element={<ProfessionalDirectory />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/payment" element={<Payment />} />
@@ -96,6 +99,8 @@ function App() {
                   {/* Modules protégés par rôle (RH/Admin) */}
                   <Route element={<ProtectedRoute allowedRoles={['COMPANY_ADMIN']} />}>
                     <Route path="/dashboard/admin" element={<DashboardAdmin />} />
+                    <Route path="/annuaire-pro/cotations" element={<SupplierQuotes />} />
+                    <Route path="/annuaire-pro/ma-fiche" element={<SupplierProfileEditor />} />
                     <Route path="/roles" element={<Roles />} />
                   </Route>
 

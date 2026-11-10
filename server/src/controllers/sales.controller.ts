@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { z } from "zod";
 import prisma from "../utils/prisma.js";
 import { generateSaleInvoicePDF } from "../utils/pdfGenerator.js";
 import { uploadToSupabase } from "../utils/supabase.js";
@@ -7,9 +8,20 @@ import { uploadToSupabase } from "../utils/supabase.js";
 // --- GESTION DU CATALOGUE (PRODUITS)    ---
 // ==========================================
 
+const directoryOptions = z.object({
+  directoryPublished: z.boolean().optional(),
+  directoryPriceOnQuote: z.boolean().optional(),
+  directoryImageUrl: z.url({ protocol: /^https$/ }).max(2048).nullable().optional(),
+});
+
 export const createProduct = async (req: Request, res: Response): Promise<any> => {
   try {
     const { name, description, price, vatRate, stock } = req.body;
+    const options = directoryOptions.safeParse(req.body);
+    if (!options.success) {
+      return res.status(400).json({ message: "Options de publication invalides. Utilisez un lien HTTPS pour la photo." });
+    }
+
     const companyId = (req as any).user?.companyId;
 
     if (!companyId) return res.status(403).json({ message: "Non autorisé." });
@@ -21,7 +33,8 @@ export const createProduct = async (req: Request, res: Response): Promise<any> =
         price: Number(price),
         vatRate: vatRate ? Number(vatRate) : 0,
         stock: stock ? Number(stock) : null,
-        companyId
+        companyId,
+        ...options.data,
       }
     });
 
@@ -51,6 +64,11 @@ export const updateProduct = async (req: Request, res: Response): Promise<any> =
   try {
     const id = req.params.id as string;
     const { name, description, price, vatRate, stock } = req.body;
+    const options = directoryOptions.safeParse(req.body);
+    if (!options.success) {
+      return res.status(400).json({ message: "Options de publication invalides. Utilisez un lien HTTPS pour la photo." });
+    }
+
     const companyId = (req as any).user?.companyId;
 
     if (!companyId) return res.status(403).json({ message: "Non autorisé." });
@@ -62,7 +80,8 @@ export const updateProduct = async (req: Request, res: Response): Promise<any> =
         description, 
         price: Number(price), 
         vatRate: vatRate ? Number(vatRate) : 0, 
-        stock: stock ? Number(stock) : null
+        stock: stock ? Number(stock) : null,
+        ...options.data,
       }
     });
 

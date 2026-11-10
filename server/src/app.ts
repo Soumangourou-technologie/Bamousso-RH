@@ -44,6 +44,8 @@ import workScheduleRoutes from "./routes/workSchedule.routes.js";
 import payrollItemRoutes from "./routes/payrollItem.routes.js";
 import accountingRoutes from "./routes/accounting.routes.js";
 import metaPixelRoutes from "./routes/metaPixel.routes.js";
+import supplierQuoteRoutes from "./routes/supplierQuotes.routes.js";
+import directoryRoutes from "./routes/directory.routes.js";
 import salesRoutes from "./routes/sales.routes.js";
 
 // Chargement des variables d'environnement
@@ -136,6 +138,8 @@ app.use("/api/work-schedules", apiLimiter, workScheduleRoutes);
 app.use("/api/payroll-items", apiLimiter, payrollItemRoutes);
 app.use("/api/accounting", apiLimiter, accountingRoutes);
 app.use("/api/meta-pixel", apiLimiter, metaPixelRoutes);
+app.use("/api/supplier-quotes", apiLimiter, supplierQuoteRoutes);
+app.use("/api/directory", apiLimiter, directoryRoutes);
 app.use("/api/sales", apiLimiter, salesRoutes);
 
 

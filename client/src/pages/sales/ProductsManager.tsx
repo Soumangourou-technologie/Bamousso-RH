@@ -10,7 +10,15 @@ interface Product {
   price: number;
   vatRate: number;
   stock: number | null;
+  directoryPublished: boolean;
+  directoryPriceOnQuote: boolean;
+  directoryImageUrl: string | null;
 }
+
+const emptyForm = {
+  name: "", description: "", price: "", vatRate: "0", stock: "",
+  directoryPublished: false, directoryPriceOnQuote: false, directoryImageUrl: "",
+};
 
 const ProductsManager = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -18,13 +26,7 @@ const ProductsManager = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    price: "",
-    vatRate: "0",
-    stock: "",
-  });
+  const [formData, setFormData] = useState(emptyForm);
 
   const fetchProducts = async () => {
     try {
@@ -50,11 +52,14 @@ const ProductsManager = () => {
         description: product.description || "",
         price: product.price.toString(),
         vatRate: product.vatRate.toString(),
-        stock: product.stock ? product.stock.toString() : "",
+        stock: product.stock?.toString() ?? "",
+        directoryPublished: product.directoryPublished,
+        directoryPriceOnQuote: product.directoryPriceOnQuote,
+        directoryImageUrl: product.directoryImageUrl ?? "",
       });
     } else {
       setEditingProduct(null);
-      setFormData({ name: "", description: "", price: "", vatRate: "0", stock: "" });
+      setFormData(emptyForm);
     }
     setIsModalOpen(true);
   };
@@ -62,10 +67,11 @@ const ProductsManager = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const data = { ...formData, directoryImageUrl: formData.directoryImageUrl.trim() || null };
       if (editingProduct) {
-        await updateProduct(editingProduct.id, formData);
+        await updateProduct(editingProduct.id, data);
       } else {
-        await createProduct(formData);
+        await createProduct(data);
       }
       setIsModalOpen(false);
       fetchProducts();
@@ -138,6 +144,7 @@ const ProductsManager = () => {
                   <tr key={product.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors group">
                     <td className="p-4">
                       <div className="font-medium text-gray-900 dark:text-white">{product.name}</div>
+                      {product.directoryPublished && <span className="text-xs font-medium text-indigo-700 dark:text-indigo-300">Sélectionné pour l’annuaire</span>}
                       {product.description && <div className="text-sm text-gray-500 dark:text-gray-400 truncate max-w-xs">{product.description}</div>}
                     </td>
                     <td className="p-4 text-right font-medium text-gray-900 dark:text-white">
@@ -177,7 +184,7 @@ const ProductsManager = () => {
 
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white dark:bg-[#1f1f1f] rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-slide-up">
+          <div className="bg-white dark:bg-[#1f1f1f] rounded-2xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto animate-slide-up">
             <div className="p-6 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-gray-50/50">
               <h2 className="text-xl font-bold text-gray-900 dark:text-white">
                 {editingProduct ? "Modifier Produit" : "Ajouter Produit"}
@@ -282,6 +289,29 @@ const ProductsManager = () => {
                   placeholder="Détails supplémentaires..."
                 />
               </div>
+
+              <fieldset className="space-y-2 rounded-xl border border-gray-300 p-3">
+                <legend className="px-1 font-medium">Annuaire Pro</legend>
+                <label className="flex items-center gap-2">
+                  <input type="checkbox" checked={formData.directoryPublished}
+                    onChange={(e) => setFormData({ ...formData, directoryPublished: e.target.checked })} />
+                  Afficher cet article sur ma fiche publiée
+                </label>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Le nom, la description et la disponibilité seront visibles.
+                </p>
+                <label className="flex items-center gap-2">
+                  <input type="checkbox" checked={formData.directoryPriceOnQuote}
+                    onChange={(e) => setFormData({ ...formData, directoryPriceOnQuote: e.target.checked })} />
+                  Afficher « Sur devis » pour le prix
+                </label>
+                <label className="block">
+                  Lien HTTPS de la photo (facultatif)
+                  <input type="url" maxLength={2048} value={formData.directoryImageUrl}
+                    onChange={(e) => setFormData({ ...formData, directoryImageUrl: e.target.value })}
+                    className="w-full rounded-lg border border-gray-400 bg-transparent px-3 py-2" />
+                </label>
+              </fieldset>
 
               <div className="flex gap-3 pt-4 border-t border-gray-100 dark:border-gray-800">
                 <button

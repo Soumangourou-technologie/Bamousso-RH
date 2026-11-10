@@ -118,6 +118,9 @@ const Landing = () => {
                   Espace Client
                 </Link>
               </motion.div>
+              <Link to="/annuaire-pro" className="mt-5 inline-block font-semibold text-white underline underline-offset-4">
+                Trouver un fournisseur dans l’Annuaire Pro
+              </Link>
             </motion.div>
 
             <motion.div 

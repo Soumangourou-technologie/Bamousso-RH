@@ -131,6 +131,8 @@ const DashboardAdmin = () => {
   const badge = PLAN_BADGE[plan] || PLAN_BADGE['FITINI'];
 
   const modules = [
+    { name: 'Cotations et commandes', desc: 'Suivre les échanges avec les entreprises', icon: ShoppingCart, path: '/annuaire-pro/cotations', color: 'bg-indigo-600', feature: 'supplier_quotes' },
+    { name: 'Annuaire Pro',  desc: 'Publier ma fiche fournisseur', icon: Package, path: '/annuaire-pro/ma-fiche', color: 'bg-indigo-600', feature: 'supplier_profile' },
     { name: 'Annuaire',      desc: 'Gérer les employés',           icon: Users,         path: '/employees',    color: 'bg-blue-500',   feature: 'employees',   stat: `${stats.employees}${maxEmp ? ' / ' + maxEmp : ' / Illimité'} employés` },
     { name: 'Départements',  desc: 'Structure de l\'entreprise',   icon: Layers,        path: '/departments',  color: 'bg-indigo-500', feature: 'departments', stat: `${stats.departments} départements` },
     { name: 'Rôles & Permissions', desc: 'Définir les accès',       icon: Shield,        path: '/roles',        color: 'bg-blue-500',   feature: 'roles' },

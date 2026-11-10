@@ -62,6 +62,52 @@ model Company {
   // Ventes & POS
   products        Product[]
   saleInvoices    SaleInvoice[]
+  supplierProfile SupplierProfile?
+  purchaseQuotes  SupplierQuote[] @relation("QuoteBuyer")
+  supplierQuotes  SupplierQuote[] @relation("QuoteSupplier")
+}
+
+model SupplierProfile {
+  companyId   String  @id
+  company     Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  sector      String
+  city        String
+  description String
+  address     String
+  email       String
+  phone       String
+  published   Boolean @default(false)
+}
+
+model SupplierQuote {
+  id           String   @id
+  buyerId      String?
+  supplierId   String?
+  buyerName    String
+  supplierName String
+  buyer        Company? @relation("QuoteBuyer", fields: [buyerId], references: [id], onDelete: SetNull)
+  supplier     Company? @relation("QuoteSupplier", fields: [supplierId], references: [id], onDelete: SetNull)
+  need         String
+  quantity     Int
+  location     String
+  requestedBy  String
+  status       String   @default("REQUESTED")
+  totalFcfa    Int?
+  terms        String?
+  validUntil   DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  order        SupplierOrder?
+
+  @@index([buyerId, createdAt])
+  @@index([supplierId, createdAt])
+}
+
+model SupplierOrder {
+  id        String        @id @default(uuid())
+  quoteId   String        @unique
+  quote     SupplierQuote @relation(fields: [quoteId], references: [id], onDelete: Restrict)
+  createdAt DateTime      @default(now())
 }
 
 /// Modèle Cas Disciplinaire (Conflit)
@@ -792,6 +838,10 @@ model Product {
   vatRate     Float    @default(0) // Taux de TVA en pourcentage (ex: 18)
   stock       Int?     // Quantité en stock (Optionnel)
   
+  directoryPublished    Boolean @default(false)
+  directoryPriceOnQuote Boolean @default(false)
+  directoryImageUrl     String?
+
   companyId   String
   company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
   
