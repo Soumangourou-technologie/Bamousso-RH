@@ -8,7 +8,7 @@ import './Landing.css';
 
 const areas = [
   {
-    name: 'Bamousso RH', title: 'Gérer votre entreprise', icon: UsersRound, tone: 'green', target: '/register',
+    name: 'Bamousso RH', title: 'Gérer votre entreprise', icon: UsersRound, tone: 'green', target: '/register/entreprise',
     description: 'Suivez les présences, les congés, les tâches et l’activité de vos équipes dans un même espace.',
     action: 'Créer mon espace RH',
   },
@@ -108,7 +108,7 @@ export default function Landing() {
   const whatsapp = contacts.length ? contacts : [contactFallback];
   function selectPlan(planId: PlanType) {
     trackMetaEvent('InitiateCheckout', { planId, billingCycle });
-    navigate('/register', { state: { selectedPlanId: planId, billingCycle } });
+    navigate('/register/entreprise', { state: { selectedPlanId: planId, billingCycle } });
   }
 
   return (
@@ -120,6 +120,7 @@ export default function Landing() {
           <nav className="bmh-nav-links" aria-label="Navigation principale">
             <a href="#features">Les solutions</a>
             <a href="#pricing">Tarifs RH</a>
+            <Link to="/emploi">Offres d’emploi</Link>
             <a href="#faq">Questions fréquentes</a>
           </nav>
           <Link className="bmh-button bmh-button-outline" to="/login">Se connecter <ArrowUpRight size={15} aria-hidden="true" /></Link>
@@ -133,7 +134,7 @@ export default function Landing() {
             <h1 id="bmh-title">Gérez votre entreprise.<br /><em>Développez votre activité.</em></h1>
             <p className="bmh-hero-text">Organisez le travail de vos équipes, trouvez des fournisseurs et développez vos compétences avec Bamousso.</p>
             <div className="bmh-actions">
-              <Link className="bmh-button bmh-button-primary" to="/register">Créer un compte entreprise <ArrowRight size={18} aria-hidden="true" /></Link>
+              <Link className="bmh-button bmh-button-primary" to="/register">Créer un compte <ArrowRight size={18} aria-hidden="true" /></Link>
               <a className="bmh-button bmh-button-outline" href="#features">Voir les solutions</a>
             </div>
           </div>

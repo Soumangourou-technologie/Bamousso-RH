@@ -12,17 +12,17 @@ import {
   getCurrentUser,
   logout,
 } from "../controllers/auth.controller.js";
-import { authenticate } from "../middleware/auth.js";
+import { authenticateAccount } from "../middleware/auth.js";
 
 import { strictLimiter } from "../middleware/rateLimit.js";
 
 const router = Router();
 
 // Route pour l'utilisateur actuel (rafraîchissement)
-router.get("/me", authenticate, getCurrentUser);
+router.get("/me", authenticateAccount, getCurrentUser);
 
 // Route pour l'inscription d'un nouvel utilisateur
-router.post("/register", register);
+router.post("/register", strictLimiter, register);
 
 // Création entreprise + 1er admin (self-serve)
 router.post("/register-company", strictLimiter, registerCompany);
@@ -31,7 +31,7 @@ router.post("/register-company", strictLimiter, registerCompany);
 router.post("/login", login);
 
 // Route pour la déconnexion
-router.post("/logout", authenticate, logout);
+router.post("/logout", authenticateAccount, logout);
 
 // Mot de passe oublié
 router.post("/forgot-password", strictLimiter, forgotPassword);

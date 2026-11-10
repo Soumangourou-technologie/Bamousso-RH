@@ -113,7 +113,7 @@
 @media (max-width: 690px) {
   .bmh-shell { width: calc(100% - 32px); }
   .bmh-nav { min-height: 66px; flex-wrap: wrap; column-gap: 10px; row-gap: 2px; padding-block: 8px; }
-  .bmh-nav-links { order: 3; flex-basis: 100%; justify-content: space-between; font-size: 12px; }
+  .bmh-nav-links { order: 3; flex-basis: 100%; flex-wrap: wrap; justify-content: space-between; gap: 0 10px; font-size: 12px; }
   .bmh-nav-links a { padding-block: 8px; }
   .bmh-nav .bmh-button { font-size: 13px; padding: 8px 10px; min-height: 42px; }
   .bmh-hero, .bmh-tiles, .bmh-resources { grid-template-columns: 1fr; }

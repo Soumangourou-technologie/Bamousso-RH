@@ -26,6 +26,8 @@ import Academy from "./pages/Academy";
 import { AcademyAdmin, AcademyTeam } from "./pages/AcademyManagement";
 import MainLayout from './layouts/MainLayout';
 import Register from './pages/Register';
+import AccountChoice, { PersonalRegistration } from './pages/AccountChoice';
+import { CompanyWorkspace, JobsPage, PersonalWorkspace, RecruitmentWorkspace } from './pages/CareerWorkspaces';
 import Payment from './pages/Payment';
 import PaymentSuccess from './pages/PaymentSuccess';
 import PaymentCancelled from './pages/PaymentCancelled';
@@ -77,7 +79,17 @@ function App() {
               <Route path="/annuaire-pro" element={<ProfessionalDirectory />} />
               <Route path="/academie" element={<Academy />} />
               <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
+              <Route path="/register" element={<AccountChoice />} />
+              <Route path="/register/entreprise" element={<Register />} />
+              <Route path="/register/personnel" element={<PersonalRegistration />} />
+              <Route path="/emploi" element={<JobsPage />} />
+              <Route element={<ProtectedRoute allowedRoles={['PERSONAL']} allowPersonal />}>
+                <Route path="/espace-personnel" element={<PersonalWorkspace />} />
+              </Route>
+              <Route element={<ProtectedRoute allowedRoles={['COMPANY_ADMIN']} />}>
+                <Route path="/espace-entreprise" element={<CompanyWorkspace />} />
+                <Route path="/espace-entreprise/recrutement" element={<RecruitmentWorkspace />} />
+              </Route>
               <Route path="/payment" element={<Payment />} />
               <Route path="/payment-success" element={<PaymentSuccess />} />
               <Route path="/payment-cancelled" element={<PaymentCancelled />} />

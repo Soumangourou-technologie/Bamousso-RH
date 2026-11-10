@@ -138,6 +138,12 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
             Tableau de bord
           </Link>
 
+          {user.role === 'COMPANY_ADMIN' && (
+            <Link to="/espace-entreprise" className="flex items-center gap-3 rounded-2xl p-3.5 text-sm font-bold hover:bg-black/5 dark:hover:bg-white/5">
+              <Building2 className="h-5 w-5" /> Espace entreprise
+            </Link>
+          )}
+
           {isSuperAdmin && (
             <>
               <Link to="/dashboard/super-admin/offline" className={`flex items-center gap-3 p-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${location.pathname === '/dashboard/super-admin/offline' ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20 scale-[1.02]' : 'hover:bg-black/5 dark:hover:bg-white/5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'}`}>

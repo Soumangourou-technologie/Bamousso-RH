@@ -96,7 +96,7 @@ function AcademyCourse({ courseId }: { courseId: string | null }) {
   return (
     <main className="min-h-screen bg-slate-50 px-4 py-8 text-slate-900">
       <div className="mx-auto max-w-3xl space-y-6">
-        <Link to={user ? '/dashboard' : '/'} className="font-semibold text-teal-800 hover:underline">
+        <Link to={user?.role === 'PERSONAL' ? '/espace-personnel' : user ? '/dashboard' : '/'} className="font-semibold text-teal-800 hover:underline">
           {user ? 'Retour au tableau de bord' : 'Retour à l’accueil'}
         </Link>
         <header className="space-y-2 rounded-xl bg-teal-950 p-6 text-white">
@@ -123,7 +123,10 @@ function AcademyCourse({ courseId }: { courseId: string | null }) {
             {!progress?.enrolled && (
               <ol className="list-decimal space-y-1 pl-5">{course.lessons.map(lesson => <li key={lesson.id}>{lesson.title}</li>)}</ol>
             )}
-            {!isLoading && !user && <Link className={`${button} inline-block`} to="/login" state={{ returnToAcademy: true, courseId }}>Se connecter pour s’inscrire</Link>}
+            {!isLoading && !user && <div className="flex flex-wrap gap-3">
+              <Link className={`${button} inline-block`} to="/login" state={{ returnToAcademy: true, courseId }}>Se connecter pour s’inscrire</Link>
+              <Link className="self-center font-semibold text-teal-800 underline" to="/register/personnel" state={{ returnToAcademy: true, courseId }}>Créer un compte personnel</Link>
+            </div>}
             {user && progress && !progress.enrolled && (
               <button className={button} disabled={busy} onClick={() => void update(() => api.post(`/academy/enroll${query}`))}>M’inscrire</button>
             )}

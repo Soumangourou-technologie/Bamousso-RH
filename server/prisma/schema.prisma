@@ -63,6 +63,7 @@ model Company {
   products        Product[]
   saleInvoices    SaleInvoice[]
   supplierProfile SupplierProfile?
+  jobOffers       JobOffer[]
   purchaseQuotes  SupplierQuote[] @relation("QuoteBuyer")
   supplierQuotes  SupplierQuote[] @relation("QuoteSupplier")
   directPurchases DirectSupplierOrder[] @relation("DirectBuyer")
@@ -79,6 +80,7 @@ model SupplierProfile {
   email       String
   phone       String
   published   Boolean @default(false)
+  featuredUntil DateTime?
 }
 
 model SupplierQuote {
@@ -173,6 +175,7 @@ model Payment {
 /// Modèle Utilisateur (Employé)
 model User {
   academyProgress AcademyProgress[]
+  candidateProfile CandidateProfile?
   id        String  @id @default(uuid())
   email     String  @unique
   password  String // Mot de passe crypté (Haché)
@@ -942,4 +945,30 @@ model AcademyCourse {
   content   Json
   published Boolean  @default(false)
   updatedAt DateTime @updatedAt
+}
+
+model JobOffer {
+  id          String   @id @default(uuid())
+  companyId   String
+  title       String
+  location    String
+  description String
+  email       String
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([published, createdAt])
+  @@index([companyId, createdAt])
+}
+
+model CandidateProfile {
+  userId    String  @id
+  headline  String
+  city      String
+  visible   Boolean @default(false)
+  cv        Bytes?
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([visible])
 }

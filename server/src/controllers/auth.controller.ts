@@ -9,11 +9,10 @@ import { catchAsync } from '../utils/catchAsync.js';
 import { sendPasswordResetEmail, sendRegistrationWelcomeEmail } from '../utils/mailer.js';
 
 const registerSchema = z.object({
-  email: z.string().email("Format d'email invalide"),
-  password: z.string().min(6, "Le mot de passe doit contenir au moins 6 caractères"),
-  firstName: z.string().min(1, "Le prénom est requis"),
-  lastName: z.string().min(1, "Le nom est requis"),
-  role: z.enum(["SUPER_ADMIN", "COMPANY_ADMIN", "HR_MANAGER", "COMMERCIAL", "EMPLOYEE"]).optional(),
+  email: z.string().trim().email("Format d'email invalide").max(254),
+  password: z.string().min(8).refine(value => Buffer.byteLength(value, "utf8") <= 72),
+  firstName: z.string().trim().min(1).max(100),
+  lastName: z.string().trim().min(1).max(100),
 });
 
 const loginSchema = z.object({
@@ -43,25 +42,21 @@ const resetPasswordSchema = z.object({
 });
 
 export const register = catchAsync(async (req: Request, res: Response) => {
-  const { email, password, firstName, lastName, role } = registerSchema.parse(req.body);
-  const existingUser = await prisma.user.findUnique({ where: { email } });
-  if (existingUser) {
-    return res.status(400).json({ message: "Cet utilisateur existe déjà" });
+  const result = registerSchema.safeParse(req.body);
+  if (!result.success) return res.status(400).json({ message: "Vérifiez le nom, l’adresse e-mail et le mot de passe (8 caractères minimum)." });
+  const { email, password, firstName, lastName } = result.data;
+  try {
+    const user = await prisma.user.create({
+      data: { email, firstName, lastName, password: await bcrypt.hash(password, 10), role: "PERSONAL" },
+      select: { id: true, email: true, role: true },
+    });
+    res.status(201).json({ message: "Compte personnel créé.", user });
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+      return res.status(409).json({ message: "Cet e-mail est déjà utilisé. Connectez-vous à votre compte existant." });
+    }
+    throw error;
   }
-  const hashedPassword = await bcrypt.hash(password, 10);
-  const user = await prisma.user.create({
-    data: {
-      email,
-      password: hashedPassword,
-      firstName,
-      lastName,
-      role: role || "EMPLOYEE",
-    },
-  });
-  res.status(201).json({ 
-    message: "Utilisateur créé avec succès", 
-    user: { id: user.id, email: user.email, role: user.role } 
-  });
 });
 
 export const registerCompany = catchAsync(async (req: Request, res: Response) => {

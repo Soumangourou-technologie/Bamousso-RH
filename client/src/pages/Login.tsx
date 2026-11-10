@@ -30,7 +30,8 @@ const Login = () => {
       } else {
         const role = response.data.user?.role;
         if (role === 'SUPER_ADMIN') navigate('/dashboard/super-admin');
-        else if (role === 'COMPANY_ADMIN') navigate('/dashboard/admin');
+        else if (role === 'COMPANY_ADMIN') navigate('/espace-entreprise');
+        else if (role === 'PERSONAL') navigate('/espace-personnel');
         else if (role === 'HR_MANAGER' || role === 'HR_ASSISTANT' || role === 'RH') navigate('/dashboard/hr');
         else navigate('/dashboard/employee');
       }
@@ -59,10 +60,11 @@ const Login = () => {
           <div className="w-20 h-20 bg-brand-primary/10 rounded-3xl flex items-center justify-center mx-auto mb-6 border border-brand-primary/20">
             <Lock className="w-10 h-10 text-brand-primary" />
           </div>
-          <h2 className="text-4xl font-black text-gray-900 dark:text-white tracking-tight mb-2">Espace Client</h2>
-          <p className="text-gray-500 dark:text-gray-400 font-medium">Gérez votre capital humain avec sagesse.</p>
+          <h2 className="text-4xl font-black text-gray-900 dark:text-white tracking-tight mb-2">Connexion à Bamousso</h2>
+          <p className="text-gray-500 dark:text-gray-400 font-medium">Accédez à votre espace personnel ou entreprise.</p>
         </div>
         
+        {location.state?.personalCreated === true && <p role="status" className="mb-4 text-sm">Compte personnel créé. Connectez-vous pour continuer.</p>}
         {error && (
           <motion.div 
             initial={{ opacity: 0, x: -10 }}

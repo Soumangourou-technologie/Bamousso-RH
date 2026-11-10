@@ -43,7 +43,7 @@ api.interceptors.response.use(
       localStorage.removeItem('user');
       localStorage.removeItem('company');
       
-      const publicPaths = ['/', '/login', '/register', '/payment', '/payment-success', '/payment-cancelled', '/forgot-password', '/reset-password', '/client-registration'];
+      const publicPaths = ['/', '/login', '/register', '/register/personnel', '/register/entreprise', '/emploi', '/payment', '/payment-success', '/payment-cancelled', '/forgot-password', '/reset-password', '/client-registration'];
       
       if (!publicPaths.includes(window.location.pathname)) {
         window.location.assign('/login?expired=true');

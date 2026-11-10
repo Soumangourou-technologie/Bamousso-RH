@@ -56,7 +56,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
   };
 
   const fetchNotifications = useCallback(async () => {
-    if (!user?.id) return;
+    if (!user?.id || user.role === 'PERSONAL') return;
     try {
       const response = await api.get('/notifications');
       setNotifications(response.data);
@@ -65,10 +65,10 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     } catch (error) {
       console.error("Error fetching notifications", error);
     }
-  }, [user?.id]);
+  }, [user?.id, user?.role]);
 
   useEffect(() => {
-    if (!user?.id) return;
+    if (!user?.id || user.role === 'PERSONAL') return;
 
     // Fetch initial notifications
     fetchNotifications();
@@ -119,7 +119,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
       clearInterval(interval);
       void supabase.removeChannel(channel);
     };
-  }, [user?.id, user?.companyId, fetchNotifications]);
+  }, [user?.id, user?.companyId, user?.role, fetchNotifications]);
 
   const markAsRead = async (id: string) => {
     try {
