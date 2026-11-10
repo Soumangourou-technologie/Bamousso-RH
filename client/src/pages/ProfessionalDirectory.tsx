@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../utils/api';
+import { DirectOrderForm } from './DirectOrders';
 import { useAuth } from '../context/AuthContext';
 
 type Profile = {
@@ -24,6 +25,7 @@ type PublicProduct = {
   description: string | null;
   imageUrl: string | null;
   price: number | null;
+  vatRate: number | null;
   availability: 'ON_REQUEST' | 'AVAILABLE' | 'UNAVAILABLE';
 };
 
@@ -109,7 +111,7 @@ export default function ProfessionalDirectory() {
                 <Link className="block underline" to={`/annuaire-pro/cotations?fournisseur=${encodeURIComponent(profile.companyId)}`}
                   state={{ supplierName: profile.company.name }}>Demander une cotation</Link>
               )}
-              {openCatalog === profile.companyId && <SupplierCatalog companyId={profile.companyId} />}
+              {openCatalog === profile.companyId && <SupplierCatalog companyId={profile.companyId} canOrder={user?.role === 'COMPANY_ADMIN' && user.companyId !== profile.companyId} />}
             </li>
           ))}
         </ul>
@@ -127,7 +129,8 @@ export default function ProfessionalDirectory() {
   );
 }
 
-function SupplierCatalog({ companyId }: { companyId: string }) {
+function SupplierCatalog({ companyId, canOrder }: { companyId: string; canOrder: boolean }) {
+  const [selectedProduct, setSelectedProduct] = useState<string>();
   const [page, setPage] = useState(1);
   const [catalog, setCatalog] = useState<{ products: PublicProduct[]; hasMore: boolean }>();
   const [failed, setFailed] = useState(false);
@@ -156,6 +159,17 @@ function SupplierCatalog({ companyId }: { companyId: string }) {
           {product.description && <p>{product.description}</p>}
           <p>{product.price === null ? 'Sur devis' : `${priceFormat.format(product.price)} FCFA HT`}</p>
           <p className="text-sm">{availabilityLabels[product.availability]}</p>
+          {canOrder && product.price !== null && product.vatRate !== null &&
+            product.vatRate >= 0 && product.vatRate <= 100 && product.availability !== 'UNAVAILABLE' && (
+              <>
+                <button className="underline" aria-expanded={selectedProduct === product.id}
+                  onClick={() => setSelectedProduct(selectedProduct === product.id ? undefined : product.id)}>
+                  {selectedProduct === product.id ? 'Fermer' : 'Commander'}
+                </button>
+                {selectedProduct === product.id && <DirectOrderForm supplierId={companyId}
+                  productId={product.id} price={product.price} vatRate={product.vatRate} />}
+              </>
+            )}
         </article>
       ))}
       {catalog && (page > 1 || catalog.hasMore) && (

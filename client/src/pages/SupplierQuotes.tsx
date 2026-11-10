@@ -59,7 +59,8 @@ export default function SupplierQuotes() {
   return (
     <section className="mx-auto max-w-4xl space-y-4 p-4">
       <Link to="/annuaire-pro" className="underline">Rechercher un fournisseur</Link>
-      <h1 className="text-2xl font-bold">Cotations et commandes</h1>
+      <Link to="/annuaire-pro/commandes" className="block underline">Commandes directes</Link>
+      <h1 className="text-2xl font-bold">Cotations et commandes sur devis</h1>
       {supplierId && (
         <QuoteRequest key={supplierId} supplierId={supplierId} supplierName={supplierName}
           onSent={() => { setParams({}); setDirection('sent'); setPage(1); reload(); }} />

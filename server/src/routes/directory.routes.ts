@@ -95,7 +95,7 @@ router.get("/:companyId/catalog", async (req, res) => {
       company: { select: {
         products: {
           where: { directoryPublished: true },
-          select: { id: true, name: true, description: true, price: true, stock: true,
+          select: { id: true, name: true, description: true, price: true, vatRate: true, stock: true,
             directoryPriceOnQuote: true, directoryImageUrl: true },
           orderBy: [{ name: "asc" }, { id: "asc" }],
           skip: (page.data - 1) * pageSize,
@@ -116,6 +116,7 @@ router.get("/:companyId/catalog", async (req, res) => {
       imageUrl: product.directoryImageUrl,
       price: product.directoryPriceOnQuote || !Number.isFinite(product.price) || product.price < 0
         ? null : product.price,
+      vatRate: product.directoryPriceOnQuote ? null : product.vatRate,
       availability: product.stock === null ? "ON_REQUEST" : product.stock > 0 ? "AVAILABLE" : "UNAVAILABLE",
     })),
     hasMore: page.data < 1000 && products.length > pageSize,

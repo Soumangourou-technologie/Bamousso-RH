@@ -44,6 +44,7 @@ import Upgrade from './pages/Upgrade';
 import Missions from './pages/Missions';
 import WorkSchedules from './pages/WorkSchedules';
 import Accounting from './pages/Accounting';
+import DirectOrders from './pages/DirectOrders';
 import SupplierQuotes from './pages/SupplierQuotes';
 import ProfessionalDirectory, { SupplierProfileEditor } from './pages/ProfessionalDirectory';
 import ProductsManager from './pages/sales/ProductsManager';
@@ -99,6 +100,7 @@ function App() {
                   {/* Modules protégés par rôle (RH/Admin) */}
                   <Route element={<ProtectedRoute allowedRoles={['COMPANY_ADMIN']} />}>
                     <Route path="/dashboard/admin" element={<DashboardAdmin />} />
+                    <Route path="/annuaire-pro/commandes" element={<DirectOrders />} />
                     <Route path="/annuaire-pro/cotations" element={<SupplierQuotes />} />
                     <Route path="/annuaire-pro/ma-fiche" element={<SupplierProfileEditor />} />
                     <Route path="/roles" element={<Roles />} />

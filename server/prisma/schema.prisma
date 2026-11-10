@@ -65,6 +65,8 @@ model Company {
   supplierProfile SupplierProfile?
   purchaseQuotes  SupplierQuote[] @relation("QuoteBuyer")
   supplierQuotes  SupplierQuote[] @relation("QuoteSupplier")
+  directPurchases DirectSupplierOrder[] @relation("DirectBuyer")
+  directSales     DirectSupplierOrder[] @relation("DirectSupplier")
 }
 
 model SupplierProfile {
@@ -108,6 +110,29 @@ model SupplierOrder {
   quoteId   String        @unique
   quote     SupplierQuote @relation(fields: [quoteId], references: [id], onDelete: Restrict)
   createdAt DateTime      @default(now())
+}
+
+model DirectSupplierOrder {
+  id          String   @id
+  buyerId     String?
+  supplierId  String?
+  buyer       Company? @relation("DirectBuyer", fields: [buyerId], references: [id], onDelete: SetNull)
+  supplier    Company? @relation("DirectSupplier", fields: [supplierId], references: [id], onDelete: SetNull)
+  buyerName   String
+  supplierName String
+  productId   String
+  productName String
+  quantity    Int
+  unitPrice   Decimal  @db.Decimal(14, 2)
+  vatRate     Decimal  @db.Decimal(5, 2)
+  total       Decimal  @db.Decimal(14, 2)
+  deliveryAddress String
+  status      String   @default("PENDING")
+  response    String?
+  createdAt   DateTime @default(now())
+
+  @@index([buyerId, createdAt])
+  @@index([supplierId, createdAt])
 }
 
 /// Modèle Cas Disciplinaire (Conflit)

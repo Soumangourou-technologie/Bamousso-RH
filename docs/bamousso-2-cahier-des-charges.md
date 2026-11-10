@@ -68,4 +68,10 @@ Vérifier avec deux entreprises que seuls les articles sélectionnés sur une fi
 
 Appliquer `server/prisma/sql/add-supplier-quotes.sql` sur la base de recette et régénérer le client Prisma. Deux administrateurs d’entreprises distinctes testent la demande depuis l’annuaire, la réponse chiffrée, l’expiration, le refus et la conversion du devis accepté en commande. Réessayer l’acceptation pour vérifier qu’une seule commande est créée. Une entreprise tierce ne doit pouvoir ni consulter ni modifier le dossier. L’historique conserve le devis accepté et les noms des entreprises au moment de la demande.
 
-Ce lot crée la commande issue d’un devis. La commande directe du catalogue, le suivi d’exécution et le paiement relèvent de lots ultérieurs.
+Ce lot crée la commande issue d’un devis. La commande directe du catalogue est traitée au lot 2B. Le suivi d’exécution et le paiement relèvent de lots ultérieurs.
+
+### Mise en recette du lot 2B
+
+Appliquer `server/prisma/sql/add-direct-supplier-orders.sql` et régénérer Prisma. Commander un article au prix affiché avec une quantité et une adresse. Le serveur vérifie la publication, le prix et la disponibilité connue, puis conserve le montant TTC. L’acheteur et le fournisseur consultent les commandes dans leurs espaces respectifs. Le fournisseur confirme la disponibilité avec un délai ou indique le motif de refus.
+
+Cette tranche traite un article par commande. Le fournisseur vérifie le stock avant de confirmer. Bamousso ne réserve ni ne déduit automatiquement les quantités et ne collecte pas le paiement.
