@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../utils/api';
 import { Eye, EyeOff, Lock, Mail, ArrowRight } from 'lucide-react';
@@ -10,6 +10,7 @@ const Login = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -22,6 +23,10 @@ const Login = () => {
       login(response.data.user, response.data.company);
       if (response.data.company?.isLocked) {
         navigate('/locked');
+      } else if (location.state?.returnToAcademy === true) {
+        const courseId = location.state.courseId;
+        const destination = typeof courseId === 'string' ? `/academie?formation=${encodeURIComponent(courseId)}` : '/academie';
+        navigate(destination, { replace: true });
       } else {
         const role = response.data.user?.role;
         if (role === 'SUPER_ADMIN') navigate('/dashboard/super-admin');
