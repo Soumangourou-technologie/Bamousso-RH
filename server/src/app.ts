@@ -48,6 +48,7 @@ import directOrderRoutes from "./routes/directOrders.routes.js";
 import supplierQuoteRoutes from "./routes/supplierQuotes.routes.js";
 import directoryRoutes from "./routes/directory.routes.js";
 import academyRoutes from "./routes/academy.routes.js";
+import academyManagementRoutes from "./routes/academyManagement.routes.js";
 import salesRoutes from "./routes/sales.routes.js";
 
 // Chargement des variables d'environnement
@@ -143,6 +144,7 @@ app.use("/api/meta-pixel", apiLimiter, metaPixelRoutes);
 app.use("/api/direct-orders", apiLimiter, directOrderRoutes);
 app.use("/api/supplier-quotes", apiLimiter, supplierQuoteRoutes);
 app.use("/api/directory", apiLimiter, directoryRoutes);
+app.use("/api/academy-management", apiLimiter, academyManagementRoutes);
 app.use("/api/academy", apiLimiter, academyRoutes);
 app.use("/api/sales", apiLimiter, salesRoutes);
 

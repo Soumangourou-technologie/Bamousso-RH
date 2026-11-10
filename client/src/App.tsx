@@ -23,6 +23,7 @@ import DashboardRedirect from './pages/DashboardRedirect';
 import ProtectedRoute from './components/ProtectedRoute';
 import Landing from './pages/Landing';
 import Academy from "./pages/Academy";
+import { AcademyAdmin, AcademyTeam } from "./pages/AcademyManagement";
 import MainLayout from './layouts/MainLayout';
 import Register from './pages/Register';
 import Payment from './pages/Payment';
@@ -94,6 +95,7 @@ function App() {
                   {/* Super Admin Route */}
                   <Route element={<ProtectedRoute allowedRoles={['SUPER_ADMIN']} />}>
                     <Route path="/dashboard/super-admin" element={<DashboardSuperAdmin />} />
+                    <Route path="/academie/gestion" element={<AcademyAdmin />} />
                     <Route path="/dashboard/super-admin/offline" element={<SuperAdminOfflineClients />} />
                     <Route path="/dashboard/super-admin/broadcast" element={<SuperAdminBroadcast />} />
                     <Route path="/dashboard/super-admin/pixel-analytics" element={<SuperAdminPixelAnalytics />} />
@@ -102,6 +104,7 @@ function App() {
                   {/* Modules protégés par rôle (RH/Admin) */}
                   <Route element={<ProtectedRoute allowedRoles={['COMPANY_ADMIN']} />}>
                     <Route path="/dashboard/admin" element={<DashboardAdmin />} />
+                    <Route path="/academie/equipe" element={<AcademyTeam />} />
                     <Route path="/annuaire-pro/commandes" element={<DirectOrders />} />
                     <Route path="/annuaire-pro/cotations" element={<SupplierQuotes />} />
                     <Route path="/annuaire-pro/ma-fiche" element={<SupplierProfileEditor />} />

@@ -24,7 +24,9 @@ const Login = () => {
       if (response.data.company?.isLocked) {
         navigate('/locked');
       } else if (location.state?.returnToAcademy === true) {
-        navigate('/academie', { replace: true });
+        const courseId = location.state.courseId;
+        const destination = typeof courseId === 'string' ? `/academie?formation=${encodeURIComponent(courseId)}` : '/academie';
+        navigate(destination, { replace: true });
       } else {
         const role = response.data.user?.role;
         if (role === 'SUPER_ADMIN') navigate('/dashboard/super-admin');

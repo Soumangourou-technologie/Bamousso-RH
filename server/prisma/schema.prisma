@@ -936,3 +936,10 @@ model AcademyProgress {
 
   @@id([userId, courseId, activity])
 }
+
+model AcademyCourse {
+  id        String   @id @default(uuid())
+  content   Json
+  published Boolean  @default(false)
+  updatedAt DateTime @updatedAt
+}
