@@ -126,14 +126,13 @@ export const sendPasswordResetEmail = async (email: string, name: string, token:
 };
 
 /**
- * Envoie un email de bienvenue lors de l'inscription en ligne avec récapitulatif des identifiants
+ * Envoie un email de bienvenue lors de l'inscription en ligne avec le lien de connexion
  */
 export const sendRegistrationWelcomeEmail = async (
   email: string, 
   firstName: string, 
   companyName: string, 
-  plan: string, 
-  rawPassword: string
+  plan: string
 ) => {
   try {
     const frontendUrl = process.env.FRONTEND_URL || 'https://www.bamousso.com';
@@ -141,7 +140,7 @@ export const sendRegistrationWelcomeEmail = async (
     await resend.emails.send({
       from: 'Bamousso RH <bienvenue@bamousso.com>',
       to: email,
-      subject: `🎉 Bienvenue sur Bamousso RH - Identifiants de l'entreprise ${companyName}`,
+      subject: `🎉 Bienvenue sur Bamousso RH - Accès à l'entreprise ${companyName}`,
       html: `
         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 30px; color: #1a0f0a; max-width: 600px; margin: 0 auto; border: 1px solid #f0f0f0; border-radius: 16px; background-color: #ffffff;">
           <div style="text-align: center; margin-bottom: 24px;">
@@ -157,10 +156,9 @@ export const sendRegistrationWelcomeEmail = async (
             <p style="margin: 6px 0; font-size: 14px;"><strong>Entreprise :</strong> ${companyName}</p>
             <p style="margin: 6px 0; font-size: 14px;"><strong>Administrateur :</strong> ${firstName}</p>
             <p style="margin: 6px 0; font-size: 14px;"><strong>Email de connexion :</strong> <span style="color: #ff5722; font-weight: bold;">${email}</span></p>
-            <p style="margin: 6px 0; font-size: 14px;"><strong>Mot de passe :</strong> <span style="font-family: monospace; font-size: 15px; background: #fff; padding: 2px 8px; border-radius: 4px; border: 1px solid #ffd0b0;">${rawPassword}</span></p>
           </div>
           
-          <p style="font-size: 13px; color: #666; line-height: 1.5;">Pour des raisons de sécurité, nous vous recommandons de conserver cet email précieusement ou de modifier votre mot de passe si vous le souhaitez depuis vos paramètres d'espace.</p>
+          <p style="font-size: 13px; color: #666; line-height: 1.5;">Utilisez le mot de passe choisi lors de l’inscription. Si vous l’avez oublié, utilisez « Mot de passe oublié » depuis la page de connexion.</p>
           
           <div style="text-align: center; margin: 30px 0;">
             <a href="${frontendUrl}/login" style="background-color: #ff5722; color: white; padding: 14px 32px; border-radius: 12px; text-decoration: none; font-weight: 800; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 12px rgba(255,87,34,0.3); display: inline-block;">Accéder à mon espace client</a>

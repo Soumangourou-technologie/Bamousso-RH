@@ -8,7 +8,7 @@ const PaymentSuccess = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [status, setStatus] = useState<'verifying' | 'success' | 'error'>('verifying');
-  const { login } = useAuth();
+  const { user } = useAuth();
 
   useEffect(() => {
     let isMounted = true;
@@ -16,29 +16,14 @@ const PaymentSuccess = () => {
     const maxRetries = 3;
 
     const verifyPayment = async () => {
-      const token = searchParams.get('token') || searchParams.get('reference') || searchParams.get('transaction_id');
-      const companyId = searchParams.get('companyId') || searchParams.get('comp_id');
-      const urlStatus = searchParams.get('status');
-      
-      // Si GeniusPay nous dit déjà que c'est bon dans l'URL
-      if (urlStatus === 'completed' || urlStatus === 'success') {
-        if (isMounted) {
-          setStatus('success');
-          trackMetaEvent('Subscribe', { status: 'SUCCESS', method: 'URL_STATUS' });
-        }
-        return;
-      }
-
-      if (!token && !companyId) {
+      const token = searchParams.get('reference') || searchParams.get('transaction_id') || searchParams.get('token') || sessionStorage.getItem('bamousso.pendingPayment');
+      if (!token) {
         if (isMounted) setStatus('error');
         return;
       }
 
       try {
-        const url = token 
-          ? `/api/payment/confirm/${token}` 
-          : `/api/payment/confirm/by-company/${companyId}`;
-        
+        const url = `/api/payment/confirm/${encodeURIComponent(token)}`;
         const apiUrl = import.meta.env.VITE_API_URL || '';
         const response = await fetch(`${apiUrl}${url}`, {
           headers: { 
@@ -50,9 +35,7 @@ const PaymentSuccess = () => {
           const data = await response.json();
           if (data.success && isMounted) {
             setStatus('success');
-            if (data.user && data.company) {
-              login(data.user, data.company);
-            }
+            sessionStorage.removeItem('bamousso.pendingPayment');
             trackMetaEvent('Subscribe', { status: 'SUCCESS', method: 'API_VERIFY' });
           } else if (retryCount < maxRetries) {
             retryCount++;
@@ -85,14 +68,14 @@ const PaymentSuccess = () => {
     if (status === 'success') {
       const timer = setTimeout(() => {
         try {
-          navigate('/dashboard/admin');
+          navigate(user ? '/dashboard' : '/login');
         } catch (e) {
-          window.location.assign('/dashboard/admin');
+          window.location.assign(user ? '/dashboard' : '/login');
         }
       }, 2000);
       return () => clearTimeout(timer);
     }
-  }, [status, navigate]);
+  }, [status, navigate, user]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#1a1614] px-6">

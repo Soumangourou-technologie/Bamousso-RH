@@ -4,9 +4,10 @@ import { useAuth } from '../context/AuthContext';
 interface ProtectedRouteProps {
   allowedRoles?: string[];
   allowedPermissions?: string[];
+  allowPersonal?: boolean;
 }
 
-const ProtectedRoute = ({ allowedRoles, allowedPermissions }: ProtectedRouteProps) => {
+const ProtectedRoute = ({ allowedRoles, allowedPermissions, allowPersonal }: ProtectedRouteProps) => {
   const { user, company, isLoading } = useAuth();
   const location = useLocation();
 
@@ -21,6 +22,8 @@ const ProtectedRoute = ({ allowedRoles, allowedPermissions }: ProtectedRouteProp
   if (!user) {
     return <Navigate to="/login" replace />;
   }
+
+  if (user.role === "PERSONAL" && !allowPersonal) return <Navigate to="/espace-personnel" replace />;
 
   if (allowedRoles || allowedPermissions) {
     const hasRole = allowedRoles ? allowedRoles.includes(user.role) : false;

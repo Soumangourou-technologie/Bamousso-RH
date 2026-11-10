@@ -12,6 +12,7 @@ interface User {
   id: string;
   email: string;
   role:
+    | 'PERSONAL'
     | 'SUPER_ADMIN'
     | 'COMPANY_ADMIN'
     | 'HR_MANAGER'
@@ -72,7 +73,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [onlineCompanies, setOnlineCompanies] = useState<string[]>([]);
 
   useEffect(() => {
-    if (!user || !supabase.channel || typeof supabase.channel !== 'function') return;
+    if (!user || user.role === "PERSONAL" || !supabase.channel || typeof supabase.channel !== 'function') return;
 
     const presenceChannel = supabase.channel('bamousso-global-presence', {
       config: {

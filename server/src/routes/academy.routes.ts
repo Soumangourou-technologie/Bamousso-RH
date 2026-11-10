@@ -2,7 +2,7 @@ import { Router } from "express";
 import PDFDocument from "pdfkit";
 import { z } from "zod";
 import { catalogue, completion, enrollment, pilot, publishedCourse } from "../academy/courses.js";
-import { authenticate, type AuthRequest } from "../middleware/auth.js";
+import { authenticateAccount, type AuthRequest } from "../middleware/auth.js";
 import prisma from "../utils/prisma.js";
 
 const router = Router();
@@ -23,7 +23,7 @@ router.get("/", (_req, res) => {
   res.json({ ...summary, lessons: lessons.map(({ id, title }) => ({ id, title })) });
 });
 
-router.use(authenticate, (_req, res, next) => {
+router.use(authenticateAccount, (_req, res, next) => {
   res.set("Cache-Control", "no-store");
   next();
 });

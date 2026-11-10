@@ -601,7 +601,6 @@ const DashboardSuperAdmin = () => {
                     className={`w-full p-6 rounded-4xl border-2 text-left transition-all duration-300 ${selectedCompany.plan === p ? 'border-brand-primary bg-brand-primary/10' : 'border-white/5 hover:border-white/20 bg-white dark:bg-[#1f1f1f]/5'}`}
                   >
                     <p className="font-black text-white text-lg">{PLAN_LABELS[p]}</p>
-                    <p className="text-sm text-brand-accent font-bold mt-1">{PLAN_PRICES[p]} FCFA / mois</p>
                   </button>
                 ))}
               </div>

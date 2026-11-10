@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import axios from 'axios';
 import crypto from 'node:crypto';
-import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { openRegistrationHash } from '../utils/registrationPassword.js';
 import prisma from '../utils/prisma.js';
 import { logger } from '../utils/logger.js';
 import { sendSubscriptionConfirmation, sendAdminSubscriptionNotification, sendRegistrationWelcomeEmail } from '../utils/mailer.js';
@@ -14,7 +14,8 @@ import { calculateTotalAmount, PlanType, BillingCycle } from '../shared/pricing.
  * ou active l'abonnement pour une entreprise existante)
  */
 export const processSuccessfulPayment = async (transactionId: string, amount: number | string, metadata: any) => {
-  const numericAmount = typeof amount === 'string' ? parseFloat(amount) : (Number(amount) || 0);
+  const numericAmount = Number(amount);
+  if (!transactionId || !Number.isFinite(numericAmount) || numericAmount <= 0) return { success: false };
   const isNewRegistration = metadata.isNewRegistration === true || metadata.isNewRegistration === 'true' || Boolean(metadata.companyName && metadata.email);
 
   if (isNewRegistration) {
@@ -23,90 +24,80 @@ export const processSuccessfulPayment = async (transactionId: string, amount: nu
     const firstName = metadata.firstName || 'Client';
     const lastName = metadata.lastName || '';
     const phone = metadata.phone || '';
-    const hashedPassword = metadata.hashedPassword;
-    const rawPassword = metadata.rawPassword || 'Password123';
-    let plan = (metadata.plan || 'FITINI').toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    const plan = (metadata.plan || 'FITINI').toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     const billingCycle = metadata.billingCycle || 'MONTHLY';
     const extraEmployees = Number(metadata.extraEmployees) || 0;
 
-    // Idempotency: vérifier si l'utilisateur existe déjà
-    let user = await prisma.user.findUnique({
-      where: { email },
-      include: { company: true }
-    });
+    const paid = await prisma.payment.findFirst({ where: { externalId: transactionId, status: "SUCCESS" }, select: { id: true } });
+    if (paid) return { success: true };
 
-    let company = user?.company;
+    if (numericAmount !== calculateTotalAmount(plan as PlanType, billingCycle, extraEmployees)) return { success: false };
 
-    if (!user) {
-      // 1. CRÉATION DE L'ENTREPRISE ET DE L'UTILISATEUR EN BASE DE DONNÉES UNIQUEMENT APRÈS PAIEMENT RÉEL VALIDÉ
-      const creationResult = await prisma.$transaction(async (tx) => {
-        const newCompany = await tx.company.create({
-          data: {
-            name: companyName,
-            isActive: true,
-            subscriptionStatus: "ACTIVE",
-            subscriptionEndsAt: new Date(Date.now() + (billingCycle === 'YEARLY' ? 365 : 30) * 24 * 60 * 60 * 1000),
-            trialEndsAt: null,
-            plan: plan,
-            billingCycle: billingCycle,
-            extraEmployees: extraEmployees,
-            isLocked: false,
-            lockedAt: null,
-          } as any,
-        });
+    const existingUser = await prisma.user.findUnique({ where: { email }, select: { id: true } });
+    if (existingUser) return { success: false };
 
-        const newUser = await tx.user.create({
-          data: {
-            email,
-            phone,
-            password: hashedPassword || await bcrypt.hash(rawPassword, 10),
-            firstName,
-            lastName,
-            role: "COMPANY_ADMIN",
-            companyId: newCompany.id,
-            status: "ACTIVE",
-          },
-        });
-
-        await tx.company.update({
-          where: { id: newCompany.id },
-          data: { managerId: newUser.id }
-        });
-
-        await tx.payment.create({
-          data: {
-            amount: numericAmount,
-            reference: `BAM-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
-            externalId: transactionId.toString(),
-            status: "SUCCESS",
-            companyId: newCompany.id,
-            description: `Abonnement Bamousso RH - Formule ${plan}`,
-          }
-        });
-
-        return { company: newCompany, user: newUser };
-      });
-
-      company = creationResult.company as any;
-      user = creationResult.user as any;
-
-      // 2. ENVOI DE L'EMAIL DE BIENVENUE AVEC IDENTIFIANTS UNIQUEMENT MAINTENANT
-      try {
-        await sendRegistrationWelcomeEmail(email, firstName, companyName, plan, rawPassword);
-      } catch (mailErr) {
-        await logger.error("Erreur envoi email bienvenue après paiement", mailErr, "PaymentController");
-      }
-    } else if (company && !company.isActive) {
-      await prisma.company.update({
-        where: { id: company.id },
+    // Compatibilité avec les paiements déjà initialisés avant la correction.
+    const password = typeof metadata.passwordEnvelope === 'string'
+      ? openRegistrationHash(metadata.passwordEnvelope, email)
+      : metadata.hashedPassword;
+    if (typeof password !== 'string' || !/^\$2[aby]\$\d{2}\$[./A-Za-z0-9]{53}$/.test(password)) {
+      throw new Error('Identifiants d’inscription incomplets');
+    }
+    // 1. CRÉATION DE L'ENTREPRISE ET DE L'UTILISATEUR EN BASE DE DONNÉES UNIQUEMENT APRÈS PAIEMENT RÉEL VALIDÉ
+    await prisma.$transaction(async (tx) => {
+      const newCompany = await tx.company.create({
         data: {
+          name: companyName,
           isActive: true,
           subscriptionStatus: "ACTIVE",
+          subscriptionEndsAt: new Date(Date.now() + (billingCycle === 'YEARLY' ? 365 : 30) * 24 * 60 * 60 * 1000),
+          trialEndsAt: null,
+          plan: plan,
+          billingCycle: billingCycle,
+          extraEmployees: extraEmployees,
           isLocked: false,
-          subscriptionEndsAt: new Date(Date.now() + (billingCycle === 'YEARLY' ? 365 : 30) * 24 * 60 * 60 * 1000)
+          lockedAt: null,
+        } as any,
+      });
+
+      const newUser = await tx.user.create({
+        data: {
+          email,
+          phone,
+          password,
+          firstName,
+          lastName,
+          role: "COMPANY_ADMIN",
+          companyId: newCompany.id,
+          status: "ACTIVE",
+        },
+      });
+
+      await tx.company.update({
+        where: { id: newCompany.id },
+        data: { managerId: newUser.id }
+      });
+
+      await tx.payment.create({
+        data: {
+          amount: numericAmount,
+          reference: `BAM-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+          externalId: transactionId.toString(),
+          status: "SUCCESS",
+          companyId: newCompany.id,
+          description: `Abonnement Bamousso RH - Formule ${plan}`,
         }
       });
+
+    });
+
+    // 2. Envoyer le lien de connexion une fois le compte créé.
+    try {
+      await sendRegistrationWelcomeEmail(email, firstName, companyName, plan);
+    } catch (mailErr) {
+      await logger.error("Erreur envoi email bienvenue après paiement", mailErr, "PaymentController");
     }
+
 
     // 3. ENVOI DE LA CONFIRMATION ET FACTURE PDF
     try {
@@ -124,7 +115,7 @@ export const processSuccessfulPayment = async (transactionId: string, amount: nu
       await logger.error("Erreur envoi facture après paiement", pdfErr, "PaymentController");
     }
 
-    return { success: true, company, user };
+    return { success: true };
   } else {
     // Cas Entreprise existante (Renouvellement)
     const companyId = metadata.companyId;
@@ -132,8 +123,8 @@ export const processSuccessfulPayment = async (transactionId: string, amount: nu
 
     const extraEmployees = Number(metadata.extraEmployees) || 0;
     const isAddOn = metadata.isAddOn === 'true' || metadata.isAddOn === true;
-    let plan = (metadata.plan || 'FITINI').toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    let billingCycle = metadata.billingCycle || 'MONTHLY';
+    const plan = (metadata.plan || 'FITINI').toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    const billingCycle = metadata.billingCycle || 'MONTHLY';
 
     const updateData: any = {
       subscriptionStatus: "ACTIVE",
@@ -152,16 +143,22 @@ export const processSuccessfulPayment = async (transactionId: string, amount: nu
       }
     }
 
-    const company = await (prisma.company.update({
-      where: { id: companyId },
-      data: updateData,
-      include: { users: { where: { role: 'COMPANY_ADMIN' }, take: 1 } }
-    }) as any);
-
-    await prisma.payment.updateMany({
-      where: { externalId: transactionId.toString() },
-      data: { status: "SUCCESS" }
+    const company = await prisma.$transaction(async tx => {
+      const updated = await tx.payment.updateMany({
+        where: { externalId: transactionId, companyId, amount: numericAmount, status: "PENDING" },
+        data: { status: "SUCCESS" },
+      });
+      if (!updated.count) return null;
+      return tx.company.update({
+        where: { id: companyId },
+        data: updateData,
+        include: { users: { where: { role: 'COMPANY_ADMIN' }, take: 1 } },
+      });
     });
+    if (!company) {
+      const paid = await prisma.payment.findFirst({ where: { externalId: transactionId, companyId, amount: numericAmount, status: "SUCCESS" }, select: { id: true } });
+      return { success: Boolean(paid) };
+    }
 
     try {
       const adminEmail = company.users[0]?.email;
@@ -182,7 +179,7 @@ export const processSuccessfulPayment = async (transactionId: string, amount: nu
       await logger.error("Erreur envoi emails confirmation", mailError, "PaymentController");
     }
 
-    return { success: true, company, user: company.users[0] };
+    return { success: true };
   }
 };
 
@@ -191,16 +188,22 @@ export const processSuccessfulPayment = async (transactionId: string, amount: nu
  */
 export const initiatePayment = async (req: Request, res: Response) => {
   try {
-    const { description, companyId, plan, pendingToken, registrationData } = req.body;
+    const { description, companyId, plan, pendingToken } = req.body;
 
-    // Décoder le token d'inscription temporaire s'il existe
-    let regData: any = registrationData || null;
+    let regData: jwt.JwtPayload | null = null;
     if (pendingToken) {
       try {
-        const jwtSecret = process.env.JWT_SECRET || '';
-        regData = jwt.verify(pendingToken, jwtSecret);
-      } catch (err) {
-        console.error("Token d'inscription invalide ou expiré:", err);
+        const secret = process.env.JWT_SECRET;
+        if (!secret) throw new Error('JWT_SECRET absent');
+        const payload = jwt.verify(pendingToken, secret, { algorithms: ['HS256'] });
+        if (typeof payload === 'string' || payload.purpose !== 'company-registration'
+            || typeof payload.email !== 'string' || typeof payload.companyName !== 'string'
+            || typeof payload.passwordEnvelope !== 'string') {
+          throw new Error('Jeton d’inscription invalide');
+        }
+        regData = payload;
+      } catch {
+        return res.status(400).json({ success: false, message: "Inscription expirée ou invalide. Reprenez le formulaire d’inscription." });
       }
     }
 
@@ -211,7 +214,7 @@ export const initiatePayment = async (req: Request, res: Response) => {
     }
 
     const targetPlan = plan || (regData ? regData.plan : 'FITINI');
-    const isAddOn = req.body.isAddOn === 'true' || req.body.isAddOn === true;
+    const isAddOn = !isNewRegistration && (req.body.isAddOn === 'true' || req.body.isAddOn === true);
     const extraEmployees = parseInt(req.body.extraEmployees || (regData ? regData.extraEmployees : 0)) || 0;
     const billingCycle: BillingCycle = (req.body.billingCycle || (regData ? regData.billingCycle : 'MONTHLY')) === 'YEARLY' ? 'YEARLY' : 'MONTHLY';
     const idempotencyKey = req.headers['idempotency-key'] as string;
@@ -266,13 +269,12 @@ export const initiatePayment = async (req: Request, res: Response) => {
       metadata.phone = regData.phone;
       metadata.firstName = regData.firstName;
       metadata.lastName = regData.lastName;
-      metadata.hashedPassword = regData.hashedPassword;
-      metadata.rawPassword = regData.rawPassword;
+      metadata.passwordEnvelope = regData.passwordEnvelope;
     } else {
       metadata.companyId = companyId;
     }
 
-    await logger.info("Initiating GeniusPay payment request (0 DB write before payment)", { amount: calculatedAmount, isNewRegistration, email: regData?.email }, "PaymentController");
+    await logger.info("Initialisation du paiement GeniusPay", { amount: calculatedAmount, isNewRegistration }, "PaymentController");
 
     const response = await axios.post('https://pay.genius.ci/api/v1/merchant/payments', {
       amount: calculatedAmount,
@@ -314,105 +316,61 @@ export const initiatePayment = async (req: Request, res: Response) => {
       return res.json({
         success: true,
         url: response.data.data.checkout_url,
-        transactionId: transactionId
+        transactionId: transactionId,
+        paymentReference: response.data.data.reference || transactionId
       });
     }
 
     throw new Error(response.data.message || "Réponse invalide de GeniusPay");
 
   } catch (error: any) {
-    const errorDetails = error.response?.data || error.message;
-    await logger.error("GeniusPay Initiation Error", errorDetails, "PaymentController");
+    await logger.error("GeniusPay Initiation Error", { status: error.response?.status }, "PaymentController");
     
     res.status(500).json({ 
       success: false, 
-      message: "Erreur lors de l'initialisation du paiement.",
-      error: errorDetails
+      message: "Erreur lors de l'initialisation du paiement."
     });
   }
 };
 
-/**
- * Webhook pour confirmer le paiement avec vérification de signature GeniusPay
- */
+// Les deux points d’entrée confirment la transaction auprès du prestataire.
+async function verifyMerchantPayment(reference: unknown) {
+  if (typeof reference !== 'string' || !/^[a-zA-Z0-9_-]{1,120}$/.test(reference)) return { success: false };
+  const apiKey = process.env.GENIUSPAY_KEY;
+  const apiSecret = process.env.GENIUSPAY_SECRET;
+  if (!apiKey || !apiSecret) return { success: false };
+  const response = await axios.get(`https://pay.genius.ci/api/v1/merchant/payments/${encodeURIComponent(reference)}`, {
+    headers: { 'X-API-Key': apiKey, 'X-API-Secret': apiSecret },
+    timeout: 10000,
+  });
+  const payment = response.data?.data;
+  if (!payment || !['completed', 'SUCCESS'].includes(payment.status)) return { success: false };
+  const id = String(payment.transaction_id || payment.id || payment.reference || reference);
+  return processSuccessfulPayment(id, payment.amount, payment.metadata || {});
+}
+
 export const handleWebhook = async (req: Request, res: Response) => {
   try {
-    await logger.info("Webhook GeniusPay reçu", req.body, "PaymentController");
-
     const { event, data } = req.body;
-    const isSuccess = event === 'payment.success' || (data && (data.status === 'completed' || data.status === 'SUCCESS'));
-
-    if (isSuccess && data) {
-      const transactionId = (data.transaction_id || data.id || data.reference || '').toString();
-      const amount = typeof data.amount === 'string' ? parseFloat(data.amount) : (data.amount || 0);
-      const metadata = data.metadata || {};
-
-      await processSuccessfulPayment(transactionId, amount, metadata);
+    if (event === 'payment.success' || ['completed', 'SUCCESS'].includes(data?.status)) {
+      const reference = data?.reference || data?.transaction_id || data?.id;
+      const result = await verifyMerchantPayment(reference == null ? undefined : String(reference));
+      if (!result.success) return res.status(503).send('Paiement non confirmé');
     }
-
     res.status(200).send('OK');
-  } catch (error: any) {
-    await logger.error("Webhook Error", error.message, "PaymentController");
-    res.status(500).send('Webhook Error');
+  } catch {
+    await logger.error("Vérification du webhook GeniusPay indisponible", undefined, "PaymentController");
+    res.status(503).send('Webhook Error');
   }
 };
 
-/**
- * Confirmation directe appelée lors du retour sur /payment-success
- */
 export const confirmPayment = async (req: Request, res: Response) => {
   try {
-    const { token, companyId } = req.params; 
-    const apiKey = process.env.GENIUSPAY_KEY;
-    const apiSecret = process.env.GENIUSPAY_SECRET;
-
-    let transactionId = token;
-
-    if (transactionId && transactionId !== '{transaction_id}' && !transactionId.includes('{')) {
-      try {
-        const response = await axios.get(`https://pay.genius.ci/api/v1/merchant/payments/${transactionId}`, {
-          headers: {
-            'X-API-Key': apiKey,
-            'X-API-Secret': apiSecret
-          }
-        });
-
-        const externalData = response.data.data;
-        if (externalData && (externalData.status === 'completed' || externalData.status === 'SUCCESS')) {
-          const result = await processSuccessfulPayment(transactionId.toString(), externalData.amount || 0, externalData.metadata || {});
-
-          if (result && result.user && result.company) {
-            const jwtSecret = process.env.JWT_SECRET || 'secret';
-            const userToken = jwt.sign(
-              { id: result.user.id, role: result.user.role, companyId: result.company.id },
-              jwtSecret,
-              { expiresIn: '1d' }
-            );
-
-            return res.json({
-              success: true,
-              status: "SUCCESS",
-              token: userToken,
-              user: {
-                id: result.user.id,
-                email: result.user.email,
-                firstName: result.user.firstName,
-                lastName: result.user.lastName,
-                role: result.user.role,
-                companyId: result.user.companyId
-              },
-              company: result.company
-            });
-          }
-        }
-      } catch (err: any) {
-        await logger.error("Erreur vérification directe confirmPayment", err.message, "PaymentController");
-      }
-    }
-
-    return res.json({ success: false, message: "Paiement non confirmé ou en cours de validation." });
-  } catch (error: any) {
-    await logger.error("ConfirmPayment Error", error.message, "PaymentController");
-    res.status(500).json({ success: false, message: "Erreur lors de la confirmation." });
+    const result = await verifyMerchantPayment(req.params.token);
+    return res.json(result.success
+      ? { success: true, status: "SUCCESS" }
+      : { success: false, message: "Paiement non confirmé ou en cours de validation." });
+  } catch {
+    return res.status(503).json({ success: false, message: "Vérification du paiement momentanément indisponible." });
   }
 };

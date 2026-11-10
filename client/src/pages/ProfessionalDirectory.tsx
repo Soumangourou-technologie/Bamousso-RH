@@ -55,6 +55,7 @@ export default function ProfessionalDirectory() {
   const { user } = useAuth();
   const [openCatalog, setOpenCatalog] = useState<string>();
   const [search, setSearch] = useState('');
+  const [featured, setFeatured] = useState<Pick<DirectoryEntry, 'companyId' | 'company' | 'sector' | 'city'>[]>([]);
   const [criteria, setCriteria] = useState({ q: '', page: 1 });
   const [results, setResults] = useState<{ profiles: DirectoryEntry[]; hasMore: boolean }>();
   const [error, setError] = useState('');
@@ -71,6 +72,13 @@ export default function ProfessionalDirectory() {
     return () => controller.abort();
   }, [criteria]);
 
+  useEffect(() => {
+    const controller = new AbortController();
+    api.get('/directory/featured', { signal: controller.signal })
+      .then(({ data }) => setFeatured(data)).catch(() => {});
+    return () => controller.abort();
+  }, []);
+
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setOpenCatalog(undefined);
@@ -82,6 +90,20 @@ export default function ProfessionalDirectory() {
       <div className="mx-auto max-w-5xl space-y-5">
         <Link to="/" className="underline">Accueil Bamousso</Link>
         <h1 className="text-3xl font-bold">Annuaire Pro</h1>
+        {!criteria.q && criteria.page === 1 && featured.length > 0 && (
+          <section aria-label="Fournisseurs mis en avant" className="space-y-3 rounded-xl border border-teal-500 bg-teal-50 p-4 text-slate-900">
+            <h2 className="text-xl font-bold text-slate-900">Fournisseurs mis en avant</h2>
+            <ul className="flex flex-wrap gap-3">
+              {featured.map(profile => <li key={profile.companyId}>
+                <button type="button" className="rounded border border-teal-700 bg-white px-3 py-2 text-teal-900 underline" onClick={() => {
+                  setSearch(profile.company.name);
+                  setOpenCatalog(undefined);
+                  setCriteria({ q: profile.company.name, page: 1 });
+                }}>{profile.company.name} · {profile.city}</button>
+              </li>)}
+            </ul>
+          </section>
+        )}
         <form onSubmit={submit} className="flex flex-wrap items-end gap-2">
           <label className="min-w-56 flex-1">
             Entreprise, produit, secteur ou ville

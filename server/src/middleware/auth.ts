@@ -10,7 +10,7 @@ export interface AuthRequest extends Request {
   };
 }
 
-export const authenticate = async (req: AuthRequest, res: Response, next: NextFunction) => {
+const authenticateWith = (allowPersonal: boolean) => async (req: AuthRequest, res: Response, next: NextFunction) => {
   const token = req.cookies?.token || req.header("Authorization")?.replace("Bearer ", "");
 
   if (!token) {
@@ -25,6 +25,16 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
 
     const decoded = jwt.verify(token, jwtSecret);
     req.user = decoded as any;
+
+    if (req.user?.role === "PERSONAL") {
+      if (!allowPersonal || req.user.companyId) return res.status(403).json({ message: "Cet espace est réservé aux comptes entreprise." });
+      const account = await prisma.user.findFirst({
+        where: { id: req.user.id, role: "PERSONAL", companyId: null, status: "ACTIVE" },
+        select: { id: true },
+      });
+      if (!account) return res.sendStatus(401);
+      return next();
+    }
 
     // Verrouillage entreprise (blocage total) : bypass SUPER_ADMIN
     if (req.user?.role !== "SUPER_ADMIN") {
@@ -68,6 +78,9 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
     res.status(400).json({ message: "Invalid token." });
   }
 };
+
+export const authenticate = authenticateWith(false);
+export const authenticateAccount = authenticateWith(true);
 
 export const authorize = (roles: string[]) => {
   return (req: AuthRequest, res: Response, next: NextFunction) => {

@@ -52,6 +52,28 @@ router.get("/", async (req, res) => {
   res.set("Cache-Control", "no-store").json({ profiles: profiles.slice(0, pageSize), hasMore: page < 1000 && profiles.length > pageSize });
 });
 
+router.get("/featured", async (_req, res) => {
+  const profiles = await prisma.supplierProfile.findMany({
+    where: { published: true, featuredUntil: { gt: new Date() }, company: { isActive: true, isLocked: false } },
+    select: { companyId: true, sector: true, city: true, company: { select: companyFields } },
+    orderBy: [{ featuredUntil: "desc" }, { companyId: "asc" }], take: 6,
+  });
+  res.set("Cache-Control", "no-store").json(profiles);
+});
+
+router.post("/feature", authenticate, companyAdmin, async (req: AuthRequest, res) => {
+  const companyId = req.user?.companyId;
+  if (!companyId) return res.sendStatus(403);
+  const now = new Date();
+  await prisma.supplierProfile.updateMany({
+    where: { companyId, published: true, OR: [{ featuredUntil: null }, { featuredUntil: { lte: now } }] },
+    data: { featuredUntil: new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000) },
+  });
+  const profile = await prisma.supplierProfile.findFirst({ where: { companyId, published: true }, select: { featuredUntil: true } });
+  if (!profile) return res.status(409).json({ message: "Publiez votre fiche Annuaire Pro avant de la mettre en avant." });
+  res.json(profile);
+});
+
 router.get("/my-profile", authenticate, companyAdmin, async (req: AuthRequest, res) => {
   const companyId = req.user?.companyId;
   if (!companyId) return res.status(403).json({ message: "Entreprise non associée." });
