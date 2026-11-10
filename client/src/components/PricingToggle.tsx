@@ -29,9 +29,6 @@ export const PricingToggle: React.FC<PricingToggleProps> = ({ billingCycle, onCh
           }`}
         >
           Annuel
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400">
-            -15%
-          </span>
         </button>
 
         {/* Animated Background Indicator */}

@@ -65,7 +65,6 @@ const TrialExpiredOverlay = () => {
                   <p className="text-xl font-black text-gray-900 dark:text-white">Formule LOUBA</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-2xl font-black text-brand-primary">15.000 <span className="text-xs">FCFA/mois</span></p>
                 </div>
               </button>
 
@@ -75,7 +74,6 @@ const TrialExpiredOverlay = () => {
                   <p className="text-xl font-black text-gray-900 dark:text-white">Formule Kôrô</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-2xl font-black text-gray-900 dark:text-white">25.000 <span className="text-xs text-gray-400 font-medium">FCFA/mois</span></p>
                 </div>
               </button>
             </div>

@@ -4,9 +4,9 @@ import { useNavigate, Link, useLocation } from 'react-router-dom';
 
 import api from '../utils/api';
 import { Eye, EyeOff, Building2, CheckCircle } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { PricingToggle } from '../components/PricingToggle';
-import { BillingCycle, PlanType, PRICING_PLANS, calculateTotalAmount, EXTRA_EMPLOYEE_COST_MONTHLY } from '@shared/pricing';
+import { BillingCycle, PlanType, PRICING_PLANS, calculateTotalAmount } from '@shared/pricing';
 import { trackMetaEvent } from '../utils/metaPixel';
 
 
@@ -116,7 +116,7 @@ const Register = () => {
                     {selectedPlan === plan.id && <CheckCircle className="w-5 h-5 text-orange-500" />}
                   </div>
                   <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                    {(billingCycle === 'YEARLY' ? plan.priceYearly : plan.priceMonthly).toLocaleString()} FCFA / {billingCycle === 'YEARLY' ? 'an' : 'mois'}
+                    {plan.description}
                   </span>
                 </label>
               ))}
@@ -125,7 +125,7 @@ const Register = () => {
             {selectedPlan !== 'KORO' && (
               <div className="mt-8 p-4 bg-orange-50 dark:bg-orange-900/20 rounded-2xl border border-orange-200 dark:border-orange-800">
                 <label className="block text-xs font-black text-orange-600 dark:text-orange-400 uppercase tracking-widest mb-2">
-                  Employés supplémentaires (+{billingCycle === 'YEARLY' ? EXTRA_EMPLOYEE_COST_MONTHLY * 12 : EXTRA_EMPLOYEE_COST_MONTHLY}/{billingCycle === 'YEARLY' ? 'an' : 'mois'})
+                  Employés supplémentaires
                 </label>
                 <div className="flex items-center gap-4">
                   <input 
@@ -140,23 +140,6 @@ const Register = () => {
               </div>
             )}
 
-            <div className="mt-8 pt-6 border-t border-gray-100 dark:border-gray-700">
-              <div className="flex justify-between items-center">
-                <span className="text-sm font-bold text-gray-500">Total {billingCycle === 'YEARLY' ? 'Annuel' : 'Mensuel'}</span>
-                <AnimatePresence mode="wait">
-                  <motion.span 
-                    key={calculateTotalAmount(selectedPlan, billingCycle, extraEmployees)}
-                    initial={{ opacity: 0, y: -5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 5 }}
-                    transition={{ duration: 0.2 }}
-                    className="text-xl font-black text-orange-500"
-                  >
-                    {calculateTotalAmount(selectedPlan, billingCycle, extraEmployees).toLocaleString()} FCFA
-                  </motion.span>
-                </AnimatePresence>
-              </div>
-            </div>
           </div>
 
           {/* Panneau de droite : Formulaire */}

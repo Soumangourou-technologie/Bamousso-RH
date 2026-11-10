@@ -88,14 +88,12 @@ const SettingsPage = () => {
   const handleAddEmployee = () => {
     if (!company) return;
     
-    // On redirige vers le paiement pour 1 employé supplémentaire (1000 FCFA)
     navigate('/payment', {
       state: {
         plan: {
           id: company.plan,
           name: company.plan,
-          finalPrice: 850,
-          price: "850 FCFA"
+          finalPrice: 850
         },
         extraEmployees: 1, // On ajoute 1
         isAddOn: true,
@@ -204,7 +202,7 @@ const SettingsPage = () => {
                     onClick={handleAddEmployee}
                     className="w-full flex items-center justify-center gap-2 p-3 bg-orange-500 text-white rounded-xl text-xs font-black shadow-lg shadow-orange-500/20 hover:bg-orange-600 transition-colors"
                   >
-                    <Plus className="w-4 h-4" /> Ajouter 1 employé (+850 FCFA/mois)
+                    <Plus className="w-4 h-4" /> Ajouter 1 employé
                   </button>
                 </div>
               )}
