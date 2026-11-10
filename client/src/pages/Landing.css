@@ -24,7 +24,7 @@
 .bmh-nav-links { display: flex; align-items: center; gap: 30px; font-size: 14px; font-weight: 650; }
 .bmh-nav-links a:hover, .bmh-resources a:hover { color: var(--orange); }
 .bmh-button { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 46px; padding: 10px 17px; border-radius: 10px; border: 1px solid transparent; font-weight: 720; font-size: 14px; line-height: 1.25; text-align: center; cursor: pointer; }
-.bmh-button svg, .bmh-shortcuts svg, .bmh-price li svg { flex: none; }
+.bmh-button svg, .bmh-shortcuts svg { flex: none; }
 .bmh-button-primary { background: var(--ink); color: white; }
 .bmh-button-primary:hover { background: #23624d; }
 .bmh-button-outline { border-color: #acbdb2; color: var(--ink); }
@@ -38,14 +38,11 @@
 .bmh-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
 .bmh-section { padding-block: 64px; }
 .bmh h2 { margin-top: 9px; font-size: clamp(1.85rem, 3.8vw, 3.1rem); line-height: 1.08; letter-spacing: -.055em; font-weight: 820; }
-.bmh-tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 17px; margin-top: 25px; }
-.bmh-tile { min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 10px; padding: clamp(18px, 2.2vw, 29px); border: 1px solid var(--line); border-radius: 17px; background: #fffefa; }
-.bmh-tile-icon { display: grid; place-items: center; width: 45px; height: 45px; border-radius: 13px; background: #e2efe4; color: #225c43; }
-.bmh-tile h3 { font-size: clamp(1.25rem, 2vw, 1.6rem); font-weight: 800; letter-spacing: -.035em; line-height: 1.12; }
-.bmh-tile p { color: var(--muted); font-size: 14px; line-height: 1.6; }
 .bmh-audiences { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; max-width: 790px; margin-inline: auto; text-align: left; }
-.bmh-audience { gap: 12px; }
-.bmh-audience-heading { display: flex; align-items: center; gap: 12px; }
+.bmh-audience { display: flex; flex-direction: column; overflow: hidden; min-width: 0; border: 1px solid var(--line); border-radius: 17px; background: #fffefa; }
+.bmh-audience-photo { display: block; width: 100%; height: auto; aspect-ratio: 2; object-fit: cover; object-position: center 32%; background: #e7eee4; }
+.bmh-audience-content { display: flex; flex: 1; flex-direction: column; align-items: flex-start; gap: 11px; padding: clamp(16px, 2.2vw, 24px); }
+.bmh-audience p { color: var(--muted); font-size: 14px; line-height: 1.6; }
 .bmh-audience h2 { margin: 0; font-size: 1.55rem; letter-spacing: -.04em; }
 .bmh-audience .bmh-button { margin-top: auto; }
 .bmh-explore { max-width: 790px; padding-block: 0 45px; }
@@ -54,19 +51,7 @@
 .bmh-shortcuts a { display: flex; align-items: center; gap: 8px; min-height: 46px; padding: 8px 11px; border: 1px solid var(--line); border-radius: 10px; font-size: 14px; font-weight: 720; }
 .bmh-shortcuts a svg:last-child { margin-left: auto; }
 .bmh-shortcuts a:hover { background: #e8ede2; }
-.bmh-band { background: #eef1e8; border-block: 1px solid var(--line); }
-.bmh-section-heading { display: flex; justify-content: space-between; align-items: end; gap: 16px; }
-.bmh-switch { display: flex; width: max-content; flex: none; gap: 4px; padding: 4px; background: #dfe8dc; border-radius: 10px; }
-.bmh-switch button { padding: 7px 12px; border-radius: 7px; font-size: 14px; font-weight: 750; cursor: pointer; }
-.bmh-switch button[aria-pressed="true"] { background: white; box-shadow: 0 1px 4px #20342b26; }
-.bmh-price-accent { border-color: #659680; }
-.bmh-price .bmh-price-amount { color: var(--ink); }
-.bmh-price-amount strong { font-size: clamp(1.9rem, 3.4vw, 2.8rem); letter-spacing: -.055em; }
-.bmh-price ul { display: grid; gap: 8px; margin-block: 4px 12px; color: var(--muted); font-size: 14px; }
-.bmh-price li { display: flex; gap: 7px; align-items: start; }
-.bmh-price li svg { color: var(--green); margin-top: 3px; }
-.bmh-price .bmh-button { margin-top: auto; }
-.bmh-resources { display: grid; grid-template-columns: 1fr 1fr; gap: 45px; }
+.bmh-resources { border-top: 1px solid var(--line); display: grid; grid-template-columns: 1fr 1fr; gap: 45px; }
 .bmh-resources ul, .bmh-resources h2 { margin-bottom: 16px; }
 .bmh-resources li a, .bmh-resources summary { display: flex; align-items: center; gap: 9px; min-height: 47px; border-top: 1px solid var(--line); padding: 9px 0; font-weight: 720; }
 .bmh-resources li a svg:last-child { margin-left: auto; }
@@ -89,14 +74,14 @@
   .bmh-nav-links { order: 3; flex-basis: 100%; flex-wrap: wrap; justify-content: space-between; gap: 0 10px; font-size: 12px; }
   .bmh-nav-links a { padding-block: 8px; }
   .bmh-nav .bmh-button { font-size: 13px; padding: 8px 10px; min-height: 42px; }
-  .bmh-audiences, .bmh-tiles, .bmh-resources { grid-template-columns: 1fr; }
+  .bmh-audiences, .bmh-resources { grid-template-columns: 1fr; }
   .bmh-hero { padding-block: 32px 32px; }
   .bmh h1 { font-size: clamp(2.35rem, 9vw, 3.7rem); }
   .bmh-desktop-break { display: none; }
   .bmh-shortcuts { grid-template-columns: 1fr; }
   .bmh-hero-text { margin-block: 13px 21px; }
   .bmh-section { padding-block: 38px; }
-  .bmh-section-heading, .bmh-contact { align-items: start; flex-direction: column; }
+  .bmh-contact { align-items: start; flex-direction: column; }
   .bmh-resources { gap: 28px; }
   .bmh-contact { margin-bottom: 26px; }
   .bmh-footer > div { flex-wrap: wrap; }
