@@ -34,7 +34,6 @@ const Payment = () => {
         description: `Abonnement Bamousso - Formule ${plan.name}${location.state?.extraEmployees > 0 ? ` (+${location.state.extraEmployees} employés)` : ''}`,
         companyId: companyId,
         pendingToken: location.state?.pendingToken,
-        registrationData: location.state?.registrationData,
         plan: plan.id || plan.name,
         billingCycle: location.state?.billingCycle || 'MONTHLY',
         extraEmployees: location.state?.extraEmployees || 0,
@@ -44,6 +43,8 @@ const Payment = () => {
       if (response.data.success && response.data.url) {
         const url = response.data.url;
         setCheckoutUrl(url);
+        const reference = response.data.paymentReference || response.data.transactionId;
+        if (reference) sessionStorage.setItem("bamousso.pendingPayment", String(reference));
         
         // Redirection vers GeniusPay
         if (Capacitor.isNativePlatform()) {

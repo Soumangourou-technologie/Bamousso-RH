@@ -6,7 +6,9 @@ import { Prisma } from "@prisma/client";
 import prisma from "../utils/prisma.js";
 import { z } from "zod";
 import { catchAsync } from '../utils/catchAsync.js';
-import { sendPasswordResetEmail, sendRegistrationWelcomeEmail } from '../utils/mailer.js';
+import { sendPasswordResetEmail } from '../utils/mailer.js';
+
+import { sealRegistrationHash } from '../utils/registrationPassword.js';
 
 const registerSchema = z.object({
   email: z.string().trim().email("Format d'email invalide").max(254),
@@ -96,8 +98,8 @@ export const registerCompany = catchAsync(async (req: Request, res: Response) =>
         companyName,
         email,
         phone,
-        hashedPassword,
-        rawPassword: password,
+        purpose: "company-registration",
+        passwordEnvelope: sealRegistrationHash(hashedPassword, email),
         firstName,
         lastName,
         plan: plan || "FITINI",

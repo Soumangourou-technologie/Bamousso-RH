@@ -61,8 +61,7 @@ const Register = () => {
           billingCycle,
           extraEmployees,
           companyName: data.companyName,
-          pendingToken: response.data.pendingRegistrationToken,
-          registrationData: response.data.registrationData
+          pendingToken: response.data.pendingRegistrationToken
         } 
       });
     } catch (err: any) {
