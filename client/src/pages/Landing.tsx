@@ -121,6 +121,9 @@ const Landing = () => {
               <Link to="/annuaire-pro" className="mt-5 inline-block font-semibold text-white underline underline-offset-4">
                 Trouver un fournisseur dans l’Annuaire Pro
               </Link>
+              <Link to="/academie" className="mt-3 block font-semibold text-white underline underline-offset-4">
+                Découvrir Bamousso Académie
+              </Link>
             </motion.div>
 
             <motion.div 

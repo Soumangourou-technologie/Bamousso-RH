@@ -22,6 +22,7 @@ import Unauthorized from './pages/Unauthorized';
 import DashboardRedirect from './pages/DashboardRedirect';
 import ProtectedRoute from './components/ProtectedRoute';
 import Landing from './pages/Landing';
+import Academy from "./pages/Academy";
 import MainLayout from './layouts/MainLayout';
 import Register from './pages/Register';
 import Payment from './pages/Payment';
@@ -73,6 +74,7 @@ function App() {
             <Routes>
               <Route path="/" element={<RootRoute />} />
               <Route path="/annuaire-pro" element={<ProfessionalDirectory />} />
+              <Route path="/academie" element={<Academy />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/payment" element={<Payment />} />

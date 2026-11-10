@@ -172,6 +172,7 @@ model Payment {
 
 /// Modèle Utilisateur (Employé)
 model User {
+  academyProgress AcademyProgress[]
   id        String  @id @default(uuid())
   email     String  @unique
   password  String // Mot de passe crypté (Haché)
@@ -925,3 +926,13 @@ model SaleItem {
   saleInvoice   SaleInvoice @relation(fields: [saleInvoiceId], references: [id], onDelete: Cascade)
 }
 
+
+model AcademyProgress {
+  userId    String
+  courseId  String
+  activity  String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, courseId, activity])
+}
