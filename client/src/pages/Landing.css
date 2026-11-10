@@ -11,6 +11,7 @@
   font-family: "Inter", system-ui, sans-serif;
 }
 .bmh-shell { width: min(1200px, calc(100% - 64px)); margin-inline: auto; }
+.bmh h1, .bmh h2, .bmh h3 { color: inherit; }
 .bmh :focus-visible { outline: 3px solid #ad4b24; outline-offset: 4px; }
 .bmh [id] { scroll-margin-top: 24px; }
 .bmh-skip { position: absolute; top: 12px; left: 16px; z-index: 2; padding: 12px; background: white; transform: translateY(-160%); }
